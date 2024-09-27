@@ -1,0 +1,6 @@
+Ez lehet kelleni fog. 
+. . . . . . . 
+CREATE DATABASE jedlikfixit_teszt
+	CHARACTER SET utf8mb4
+	COLLATE utf8mb4_hungarian_ci;
+. . . . . . . 
