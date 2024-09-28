@@ -5,6 +5,7 @@ const app = express();
 app.use(cors()); // Enable CORS for frontend
 app.use(express.json());
 
+
 // Sample API endpoint
 app.get('/api/message', (req, res) => {
   res.json({ message: 'Hello from the backend!' });
