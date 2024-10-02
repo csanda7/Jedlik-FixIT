@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 
 // Serve static files from the frontend (if necessary)
-const frontendPath = path.join(__dirname, '..','..', 'frontend','public');
+const frontendPath = path.join(__dirname, '..','..', 'frontend');
 
 const connection = mysql.createConnection({
   host: 'localhost',       
@@ -30,9 +30,16 @@ connection.connect(function(error) {
   }
 });
 
-// Serve the login page (if you have frontend files here)
-app.get("/", function(req, res) {
-  res.sendFile(path.join(frontendPath, 'test.html'));
+// Middleware
+app.use(cors());
+app.use(express.json()); // For parsing application/json
+app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+
+// POST request endpoint
+app.post('/api/data', (req, res) => {
+    const data = req.body; // Get the data from the request body
+    console.log(data); // Log the received data to the console
+    res.json({ message: 'Data received successfully!', receivedData: data }); // Send a response back
 });
 
 // Handle login POST requests
@@ -54,10 +61,6 @@ app.post("/", encoder, function(req, res) {
   });
 });
 
-// Serve another page after login (optional)
-app.get("/test2", function(req, res) {
-  res.sendFile(path.join(frontendPath, 'test2.html'));
-});
 
 app.listen(4500, () => {
   console.log("Server is running on port 4500");

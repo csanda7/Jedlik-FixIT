@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Jedlik FixIT</a>
         <!-- Add additional navbar items here if necessary -->
@@ -15,7 +15,8 @@
   
   <style scoped>
   .navbar-brand {
-    color: #007bff;
+    color: white;
+    
   }
   </style>
   

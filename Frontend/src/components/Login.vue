@@ -2,7 +2,7 @@
     <div class="login-container container vh-100 d-flex justify-content-center align-items-center">
       <div class="login-box card p-4 shadow-sm">
         <div class="title-bar text-center mb-4">
-          <h1 class="mb-3">Jedlik FixIT</h1>
+          <h1 class="mb-3">Bejelentkezés</h1>
         </div>
         <form @submit.prevent="handleLogin">
           <div class="form-group mb-3">
