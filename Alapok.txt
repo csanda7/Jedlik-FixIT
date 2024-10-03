@@ -1,0 +1,15 @@
+Git desktopból kell lehúzni a fájlokat
+Felül kell branchet választani. Alapvetően úgy fogunk dolgozni, hogy dev nevezetű branchre fogjuk felrakni a dolgokat és a heti megbeszélés után a működő dolgot átrakjuk a mainre.
+
+
+Miután GitHubról leúztad a dolgot:
+
+Terminálból bemész a backendre (cd backend)
+Kiadod a npm i nodemon parancsot
+A backendet az npm run dev paranccsal lehet futtatni
+
+Csinálsz még egy terminált, amiből bemész a frontendre(cd frontend)
+Kiadod a npm i  parancsot
+A frontendet az npm run dev paranccsal lehet futtatni
+
+ 
