@@ -1,22 +1,87 @@
 <template>
-    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Jedlik FixIT</a>
-        <!-- Add additional navbar items here if necessary -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white" href="#">Jedlik FixIT</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item" v-if="isAuthenticated">
+            <router-link class="nav-link text-white" to="/report">HIBA BEJELENTÉSE</router-link> <!-- Corrected link -->
+          </li>
+          <li class="nav-item" v-if="isAuthenticated">
+            <router-link class="nav-link text-white" to="/reported">HIBÁK LISTÁJA</router-link> <!-- Corrected link -->
+          </li>
+          <li class="nav-item" v-if="isAuthenticated">
+            <router-link class="nav-link text-white" to="#">FELADATAIM</router-link>
+          </li>
+          <li class="nav-item" v-if="isAuthenticated">
+            <router-link class="nav-link text-white" to="#">ARCHÍVUM</router-link>
+          </li>
+          <li class="nav-item" v-if="isAdmin">
+            <router-link class="nav-link text-white" to="#">ADMIN</router-link>
+          </li>
+          <li class="nav-item" v-if="isAuthenticated">
+            <a class="nav-link text-white" href="#">Felhasználó</a>
+          </li>
+          <li class="nav-item" v-if="isAuthenticated">
+            <button class="btn btn-outline-light" @click="logout">Kilépés</button>
+          </li>
+        </ul>
       </div>
-    </nav>
-  </template>
-  
-  <script>
-  export default {
-    name: 'NavbarComponent'
-  };
-  </script>
-  
-  <style scoped>
-  .navbar-brand {
-    color: white;
-    
+    </div>
+  </nav>
+</template>
+
+<script>
+import { useAuthStore } from '../modules/AuthModule';
+import { RouterLink } from 'vue-router';
+
+export default {
+  name: 'NavbarComponent',
+  components: {
+    RouterLink // Ensure router-link is available
+  },
+  computed: {
+    isAuthenticated() {
+      const authStore = useAuthStore();
+      return authStore.isAuthenticated;
+    },
+    isAdmin() {
+      const authStore = useAuthStore();
+      return authStore.isAdmin; // Assuming isAdmin is a property in your AuthModule
+    }
+  },
+  methods: {
+    logout() {
+      const authStore = useAuthStore();
+      authStore.logout(); // You would implement this method in AuthModule
+      this.$router.push('/login'); // Redirect to login page on logout
+    }
   }
-  </style>
-  
+};
+</script>
+
+<style scoped>
+.navbar-brand {
+  color: white;
+}
+
+.nav-link {
+  color: white;
+}
+
+.btn-outline-light {
+  color: white;
+  border-color: white;
+}
+</style>
