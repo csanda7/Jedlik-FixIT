@@ -13,4 +13,9 @@ Csinálsz még egy terminált, amiből bemész a frontendre(cd frontend)
 Kiadod a npm i  parancsot
 A frontendet az npm run dev paranccsal lehet futtatni
 
+Githubra feltöltés:
+A dev branchre kell feltölteni ha csináltál valamit.
+Githb desktopból kell felrakni a dolgokat. Bal allul írsz valamit a summaryba, hogy mit csináltám, majd rányomsz a commit gombra.
+Utána középen kéken megjelenik egy push gomb. Azt megnyomod és akkor felrakja githubra.
+
  
