@@ -1,7 +1,10 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-primary">
     <div class="container-fluid">
-      <a class="navbar-brand text-white" href="#">Jedlik FixIT</a>
+      <a class="navbar-brand d-flex align-items-center" href="">
+        <img src="../assets/Jedlik_logo_2020_200_3c5beeccf8.png" alt="Jedlik FixIT Logo" style="max-height: 50px;" class="me-2">
+        <span class="text-white fw-bold fs-3">Jedlik FixIT</span>
+      </a>
       <button
         class="navbar-toggler"
         type="button"
@@ -74,6 +77,9 @@ export default {
 <style scoped>
 .navbar-brand {
   color: white;
+}
+.navbar{
+  position: relative;;
 }
 
 .nav-link {

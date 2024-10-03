@@ -14,7 +14,7 @@
   export default {
     components: {
       NavbarComponent,
-      FooterComponent
+      //FooterComponent
     }
   };
   </script>
