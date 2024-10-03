@@ -7,7 +7,7 @@ Miután GitHubról leúztad a dolgot:
 
 Terminálból bemész a backendre (cd backend)
 Kiadod a npm i nodemon parancsot
-A backendet az npm run dev paranccsal lehet futtatni
+A backendet az npm run dev paranccsal lehet futtatni, de futtatni kell hozzá xamppból a phpmyadmint
 
 Csinálsz még egy terminált, amiből bemész a frontendre(cd frontend)
 Kiadod a npm i  parancsot
