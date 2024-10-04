@@ -2,7 +2,7 @@
     <div>
       <!-- Navbar and Footer are now always visible -->
       <NavbarComponent />
-      <router-view />
+      <router-view/>
       <FooterComponent />
     </div>
   </template>

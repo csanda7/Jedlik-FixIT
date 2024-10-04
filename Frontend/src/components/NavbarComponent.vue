@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+<nav class="navbar navbar-expand-lg navbar-light bg-primary">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="">
         <img src="../assets/Jedlik_logo_2020_200_3c5beeccf8.png" alt="Jedlik FixIT Logo" style="max-height: 50px;" class="me-2">
@@ -16,25 +16,27 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
+      <div class="collapse navbar-collapse mx-3" id="navbarNav">
+        <ul class="navbar-nav ms-3">
           <li class="nav-item" v-if="isAuthenticated">
-            <router-link class="nav-link text-white" to="/report">HIBA BEJELENTÉSE</router-link> <!-- Corrected link -->
+            <router-link class="nav-link " to="/report">HIBA BEJELENTÉSE</router-link> <!-- Corrected link -->
           </li>
           <li class="nav-item" v-if="isAuthenticated">
-            <router-link class="nav-link text-white" to="/reported">HIBÁK LISTÁJA</router-link> <!-- Corrected link -->
+            <router-link class="nav-link" to="/reported">HIBÁK LISTÁJA</router-link> <!-- Corrected link -->
           </li>
           <li class="nav-item" v-if="isAuthenticated">
-            <router-link class="nav-link text-white" to="#">FELADATAIM</router-link>
+            <router-link class="nav-link" to="#">FELADATAIM</router-link>
           </li>
           <li class="nav-item" v-if="isAuthenticated">
-            <router-link class="nav-link text-white" to="#">ARCHÍVUM</router-link>
+            <router-link class="nav-link " to="#">ARCHÍVUM</router-link>
           </li>
           <li class="nav-item" v-if="isAdmin">
-            <router-link class="nav-link text-white" to="#">ADMIN</router-link>
+            <router-link class="nav-link" to="#">ADMIN</router-link>
           </li>
+        </ul>
+        <ul class="navbar-nav ms-auto mx-3">
           <li class="nav-item" v-if="isAuthenticated">
-            <a class="nav-link text-white" href="#">Felhasználó</a>
+            <a class="nav-link" href="#">Felhasználó</a>
           </li>
           <li class="nav-item" v-if="isAuthenticated">
             <button class="btn btn-outline-light" @click="logout">Kilépés</button>
@@ -43,6 +45,7 @@
       </div>
     </div>
   </nav>
+
 </template>
 
 <script>
@@ -74,13 +77,13 @@ export default {
 };
 </script>
 
+
+
 <style scoped>
 .navbar-brand {
   color: white;
 }
-.navbar{
-  position: relative;;
-}
+
 
 .nav-link {
   color: white;
@@ -90,4 +93,10 @@ export default {
   color: white;
   border-color: white;
 }
+.nav-item:hover{
+  background-color: white;
+  color: #007bff;
+  border-radius: 5px;
+}
+
 </style>
