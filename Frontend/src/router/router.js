@@ -3,6 +3,8 @@ import { useAuthStore } from '../modules/AuthModule';
 import ReportPage from '../Pages/ReportPage.vue';
 import AlreadyReportedPage from '../Pages/AlreadyReportedPage.vue'; // Import the AlreadyReportedPage
 import LoginPage from '../Pages/LoginPagE.vue'; // Updated import
+import MyTasks from '../Pages/MyTasks.vue';
+import Archive from '../Pages/Archive.vue';
 
 const routes = [
   {
@@ -23,6 +25,16 @@ const routes = [
     path: '/reported',
     name: 'AlreadyReported',
     component: AlreadyReportedPage
+  },
+  {
+    path: '/mytasks',
+    name: 'MyTasks',
+    component: MyTasks
+  },
+  {
+    path: '/archive',
+    name: 'Archive',
+    component: Archive
   },
 ];
 

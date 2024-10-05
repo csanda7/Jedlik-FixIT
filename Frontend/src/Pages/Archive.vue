@@ -1,8 +1,8 @@
 <template>
-    <div class="reported-bugs-container container mt-5">
+      <div class="reported-bugs-container container mt-5">
       <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h1 class="mb-0">Bejelentett Hibák</h1>
+          <h1 class="mb-0">Archívum</h1>
           <div class="user-actions d-flex">
             <input type="text" class="form-control search-input me-3" placeholder="Keresés..." />
             <i class="fas fa-filter filter-icon"></i>
@@ -14,45 +14,23 @@
               <tr>
                 <th>Hiba neve</th>
                 <th>Prioritás</th>
-                <th>Címke</th>
-                <th>Státusz</th>
+                <th>Bejelentés ideje</th>
+                <th>Határidő</th>
                 <th>Terem</th>
-                <th>Bejelentette</th>
-                <th>Bejelntés ideje</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Törött billentyűzet</td>
+                <td>Törött szék</td>
                 <td>
                   <div class="priority-container">
-                    <span class="priority-bar yellow"></span>
-                    <span>3</span>
+                    <span class="priority-bar lyellow"></span>
+                    <span>2</span>
                   </div>
                 </td>
-                <td>
-                  <span class="badge badge-hardware">HARDVER</span>
-                </td>
-                <td>Folyamatban</td>
-                <td>116</td>
-                <td>Fütty Imre</td>
-                <td>2024-09-26 16:12</td>
-              </tr>
-              <tr>
-                <td>Windows kékhalál</td>
-                <td>
-                  <div class="priority-container">
-                    <span class="priority-bar red"></span>
-                    <span>5</span>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge badge-software">SZOFTVER</span>
-                </td>
-                <td>Folyamatban</td>
-                <td>203</td>
-                <td>Csó Ronáldó</td>
-                <td>2024-09-27 10:25</td>
+                <td>2024-09-01 16:12</td>
+                <td>2024-09-05</td>
+                <td>303</td>
               </tr>
             </tbody>
           </table>
@@ -62,24 +40,13 @@
         <button class="btn btn-primary">Vissza</button>
       </div>
     </div>
-  </template>
+</template>
   
   <script>
-  export default {
-    data() {
-      return {
-        searchQuery: ''
-      };
-    },
-    methods: {
-      goBack() {
-        this.$router.go(-1); // Navigates back to the previous page
-      }
-    }
-  };
+
   </script>
   
-  <style scoped>
+  <style>
   .reported-bugs-container {
     max-width: 900px;
     margin: 0 auto; /* Center align */
@@ -119,8 +86,8 @@
     margin-right: 5px;
   }
   
-  .priority-bar.yellow {
-    background-color: #ffc107;
+  .priority-bar.lyellow {
+    background-color: #f5ff64dc;
   }
   
   .priority-bar.red {

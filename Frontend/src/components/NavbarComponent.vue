@@ -25,20 +25,20 @@
             <router-link class="nav-link" to="/reported">HIBÁK LISTÁJA</router-link> <!-- Corrected link -->
           </li>
           <li class="nav-item" v-if="isAuthenticated">
-            <router-link class="nav-link" to="#">FELADATAIM</router-link>
+            <router-link class="nav-link" to="mytasks">FELADATAIM</router-link>
           </li>
           <li class="nav-item" v-if="isAuthenticated">
-            <router-link class="nav-link " to="#">ARCHÍVUM</router-link>
+            <router-link class="nav-link " to="archive">ARCHÍVUM</router-link>
           </li>
           <li class="nav-item" v-if="isAdmin">
             <router-link class="nav-link" to="#">ADMIN</router-link>
           </li>
         </ul>
-        <ul class="navbar-nav ms-auto mx-3">
-          <li class="nav-item" v-if="isAuthenticated">
+        <ul class="navbar-nav ms-auto mx-5">
+          <li class="nav-item mx-1" v-if="isAuthenticated">
             <a class="nav-link" href="#">Felhasználó</a>
           </li>
-          <li class="nav-item" v-if="isAuthenticated">
+          <li class="nav-item mx-1" v-if="isAuthenticated">
             <button class="btn btn-outline-light" @click="logout">Kilépés</button>
           </li>
         </ul>

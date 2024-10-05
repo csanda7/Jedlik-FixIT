@@ -1,15 +1,15 @@
 <template>
-  <div class="container mt-5 align-center">
+  <div class="container mt-2 align-center">
     <div class="card p-4 shadow">
-      <h1 class="text-center my-2">Hiba Bejelentése</h1>
+      <h1 class="text-center my-2">HIBA BEJELENTÉSE</h1>
       <form @submit.prevent="submitForm">
         <div class="my-3">
-          <label for="bugName" class="form-label">Hiba Megnevezése</label>
-          <input type="text" class="form-control" id="bugName" v-model="bugName" placeholder="Add meg a hiba nevét">
+          <label for="bugName" class="form-label">Hiba megnevezése</label>
+          <input type="text" class="form-control" id="bugName" v-model="bugName" placeholder="Adja meg a hiba nevét röviden">
         </div>
         <div class="mb-3">
-          <label for="bugDescription" class="form-label">Hiba Leírása</label>
-          <textarea class="form-control" id="bugDescription" v-model="bugDescription" rows="3" placeholder="Add meg a hiba leírását"></textarea>
+          <label for="bugDescription" class="form-label">Hiba leírása</label>
+          <textarea class="form-control" id="bugDescription" v-model="bugDescription" rows="3" placeholder="Adja meg a hiba leírását"></textarea>
         </div>
 
         <div class="row">
@@ -46,7 +46,7 @@
 
           <!-- Second column for the photo upload input -->
           <div class="col-md-6 my-3">
-            <label for="photo" class="form-label">Fotó Feltöltése</label>
+            <label for="photo" class="form-label">Fotó feltöltése</label>
             <input type="file" class="form-control" id="photo" @change="onFileChange">
           </div>
 
@@ -54,12 +54,9 @@
 </div>
 
 
-
-
-
         <div class="d-grid gap-2 d-flex justify-content-center my-3">
           <button type="button" class="btn btn-secondary w-100" @click="goBack">Vissza</button>
-          <button type="submit" class="btn btn-primary w-100" >Hiba Beküldése</button>
+          <button type="submit" class="btn btn-primary w-100" >Hiba beküldése</button>
         </div>
       </form>
     </div>
