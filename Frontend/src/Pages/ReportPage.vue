@@ -68,7 +68,7 @@
     data() {
       return {
         bugName: '',
-        priority: 1,
+        priority: 0,
         bugDescription: '',
         photo: null,
         location: ''
