@@ -7,6 +7,8 @@ const cors = require('cors');
 
 const encoder = bodyParser.urlencoded({ extended: true });
 const authRoutes = require('./routes/authRoutes');
+const bugReportRoutes = require('./routes/bugReportRoutes');
+const authenticateUser = require('./middleware/authenticateUser');
 
 const app = express();
 
@@ -29,6 +31,9 @@ app.use(express.urlencoded({ extended: true })); // For parsing application/x-ww
 
 // Routes
 app.use(authRoutes);
+app.use('/api', bugReportRoutes);
+app.use(authenticateUser)
+
 
 // Start the server
 const PORT = 4500;

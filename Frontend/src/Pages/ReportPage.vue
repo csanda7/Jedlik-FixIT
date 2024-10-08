@@ -2,7 +2,6 @@
   <div class="container mt-2 align-center">
     <div class="card p-4 shadow">
       <h1 class="text-center my-2">HIBA BEJELENTÉSE</h1>
-      <form @submit.prevent="submitForm">
         <div class="my-3">
           <label for="bugName" class="form-label">Hiba megnevezése</label>
           <input type="text" class="form-control" id="bugName" v-model="bugName" placeholder="Adja meg a hiba nevét röviden">
@@ -26,7 +25,7 @@
 
 
         <div class="col-md-6 my-3 ">
-        <button class="btn dropdown-toggle w-100  mx-2 my-2" style="border: 2px solid gray;" type="button" id="location" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn dropdown-toggle w-100  mx-2 my-2" style="border: 2px solid gray;" type="button" id="tag" data-bs-toggle="dropdown" aria-expanded="false">
               Címkék
         </button>
         <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="dropdownMenuButton2">
@@ -56,14 +55,15 @@
 
         <div class="d-grid gap-2 d-flex justify-content-center my-3">
           <button type="button" class="btn btn-secondary w-100" @click="goBack">Vissza</button>
-          <button type="submit" class="btn btn-primary w-100" >Hiba beküldése</button>
+          <button type="submit" class="btn btn-primary w-100" @click="bekuldes" >Hiba beküldése</button>
         </div>
-      </form>
     </div>
   </div>
 </template>
   
   <script>
+
+  import axios from 'axios';
   export default {
     data() {
       return {
@@ -71,27 +71,67 @@
         priority: 0,
         bugDescription: '',
         photo: null,
-        location: ''
+        location: '',
+        tag: ''
       };
     },
+
     methods: {
       onFileChange(event) {
         this.photo = event.target.files[0];
       },
-      submitForm() {
-        console.log("Bug Name:", this.bugName);
-        console.log("Priority:", this.priority);
-        console.log("Bug Description:", this.bugDescription);
-        console.log("Location:", this.location);
-        if (this.photo) {
-          console.log("Photo Uploaded:", this.photo.name);
-        }
-      },
+      bekuldes: function() {
+  const username = localStorage.getItem('Name')
+  const formData = new FormData();
+  formData.append('bugName', this.bugName);
+  formData.append('priority', this.priority);
+  formData.append('bugDescription', this.bugDescription);
+  formData.append('location', this.location);
+  formData.append('label', this.tag);
+  formData.append('reported_by', username);
+  if (this.photo) {
+    formData.append('photo', this.photo); // Attach the photo
+  }
+
+  axios.post("http://localhost:4500/api/bugReport", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  .then((res) => {
+    if (res.data.msg === "Validation Failed") {
+      let errors = res.data.errors;
+      let errorMsg = "";
+      if (errors.bugName) {
+        errorMsg += errors.bugName.join("\n");
+      }
+      if (errors.priority) {
+        errorMsg += errors.priority.join("\n");
+      }
+      if (errors.bugDescription) {
+        errorMsg += errors.bugDescription.join("\n");
+      }
+      if (errors.location) {
+        errorMsg += errors.location.join("\n");
+      }
+      if (errors.tag) {
+        errorMsg += errors.tag.join("\n");
+      }
+      alert(errorMsg);
+    } else {
+      alert("Successfully Saved");
+    }
+  })
+  .catch((error) => {
+    console.error("Error submitting bug report:", error);
+    alert("Something Went Wrong");
+  });
+}},
+
+
       goBack() {
         console.log("Going back...");
-      }
-    }
-  };
+      }};
   </script>
   
   <style scoped>

@@ -56,6 +56,8 @@ export default {
         if (response.data.success) {
           const authStore = useAuthStore();
           authStore.isAuthenticated = true;
+          localStorage.setItem('username', response.data.username);
+          console.log('Logged in as:', response.data.username);
           this.$router.push('/report'); // Navigate to the report page
         } else {
           this.loginError = true;
