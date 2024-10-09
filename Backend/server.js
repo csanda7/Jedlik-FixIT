@@ -28,10 +28,11 @@ app.use(express.static(frontendPath));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // For parsing application/json
 app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+app.use('/uploads', express.static('uploads')); // To serve uploaded files statically
 
 // Routes
 app.use(authRoutes);
-app.use('/api', bugReportRoutes);
+app.use('/',bugReportRoutes);
 app.use(authenticateUser)
 
 

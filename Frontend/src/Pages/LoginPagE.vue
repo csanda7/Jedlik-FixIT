@@ -34,7 +34,6 @@
 
 <script>
 import axios from 'axios';
-import { useRouter } from 'vue-router';
 import { useAuthStore } from '../modules/AuthModule';
 
 export default {
@@ -54,11 +53,11 @@ export default {
         });
 
         if (response.data.success) {
-          const authStore = useAuthStore();
-          authStore.isAuthenticated = true;
-          localStorage.setItem('username', response.data.username);
-          console.log('Logged in as:', response.data.username);
-          this.$router.push('/report'); // Navigate to the report page
+  const authStore = useAuthStore();
+  authStore.isAuthenticated = true;
+  localStorage.setItem('username', response.data.username); // Store the username in localStorage
+  console.log('Logged in as:', response.data.username); // Log the username
+  this.$router.push('/report'); // Navigate to the report page
         } else {
           this.loginError = true;
         }

@@ -35,7 +35,7 @@
                 </td>
                 <td>Folyamatban</td>
                 <td>116</td>
-                <td>Fütty Imre</td>
+                <td>Nagy Gergő</td>
                 <td>2024-09-26 16:12</td>
               </tr>
               <tr>

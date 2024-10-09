@@ -12,29 +12,34 @@
         </div>
 
         <div class="row">
-          <div class="col-md-6 my-3">
-        <button class="btn dropdown-toggle w-100 mx-2  my-2" style="border: 2px solid gray;" type="button" id="location" data-bs-toggle="dropdown" aria-expanded="false">
-              Helyszín
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton2">
-          <li><a class="dropdown-item text-center" href="#">Első terem</a></li>
-          <li><a class="dropdown-item text-center" href="#">Másik terem 2</a></li>
-          <li><a class="dropdown-item text-center" href="#">Másik terem 3</a></li>
-          <li><a class="dropdown-item text-center" href="#">Egyéb</a></li>
-        </ul></div>
+  <div class="col-md-6 my-3">
+    <div class="dropdown">
+      <button class="btn dropdown-toggle w-100 mx-2 my-2" style="border: 2px solid gray;" type="button" id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ location || 'Helyszín' }}
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="locationDropdown">
+        <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Első terem')">Első terem</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 2')">Másik terem 2</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 3')">Másik terem 3</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Egyéb')">Egyéb</a></li>
+      </ul>
+    </div>
+  </div>
 
+  <div class="col-md-6 my-3">
+    <div class="dropdown">
+      <button class="btn dropdown-toggle w-100 mx-2 my-2" style="border: 2px solid gray;" type="button" id="tagDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ tag || 'Címkék' }}
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="tagDropdown">
+        <li><a class="dropdown-item text-center" href="#" @click="selectTag('Hardver')">Hardver</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectTag('Szoftver')">Szoftver</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectTag('Egyéb')">Egyéb</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
 
-        <div class="col-md-6 my-3 ">
-        <button class="btn dropdown-toggle w-100  mx-2 my-2" style="border: 2px solid gray;" type="button" id="tag" data-bs-toggle="dropdown" aria-expanded="false">
-              Címkék
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="dropdownMenuButton2">
-          <li><a class="dropdown-item text-center" href="#">Hardver</a></li>
-          <li><a class="dropdown-item text-center" href="#">Szoftver</a></li>
-          <li><a class="dropdown-item text-center" href="#">Egyéb</a></li>
-        </ul>
-      </div>
-      </div>
 
         <div class="row">
           <!-- First column for the priority input -->
@@ -65,30 +70,44 @@
 
   import axios from 'axios';
   export default {
-    data() {
-      return {
-        bugName: '',
-        priority: 0,
-        bugDescription: '',
-        photo: null,
-        location: '',
-        tag: ''
-      };
+  data() {
+    return {
+      bugName: '',
+      priority: 0,
+      bugDescription: '',
+      photo: null,
+      location: '', // For storing selected location
+      tag: '' // For storing selected tag
+    };
+  },
+  methods: {
+    onFileChange(event) {
+      this.photo = event.target.files[0];
+    },
+    selectLocation(selectedLocation) {
+      this.location = selectedLocation;
+    },
+    selectTag(selectedTag) {
+      this.tag = selectedTag;
     },
 
-    methods: {
-      onFileChange(event) {
-        this.photo = event.target.files[0];
-      },
-      bekuldes: function() {
-  const username = localStorage.getItem('Name')
+
+    bekuldes: function() {
+  const username = localStorage.getItem('username'); // Get the username from localStorage
+
+  if (!username) {
+    alert('No user logged in');
+    return;
+  }
+
   const formData = new FormData();
   formData.append('bugName', this.bugName);
   formData.append('priority', this.priority);
   formData.append('bugDescription', this.bugDescription);
   formData.append('location', this.location);
   formData.append('label', this.tag);
-  formData.append('reported_by', username);
+  formData.append('reported_by', username); // Add the username as reported_by
+
   if (this.photo) {
     formData.append('photo', this.photo); // Attach the photo
   }
@@ -126,12 +145,11 @@
     console.error("Error submitting bug report:", error);
     alert("Something Went Wrong");
   });
-}},
+}
+
+    }}
 
 
-      goBack() {
-        console.log("Going back...");
-      }};
   </script>
   
   <style scoped>

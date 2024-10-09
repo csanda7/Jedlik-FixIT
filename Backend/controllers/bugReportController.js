@@ -1,59 +1,45 @@
-const bugReport = require('../config/database');
-
-exports.login = (req, res) => {
-    const { username} = req.body;
-  
-    connection.query(
-      "SELECT Name FROM felhasznalok WHERE Login_name = ?", 
-      [username], 
-      function (error, results) {
-        if (error) {
-          return res.status(500).json({ success: false, message: "Database error" });
-        }
-  
-        if (results.length > 0) {
-          const Name = results[0].Name;
-          res.json({ 
-            success: true, 
-            Name
-          });
-        } else {
-          res.json({ success: false });
-        }
-      }
-    );
-  };
-
-// Controller function to handle bug report submissions
 exports.submitBugReport = (req, res) => {
   const { bugName, priority, bugDescription, location, label } = req.body;
+  const reported_by = req.body.reported_by; // Ensure you retrieve reported_by from req.body
   const photo = req.file ? req.file.filename : null;
 
-  // Simulated user ID from the authenticated session (replace with your actual auth system)
-  const reportedBy = req.user.id;  // Assuming you are using some authentication system to get the signed-in user's ID
+  console.log("Reported By:", reported_by); // Log to check if reported_by is received
 
-  // Basic server-side validation
-  if (!bugName || !bugDescription || !location || !label) {
-    return res.status(400).json({
-      msg: 'Validation Failed',
-      errors: {
-        bugName: !bugName ? ['Bug name is required'] : [],
-        bugDescription: !bugDescription ? ['Bug description is required'] : [],
-        location: !location ? ['Location is required'] : [],
-        label: !label ? ['Label is required'] : [],
-      }
-    });
+  if (!reported_by) {
+      console.error('Missing reported_by field');
+      return res.status(400).json({ success: false, message: "Missing reported_by field" });
   }
 
-  // Insert data into the database, including reported_by, reported_at, updated_at, and status
-  const sql = `INSERT INTO hibabejelentesek (Title, Description, Location, Priority, Photo, ReportedBy, ReportedAt, UpdatedAt, Status) 
-               VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), ?)`;
+  bugReport.query(
+      "SELECT id FROM felhasznalok WHERE Login_name = ?", 
+      [reported_by], 
+      (err, results) => {
+          if (err) {
+              console.error('Database error while selecting user:', err);
+              return res.status(500).json({ success: false, message: "Database error" });
+          }
 
-  bugReport.query(sql, [bugName, bugDescription, location, priority, photo, reportedBy, 'Kiosztva'], (err, result) => {
-    if (err) {
-      console.error('Error inserting into database:', err);
-      return res.status(500).json({ msg: 'Something Went Wrong' });
-    }
-    res.json({ msg: 'Successfully Saved', data: result });
-  });
+          if (results.length > 0) {
+              const userId = results[0].id;
+
+              const sql = `INSERT INTO hibabejelentesek 
+                           (Title, Priority, Description, Location, Tag, Photo, Reported_by, Reported_at, Updated_at, Status) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 'Kiosztva')`;
+              bugReport.query( // Ensure you use the correct variable here
+                  sql, 
+                  [bugName, priority, bugDescription, location, label, photo, userId], 
+                  (err, results) => {
+                      if (err) {
+                          console.error('Insert error:', err);
+                          return res.status(500).json({ success: false, message: "Failed to insert report" });
+                      }
+                      res.json({ success: true });
+                  }
+              );
+          } else {
+              console.error('User not found for reported_by:', reported_by);
+              res.status(400).json({ success: false, message: "User not found" });
+          }
+      }
+  );
 };
