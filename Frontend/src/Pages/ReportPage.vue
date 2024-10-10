@@ -113,7 +113,7 @@
     formData.append('photo', this.photo); // Attach the photo
   }
 
-  axios.post("http://localhost:3000/api/bugReport", formData, {
+  axios.post("http://localhost:4500/api/bugReport", formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }

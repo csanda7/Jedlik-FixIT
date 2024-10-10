@@ -7,6 +7,7 @@ const cors = require('cors');
 
 const encoder = bodyParser.urlencoded({ extended: true });
 const authRoutes = require('./routes/authRoutes');
+const bugReportController = require('./controllers/bugReportController'); // Import bug report routes
 
 
 const app = express();
@@ -27,10 +28,10 @@ app.use(express.static(frontendPath));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // For parsing application/json
 app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
-app.use('/uploads', express.static('uploads')); // To serve uploaded files statically
 
 // Routes
 app.use(authRoutes);
+app.use('/api/bugReport', bugReportController);
 
 
 // Start the server
