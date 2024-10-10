@@ -2,16 +2,16 @@
   <div class="reported-bugs-container container mt-5">
   <div class="card shadow-sm">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h1 class="mb-0">Bejelentett hibák</h1>
+      <h2 class="mb-0 h2">BEJELENTETT HIBÁK</h2>
       <div class="user-actions d-flex">
         <input type="text" class="form-control search-input me-3" placeholder="Keresés..." />
         <i class="fas fa-filter filter-icon"></i>
       </div>
     </div>
     <div class="card-body p-0">
-      <table class="table table-hover">
+      <table class="table table-hover p-4">
         <thead>
-          <tr>
+          <tr >
               <th>Hiba neve</th>
               <th>Prioritás</th>
               <th>Címke</th>
@@ -85,6 +85,11 @@ max-width: 900px;
 margin: 0 auto; /* Center align */
 }
 
+.h2{
+  color: rgb(59, 59, 59);
+  padding: 0.5em;
+}
+
 .card-header {
 background-color: #F93943;
 color: white;
@@ -98,6 +103,7 @@ border-bottom: none;
 
 .search-input {
 width: 200px;
+border: solid 2px #4285f4;
 }
 
 .filter-icon {
@@ -108,7 +114,12 @@ color: #4285f4;
 .table thead th {
 background-color: #f8f9fa;
 font-weight: bold;
+padding-left: 2em;
 text-align: left;
+}
+.table tbody td{
+  padding-left: 2em;
+  text-align: left;
 }
 
 .priority-container {
@@ -156,4 +167,6 @@ border-color: #4285f4;
 .btn-primary:hover {
 background-color: #356cc1;
 }
+
+
 </style>

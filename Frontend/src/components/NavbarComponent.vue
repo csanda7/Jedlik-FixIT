@@ -36,9 +36,6 @@
         </ul>
         <ul class="navbar-nav ms-auto mx-5">
           <li class="nav-item mx-1" v-if="isAuthenticated">
-            <router-link class="nav-link" to="/myprofile">Profilom</router-link>
-          </li>
-          <li class="nav-item mx-1" v-if="isAuthenticated">
             <button class="btn btn-outline-light" @click="logout">Kilépés</button>
           </li>
         </ul>
