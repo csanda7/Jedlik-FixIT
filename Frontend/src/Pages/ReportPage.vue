@@ -28,13 +28,13 @@
 
   <div class="col-md-6 my-3">
     <div class="dropdown">
-      <button class="btn dropdown-toggle w-100 mx-2 my-2" style="border: 2px solid gray;" type="button" id="tagDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        {{ tag || 'Címkék' }}
+      <button class="btn dropdown-toggle w-100 mx-2 my-2" style="border: 2px solid gray;" type="button" id="labelDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ label || 'Címkék' }}
       </button>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="tagDropdown">
-        <li><a class="dropdown-item text-center" href="#" @click="selectTag('Hardver')">Hardver</a></li>
-        <li><a class="dropdown-item text-center" href="#" @click="selectTag('Szoftver')">Szoftver</a></li>
-        <li><a class="dropdown-item text-center" href="#" @click="selectTag('Egyéb')">Egyéb</a></li>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="labelDropdown">
+        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Hardver')">Hardver</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Szoftver')">Szoftver</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Egyéb')">Egyéb</a></li>
       </ul>
     </div>
   </div>
@@ -51,7 +51,8 @@
           <!-- Second column for the photo upload input -->
           <div class="col-md-6 my-3">
             <label for="photo" class="form-label">Fotó feltöltése</label>
-            <input type="file" class="form-control" id="photo" @change="onFileChange">
+            <!-- Upload photo input in your form -->
+        <input type="file" class="form-control" id="photo" @change="onFileChange" accept=".png, .jpg, .jpeg, .heic">
           </div>
 
 
@@ -73,11 +74,11 @@
   data() {
     return {
       bugName: '',
-      priority: 0,
+      priority: '',
       bugDescription: '',
       photo: null,
       location: '', // For storing selected location
-      tag: '' // For storing selected tag
+      label: '' // For storing selected label
     };
   },
   methods: {
@@ -87,13 +88,13 @@
     selectLocation(selectedLocation) {
       this.location = selectedLocation;
     },
-    selectTag(selectedTag) {
-      this.tag = selectedTag;
+    selectlabel(selectedlabel) {
+      this.label = selectedlabel;
     },
 
 
     bekuldes: function() {
-  const username = localStorage.getItem('username'); // Get the username from localStorage
+  const username = sessionStorage.getItem('username'); // Get the username from sessionStorage
 
   if (!username) {
     alert('No user logged in');
@@ -102,17 +103,17 @@
 
   const formData = new FormData();
   formData.append('bugName', this.bugName);
-  formData.append('priority', this.priority);
+  formData.append('priority', this.priority); // Priority should be passed here
   formData.append('bugDescription', this.bugDescription);
-  formData.append('location', this.location);
-  formData.append('label', this.tag);
-  formData.append('reported_by', username); // Add the username as reported_by
+  formData.append('location', this.location); // Pass the location here
+  formData.append('label', this.label);
+  formData.append('reported_by', username); // Attach the username as reported_by
 
   if (this.photo) {
     formData.append('photo', this.photo); // Attach the photo
   }
 
-  axios.post("http://localhost:4500/api/bugReport", formData, {
+  axios.post("http://localhost:3000/api/bugReport", formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -133,18 +134,15 @@
       if (errors.location) {
         errorMsg += errors.location.join("\n");
       }
-      if (errors.tag) {
-        errorMsg += errors.tag.join("\n");
+      if (errors.label) {
+        errorMsg += errors.label.join("\n");
       }
       alert(errorMsg);
     } else {
       alert("Successfully Saved");
     }
   })
-  .catch((error) => {
-    console.error("Error submitting bug report:", error);
-    alert("Something Went Wrong");
-  });
+  ;
 }
 
     }}

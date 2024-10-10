@@ -7,8 +7,7 @@ const cors = require('cors');
 
 const encoder = bodyParser.urlencoded({ extended: true });
 const authRoutes = require('./routes/authRoutes');
-const bugReportRoutes = require('./routes/bugReportRoutes');
-const authenticateUser = require('./middleware/authenticateUser');
+
 
 const app = express();
 
@@ -32,8 +31,6 @@ app.use('/uploads', express.static('uploads')); // To serve uploaded files stati
 
 // Routes
 app.use(authRoutes);
-app.use('/',bugReportRoutes);
-app.use(authenticateUser)
 
 
 // Start the server

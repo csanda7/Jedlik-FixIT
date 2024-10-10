@@ -13,6 +13,7 @@
           class="form-control"
           placeholder="Felhasználónév"
           required
+          id="username"
         />
       </div>
       <div class="form-group mb-3">
@@ -51,12 +52,12 @@ export default {
           username: this.username,
           password: this.password
         });
-
+        var nev = document.getElementById('username').value;
         if (response.data.success) {
   const authStore = useAuthStore();
   authStore.isAuthenticated = true;
-  localStorage.setItem('username', response.data.username); // Store the username in localStorage
-  console.log('Logged in as:', response.data.username); // Log the username
+  sessionStorage.setItem('username', nev); // Store the username in localStorage
+  console.log('Logged in as:', nev); // Log the username
   this.$router.push('/report'); // Navigate to the report page
         } else {
           this.loginError = true;
