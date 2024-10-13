@@ -13,11 +13,11 @@
           <table class="table table-hover">
             <thead>
               <tr>
-                <th style="width: 30%;">Hiba neve</th>
-                <th style="width: 20%;">Prioritás</th>
-                <th style="width: 20%;">Bejelentés ideje</th>
-                <th style="width: 20%;">Határidő</th>
-                <th style="width: 10%;">Terem</th>
+                <th>Hiba neve</th>
+                <th>Prioritás</th>
+                <th>Bejelentés ideje</th>
+                <th>Határidő</th>
+                <th>Terem</th>
               </tr>
             </thead>
             <tbody>
@@ -55,7 +55,7 @@
 
 .card-header {
   background-color: #4285f4;
-  color: white;
+  color: rgb(255, 255, 255);
   padding: 1.2rem;
   border-bottom: none;
 }
@@ -120,4 +120,6 @@
 .btn-primary:hover {
   background-color: #356cc1;
 }
+
+
 </style>

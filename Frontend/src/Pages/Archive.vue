@@ -13,11 +13,11 @@
           <table class="table table-hover">
             <thead>
               <tr>
-                <th style="width: 30%;">Hiba neve</th>
-                <th style="width: 20%;">Prioritás</th>
-                <th style="width: 20%;">Bejelentés ideje</th>
-                <th style="width: 20%;">Határidő</th>
-                <th style="width: 10%;">Terem</th>
+                <th>Hiba neve</th>
+                <th>Prioritás</th>
+                <th>Bejelentés ideje</th>
+                <th>Határidő</th>
+                <th>Terem</th>
               </tr>
             </thead>
             <tbody>
