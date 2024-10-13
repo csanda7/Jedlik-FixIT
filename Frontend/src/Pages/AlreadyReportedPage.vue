@@ -4,74 +4,67 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h2 class="mb-0 h2">BEJELENTETT HIBÁK</h2>
         <div class="user-actions d-flex">
-          <input
-            type="text"
-            class="form-control search-input me-3"
-            placeholder="Keresés..."
-          />
+          <input type="text" class="form-control search-input me-3" placeholder="Keresés..." />
           <i class="fas fa-filter filter-icon"></i>
         </div>
       </div>
       <div class="card-body p-0">
-        <table class="table table-hover p-4">
-          <thead>
-            <tr>
-              <th>Hiba neve</th>
-              <th>Prioritás</th>
-              <th>Címke</th>
-              <th>Státusz</th>
-              <th>Terem</th>
-              <th>Bejelentette</th>
-              <th>Bejelntés ideje</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(bug, index) in bugs"
-              :key="index"
-              @click="openModal(bug)"
-              style="cursor: pointer"
-            >
-              <td>{{ bug.name }}</td>
-              <td>
-                <div class="priority-container">
-                  <span :class="['priority-bar', bug.priorityColor]"></span>
-                  <span>{{ bug.priority }}</span>
-                </div>
-              </td>
-              <td>
-                <span :class="['badge', bug.badgeClass]">{{ bug.label }}</span>
-              </td>
-              <td>{{ bug.status }}</td>
-              <td>{{ bug.room }}</td>
-              <td>{{ bug.reportedBy }}</td>
-              <td>{{ bug.reportedAt }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table table-hover p-4">
+            <thead>
+              <tr>
+                <th>Hiba neve</th>
+                <th>Prioritás</th>
+                <th>Címke</th>
+                <th>Státusz</th>
+                <th>Terem</th>
+                <th>Bejelentette</th>
+                <th>Bejelntés ideje</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(bug, index) in bugs" :key="index" @click="openModal(bug)" style="cursor: pointer">
+                <td>{{ bug.name }}</td>
+                <td>
+                  <div class="priority-container">
+                    <span :class="['priority-bar', bug.priorityColor]"></span>
+                    <span>{{ bug.priority }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span :class="['badge', bug.badgeClass]">{{ bug.label }}</span>
+                </td>
+                <td>{{ bug.status }}</td>
+                <td>{{ bug.room }}</td>
+                <td>{{ bug.reportedBy }}</td>
+                <td>{{ bug.reportedAt }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
     <!-- Modal -->
     <div v-if="showModal" class="modal-overlay ">
       <div class="bg">
-      <div class="modal-content  ">
-        <div class="modal-header  ">
-          <h3 class="modal-title  ">{{ selectedBug.name }}</h3>
-        </div>
-        <div class="modal-body">
-          <p><strong>Prioritás:</strong> {{ selectedBug.priority }}</p>
-          <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-          <p><strong>Státusz:</strong> {{ selectedBug.status }}</p>
-          <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
-          <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-          <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="closeModal">Bezárás</button>
+        <div class="modal-content  ">
+          <div class="modal-header  ">
+            <h3 class="modal-title  ">{{ selectedBug.name }}</h3>
+          </div>
+          <div class="modal-body">
+            <p><strong>Prioritás:</strong> {{ selectedBug.priority }}</p>
+            <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
+            <p><strong>Státusz:</strong> {{ selectedBug.status }}</p>
+            <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
+            <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+            <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @click="closeModal">Bezárás</button>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   </div>
 </template>
@@ -158,6 +151,7 @@ export default {
   padding-left: 2em;
   text-align: left;
 }
+
 .table tbody td {
   padding-left: 2em;
   text-align: left;
@@ -207,7 +201,8 @@ export default {
   width: 100vw;
   height: 100vh;
   max-width: 100%;
-  background: rgba(0, 0, 0, 0.6); /* Dark background overlay */
+  background: rgba(0, 0, 0, 0.6);
+  /* Dark background overlay */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -216,7 +211,7 @@ export default {
 
 .modal-content {
   background: white;
-  padding:2rem;
+  padding: 2rem;
   border-radius: 8px;
   max-width: 1000px;
   min-width: 500px;
@@ -225,16 +220,18 @@ export default {
   z-index: 1000;
 }
 
-.modal-title{
+.modal-title {
   padding-bottom: 1em;
 }
+
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.bg{
-  background-color: rgb(255,255,255);
+
+.bg {
+  background-color: rgb(255, 255, 255);
   z-index: 500;
 }
 
