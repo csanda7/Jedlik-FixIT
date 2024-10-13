@@ -30,8 +30,6 @@
           <li class="nav-item" v-if="isAuthenticated">
             <router-link class="nav-link " to="archive">ARCHÍVUM</router-link>
           </li>
-        </ul>
-        <ul class="navbar-nav col-md-2">
           <li class="nav-item" v-if="isAuthenticated">
             <button class="btn btn-outline-light" @click="logout">KILÉPÉS <i class="bi bi-box-arrow-right"></i></button>
           </li>

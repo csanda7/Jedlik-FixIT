@@ -213,12 +213,11 @@ export default {
 .modal-content {
   background: white;
   padding: 2rem;
-  border-radius: 8px;
+  border-radius: 5vh;
   max-width: 70vw;
   min-width: 80vw;
   width: 100%;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-  
+
   z-index: 1000;
 }
 
@@ -230,13 +229,12 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
 }
 
 .bg {
   background-color: rgb(255, 255, 255);
   z-index: 500;
-  border-radius: 2%;
+  border-radius: 5vh;
 }
 
 .btn-close {
