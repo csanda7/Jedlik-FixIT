@@ -46,11 +46,11 @@
     </div>
 
     <!-- Modal -->
-    <div v-if="showModal" class="modal-overlay ">
-      <div class="bg">
-        <div class="modal-content  ">
-          <div class="modal-header  ">
-            <h3 class="modal-title  ">{{ selectedBug.name }}</h3>
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+      <div class="bg" @click.stop>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">{{ selectedBug.name }}</h3>
           </div>
           <div class="modal-body">
             <p><strong>Prioritás:</strong> {{ selectedBug.priority }}</p>
@@ -111,6 +111,7 @@ export default {
     },
   },
 };
+
 </script>
 
 <style>
@@ -213,10 +214,11 @@ export default {
   background: white;
   padding: 2rem;
   border-radius: 8px;
-  max-width: 1000px;
-  min-width: 500px;
+  max-width: 70vw;
+  min-width: 80vw;
   width: 100%;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  
   z-index: 1000;
 }
 
@@ -228,11 +230,13 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
 }
 
 .bg {
   background-color: rgb(255, 255, 255);
   z-index: 500;
+  border-radius: 2%;
 }
 
 .btn-close {
