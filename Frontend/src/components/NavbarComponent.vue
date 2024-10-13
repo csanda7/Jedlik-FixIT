@@ -16,8 +16,8 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse mx-3" id="navbarNav">
-        <ul class="navbar-nav ms-3">
+      <div class="collapse navbar-collapse mx-3 row" id="navbarNav">
+        <ul class="navbar-nav col-md-10 col-sm-12">
           <li class="nav-item" v-if="isAuthenticated">
             <router-link class="nav-link " to="/report">HIBA BEJELENTÉSE</router-link> <!-- Corrected link -->
           </li>
@@ -30,13 +30,10 @@
           <li class="nav-item" v-if="isAuthenticated">
             <router-link class="nav-link " to="archive">ARCHÍVUM</router-link>
           </li>
-          <li class="nav-item" v-if="isAdmin">
-            <router-link class="nav-link" to="#">ADMIN</router-link>
-          </li>
         </ul>
-        <ul class="navbar-nav ms-auto mx-5">
-          <li class="nav-item mx-1" v-if="isAuthenticated">
-            <button class="btn btn-outline-light" @click="logout">Kilépés</button>
+        <ul class="navbar-nav col-md-2">
+          <li class="nav-item" v-if="isAuthenticated">
+            <button class="btn btn-outline-light" @click="logout">KILÉPÉS <i class="bi bi-box-arrow-right"></i></button>
           </li>
         </ul>
       </div>
