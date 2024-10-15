@@ -8,6 +8,7 @@ const cors = require('cors');
 const encoder = bodyParser.urlencoded({ extended: true });
 const authRoutes = require('./routes/authRoutes');
 const bugReportController = require('./controllers/bugReportController'); // Import bug report routes
+const hibakKiirRoutes = require('./routes/hibakKiirRoutes');
 
 
 const app = express();
@@ -32,6 +33,7 @@ app.use(express.urlencoded({ extended: true })); // For parsing application/x-ww
 // Routes
 app.use(authRoutes);
 app.use('/api/bugReport', bugReportController);
+app.use('/api/hibakKiir', hibakKiirRoutes);
 
 
 // Start the server

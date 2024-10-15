@@ -64,21 +64,11 @@
                 <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p> <!-- New row for assigned user -->
               </div>
               <div class="col-md-4 description">
-                <p><strong>Hiba leírása:</strong> {{ selectedBug.bugDescription }}</p>
+                <p><strong>Hiba leírása:</strong> {{ selectedBug.description }}</p>
               </div>
               <div class="col-md-4 photo_box">
                 <div id="bugCarousel" class="carousel slide" data-bs-ride="carousel">
-                  <div class="carousel-inner">
-                    <div class="carousel-item active">
-                      <img src="../assets/Jedlik_logo_2020_200_3c5beeccf8.png" class="d-block w-100" alt="First slide">
-                    </div>
-                    <div class="carousel-item">
-                      <img src="D:\Programs\Jedlik-FixIT\Frontend\src\assets\3101886743_5d9c49b9a5_b.jpg" class="d-block w-100" alt="Second slide">
-                    </div>
-                    <div class="carousel-item">
-                      <img src="D:\Programs\Jedlik-FixIT\Frontend\src\assets\BSOD_Windows_8-1080x660.png" class="d-block w-100" alt="Third slide">
-                    </div>
-                  </div>
+                  
                   <button class="carousel-control-prev" type="button" data-bs-target="#bugCarousel" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
@@ -105,39 +95,40 @@
 export default {
   data() {
     return {
-      bugs: [
-        {
-          name: 'Törött billentyűzet',
-          priority: 3,
-          priorityColor: 'yellow',
-          label: 'HARDVER',
-          badgeClass: 'badge-hardware',
-          status: 'Folyamatban',
-          room: '116',
-          reportedBy: 'Nagy Gergő',
-          reportedAt: '2024-09-26 16:12',
-          bugDescription : 'Aliquam pharetra id eros quis fermentum. Ut varius, sem viverra malesuada feugiat, enim nisi laoreet urna, ut sollicitudin sapien libero ut dui. Etiam vel nibh tortor. Fusce elit sem, vulputate id semper ac, efficitur quis justo. Interdum et malesuada fames.',
-          assignedTo: null
-        },
-        {
-          name: 'Windows kékhalál',
-          priority: 5,
-          priorityColor: 'red',
-          label: 'SZOFTVER',
-          badgeClass: 'badge-software',
-          status: 'Folyamatban',
-          room: '203',
-          reportedBy: 'Csó Ronáldó',
-          reportedAt: '2024-09-27 10:25',
-          bugDescription : 'Aliquam pharetra id eros quis fermentum. Ut varius, sem viverra malesuada feugiat, enim nisi laoreet urna, ut sollicitudin sapien libero ut dui. Etiam vel nibh tortor. Fusce elit sem, vulputate id semper ac, efficitur quis justo. Interdum et malesuada fames.',
-          assignedTo: null
-        },
-      ],
+      bugs: [], // Initially empty array
       selectedBug: {},
       showModal: false,
     };
   },
+  mounted() {
+    // Fetch bugs from backend when the component is mounted
+    this.fetchBugs();
+  },
   methods: {
+    async fetchBugs() {
+  try {
+    const response = await fetch('http://localhost:4500/api/hibakKiir');
+    const data = await response.json();
+    
+    this.bugs = data.map(bug => ({
+      name: bug['Hiba neve'],
+      priority: bug['Prioritás'],
+      priorityColor: bug['Prioritás'] >= 5 ? 'red' : 'yellow',
+      label: bug['Címke'],
+      badgeClass: bug['Címke'] === 'HARDVER' ? 'badge-hardware' : 'badge-software',
+      status: bug['Státusz'],
+      room: bug['Terem'],
+      reportedBy: bug['Bejelentette'],
+      reportedAt: new Date(bug['Bejelntés ideje']).toLocaleString('hu-HU'), // Format date
+      assignedTo: null,
+      description: bug['Hiba leírása']
+    }));
+
+  } catch (error) {
+    console.error('Error fetching bug data:', error);
+  }
+},
+
     openModal(bug) {
       this.selectedBug = bug;
       this.showModal = true; // Show the modal
@@ -153,21 +144,10 @@ export default {
         return;
       }
 
-      // Assign the task to the logged-in user
-      this.selectedBug.assignedTo = username;
-
-      // Optionally, you can update the task in your bugs array if needed
-      const index = this.bugs.findIndex(bug => bug.name === this.selectedBug.name);
-      if (index !== -1) {
-        this.bugs[index].assignedTo = username;
-      }
-
-      // Optionally close the modal after assigning
-      // this.showModal = false;
+      
     }
   },
 };
-
 </script>
 
 <style>
