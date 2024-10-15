@@ -17,7 +17,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse mx-3 row" id="navbarNav">
-        <ul class="navbar-nav col-md-10 col-sm-12">
+        <ul class="navbar-nav col-lg-10 col-md-9">
           <li class="nav-item" v-if="isAuthenticated">
             <router-link 
               class="nav-link" 
@@ -50,16 +50,17 @@
               ARCHÍVUM
             </router-link>
           </li>
-          <li class="nav-item" v-if="isAuthenticated">
-            <button class="btn btn-outline-light" @click="logout">
-              KILÉPÉS <i class="bi bi-box-arrow-right"></i>
-            </button>
-          </li>
         </ul>
+        <div class="d-lg-flex justify-content-lg-end col-lg-2 mt-lg-0 mt-3" v-if="isAuthenticated">
+          <button class="btn btn-outline-light logout" @click="logout">
+            KILÉPÉS <i class="bi bi-box-arrow-right"></i>
+          </button>
+        </div>
       </div>
     </div>
   </nav>
 </template>
+
 
 
 
@@ -100,16 +101,20 @@ export default {
   color: white;
 }
 
+.logout {
+  max-width: fit-content;
+}
+
 .nav-link {
   color: white;
-  border-radius: 5px; /* Make sure there's no border-radius by default */
-  transition: background-color 0.5s ease, color 0.5s ease, border-radius 0.5s ease; /* Smooth transition */
+  border-radius: 5px;
+  transition: background-color 0.5s ease, color 0.5s ease, border-radius 0.5s ease;
 }
 
 .nav-link.active-link {
   background-color: white;
   color: #595959;
-  border-radius: 5px; /* Apply border-radius to the active link */
+  border-radius: 5px;
 }
 
 .nav-item:hover .nav-link {
@@ -128,7 +133,20 @@ export default {
   color: white;
   border-color: white;
 }
-.nav-item{
-  margin-left:1vh;
+
+.nav-item {
+  margin-left: 1vh;
 }
+
+@media (max-width: 991.98px) {
+  /* On screens smaller than large, stack the logout button below the nav items */
+  .navbar-collapse .d-lg-flex {
+    justify-content: flex-start !important;
+  }
+  
+  .logout {
+    margin-top: 1rem;
+  }
+}
+
 </style>

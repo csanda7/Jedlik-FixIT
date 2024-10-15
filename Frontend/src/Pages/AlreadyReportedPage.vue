@@ -115,7 +115,7 @@ export default {
       priority: bug['Prioritás'],
       priorityColor: bug['Prioritás'] >= 5 ? 'red' : 'yellow',
       label: bug['Címke'],
-      badgeClass: bug['Címke'] === 'HARDVER' ? 'badge-hardware' : 'badge-software',
+      badgeClass: bug['Címke'] === 'Hardver' ? 'badge-hardware' : 'badge-software',
       status: bug['Státusz'],
       room: bug['Terem'],
       reportedBy: bug['Bejelentette'],
@@ -144,7 +144,7 @@ export default {
         return;
       }
 
-      
+      this.selectedBug.assignedTo = username;
     }
   },
 };

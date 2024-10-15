@@ -28,7 +28,7 @@ router.post('/', upload.single('photo'), (req, res) => {
   // Prepare SQL query
   const sql = `
     INSERT INTO hibabejelentesek (Title, Description, Photo, Reported_by, Location, Reported_at, Updated_at, Priority, Status, Label)
-    VALUES (?, ?, ?, ?, ?, NOW(), NOW(), ?, 'fasz', ?)
+    VALUES (?, ?, ?, ?, ?, NOW(), NOW(), ?, 'Bejelentve', ?)
   `;
 
   // Insert data into the database
