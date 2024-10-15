@@ -10,7 +10,7 @@
       <div class="mb-3">
         <label for="bugDescription" class="form-label">Hiba leírása</label>
         <textarea class="form-control" id="bugDescription" v-model="bugDescription" rows="3"
-          placeholder="Adja meg a hiba leírását"></textarea>
+          placeholder="Adja meg a hiba leírását" maxlength="300"  @input="adjustTextareaHeight($event)"></textarea>
       </div>
 
       <div class="row mx-2">
@@ -67,7 +67,7 @@
       </div>
 
       <div class="d-grid gap-2 d-flex justify-content-center my-3">
-        <button type="button" class="btn btn-secondary w-100" @click="goBack">Vissza</button>
+        <button type="button" class="btn btn-secondary w-100" @click="reset">Adatok törlése</button>
         <button type="submit" class="btn btn-primary w-100" @click="bekuldes">Hiba beküldése</button>
       </div>
     </div>
@@ -83,11 +83,11 @@ export default {
       bugName: '',
       priority: '0',
       bugDescription: '',
-      photos: [],  // Changed to an array to store multiple photos
-      location: '', // For storing selected location
-      label: '', // For storing selected label
-      showOtherLocation: false, // Track if 'Egyéb' is selected
-      otherLocation: '' // Store the value entered in the 'Egyéb' text box
+      photos: [],  
+      location: '', 
+      label: '', 
+      showOtherLocation: false, 
+      otherLocation: '' 
     };
   },
   methods: {
@@ -101,6 +101,21 @@ export default {
         this.photos.push(files[i]);
       }
     },
+    reset(){
+      this.bugName = '';
+      this.priority = '0';
+      this.bugDescription = '';
+      this.photos = []; 
+      this.location= ''; 
+      this.label= ''; 
+      this.showOtherLocation= false; 
+      this.otherLocation= '';
+    },
+    adjustTextareaHeight(event) {
+    const textarea = event.target;
+    textarea.style.height = 'auto'; // Reset height to auto to correctly calculate the new height
+    textarea.style.height = textarea.scrollHeight + 'px'; // Set height based on scroll height
+  },
     selectLocation(selectedLocation) {
       this.location = selectedLocation;
       this.showOtherLocation = selectedLocation === 'Egyéb';

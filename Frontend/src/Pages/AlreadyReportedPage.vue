@@ -59,9 +59,11 @@
             <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
             <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
             <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+            <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p> <!-- New row for assigned user -->
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeModal">Bezárás</button>
+            <button type="button" class="btn btn-primary mx-1" v-if="selectedBug.assignedTo == null" @click="takeTask">Elvállalom</button>
+            <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
           </div>
         </div>
       </div>
@@ -84,6 +86,7 @@ export default {
           room: '116',
           reportedBy: 'Nagy Gergő',
           reportedAt: '2024-09-26 16:12',
+          assignedTo: null
         },
         {
           name: 'Windows kékhalál',
@@ -95,6 +98,7 @@ export default {
           room: '203',
           reportedBy: 'Csó Ronáldó',
           reportedAt: '2024-09-27 10:25',
+          assignedTo: null
         },
       ],
       selectedBug: {},
@@ -109,6 +113,26 @@ export default {
     closeModal() {
       this.showModal = false; // Hide the modal
     },
+    takeTask() {
+      const username = sessionStorage.getItem('username'); // Get logged-in user's username
+
+      if (!username) {
+        alert('No user logged in'); // Error handling if username is not available
+        return;
+      }
+
+      // Assign the task to the logged-in user
+      this.selectedBug.assignedTo = username;
+
+      // Optionally, you can update the task in your `bugs` array if needed
+      const index = this.bugs.findIndex(bug => bug.name === this.selectedBug.name);
+      if (index !== -1) {
+        this.bugs[index].assignedTo = username;
+      }
+
+      // Optionally close the modal after assigning
+      // this.showModal = false;
+    }
   },
 };
 
