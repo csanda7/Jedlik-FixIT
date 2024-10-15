@@ -53,13 +53,20 @@
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
           </div>
           <div class="modal-body">
-            <p><strong>Prioritás:</strong> {{ selectedBug.priority }}</p>
-            <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-            <p><strong>Státusz:</strong> {{ selectedBug.status }}</p>
-            <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
-            <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-            <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-            <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p> <!-- New row for assigned user -->
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Prioritás:</strong> {{ selectedBug.priority }}</p>
+                <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
+                <p><strong>Státusz:</strong> {{ selectedBug.status }}</p>
+                <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
+                <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+                <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+                <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p> <!-- New row for assigned user -->
+              </div>
+              <div class="col-md-6 photo_box">
+                <img src="../assets/Jedlik_logo_2020_200_3c5beeccf8.png" class="modal_photo" alt="">
+              </div>
+          </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary mx-1" v-if="selectedBug.assignedTo == null" @click="takeTask">Elvállalom</button>
@@ -244,7 +251,15 @@ export default {
 
   z-index: 1000;
 }
-
+.modal_photo{
+  max-width: fit-content;
+  max-height: fit-content;
+  width: 80%;
+  height: 80%;
+}
+.photo_box{
+  align-items: center;
+}
 .modal-title {
   padding-bottom: 1em;
 }
