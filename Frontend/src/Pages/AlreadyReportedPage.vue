@@ -23,23 +23,28 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(bug, index) in bugs" :key="index" @click="openModal(bug)" style="cursor: pointer">
-                <td>{{ bug.name }}</td>
-                <td>
-                  <div class="priority-container">
-                    <span :class="['priority-bar', bug.priorityColor]"></span>
-                    <span>{{ bug.priority }}</span>
-                  </div>
-                </td>
-                <td>
-                  <span :class="['badge', bug.badgeClass]">{{ bug.label }}</span>
-                </td>
-                <td>{{ bug.status }}</td>
-                <td>{{ bug.room }}</td>
-                <td>{{ bug.reportedBy }}</td>
-                <td>{{ bug.reportedAt }}</td>
-              </tr>
-            </tbody>
+  <tr v-for="(bug, index) in bugs" :key="index" @click="openModal(bug)" style="cursor: pointer">
+    <td>{{ bug.name }}</td>
+    <td>
+      <div v-if="bug.priority === 0">
+        Nincs megadva prioritás
+      </div>
+      <div v-else class="priority-container">
+        <span :class="['priority-bar', bug.priorityColor]"></span>
+        <span>{{ bug.priority }}</span>
+      </div>
+    </td>
+    <td>
+      <span :class="['badge', bug.badgeClass]">{{ bug.label }}</span>
+    </td>
+    <td>{{ bug.status }}</td>
+    <td>{{ bug.room }}</td>
+    <td>{{ bug.reportedBy }}</td>
+    <td>{{ bug.reportedAt }}</td>
+  </tr>
+</tbody>
+
+
           </table>
         </div>
       </div>
@@ -105,29 +110,51 @@ export default {
     this.fetchBugs();
   },
   methods: {
-    async fetchBugs() {
-  try {
-    const response = await fetch('http://localhost:4500/api/hibakKiir');
-    const data = await response.json();
-    
-    this.bugs = data.map(bug => ({
-      name: bug['Hiba neve'],
-      priority: bug['Prioritás'],
-      priorityColor: bug['Prioritás'] >= 5 ? 'red' : 'yellow',
-      label: bug['Címke'],
-      badgeClass: bug['Címke'] === 'Hardver' ? 'badge-hardware' : 'badge-software',
-      status: bug['Státusz'],
-      room: bug['Terem'],
-      reportedBy: bug['Bejelentette'],
-      reportedAt: new Date(bug['Bejelntés ideje']).toLocaleString('hu-HU'), // Format date
-      assignedTo: null,
-      description: bug['Hiba leírása']
-    }));
+  async fetchBugs() {
+    try {
+      const response = await fetch('http://localhost:4500/api/hibakKiir');
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+      console.log(data);
+      this.bugs = data.map(bug => ({
+        name: bug['Hiba neve'],
+        priority: bug['Prioritás'],
+        priorityColor: this.getPriorityColor(bug['Prioritás']),
+        label: bug['Címke'],
+        badgeClass: bug['Címke'] === 'Hardver' ? 'badge-hardware' : 
+                bug['Címke'] === 'Szoftver' ? 'badge-software' : 
+                bug['Címke'] === 'Egyéb' ? 'badge-other' : '',
+        status: bug['Státusz'],
+        room: bug['Terem'],
+        reportedBy: bug['Bejelentette'],
+        reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
+        assignedTo: null,
+        description: bug['Hiba leírása']
+      }));
+    } catch (error) {
+      console.error('Error fetching bug data:', error);
+    }
+  },
+  
+  getPriorityColor(priority) {
+    switch (priority) {
+      case 1:
+        return 'darkgreen';
+      case 2:
+        return 'lightgreen';
+      case 3:
+        return 'yellow';
+      case 4:
+        return 'orange';
+      case 5:
+        return 'red';
+      default:
+        return ''; // No color for 0 or invalid values
+    }
+  },
 
-  } catch (error) {
-    console.error('Error fetching bug data:', error);
-  }
-},
+
+
 
     openModal(bug) {
       this.selectedBug = bug;
@@ -146,7 +173,10 @@ export default {
 
       this.selectedBug.assignedTo = username;
     }
+    
   },
+  
+  
 };
 </script>
 
@@ -206,12 +236,25 @@ export default {
   margin-right: 5px;
 }
 
+
+.priority-bar.darkgreen {
+  background-color: darkgreen;
+}
+
+.priority-bar.lightgreen {
+  background-color: lightgreen;
+}
+
 .priority-bar.yellow {
-  background-color: #ffc107;
+  background-color: yellow;
+}
+
+.priority-bar.orange {
+  background-color: #ff8c00;
 }
 
 .priority-bar.red {
-  background-color: #dc3545;
+  background-color: red;
 }
 
 .badge {
@@ -228,6 +271,11 @@ export default {
 
 .badge-software {
   background-color: #ffa73e;
+  color: #ffffff;
+}
+
+.badge-other {
+  background-color: #28a745; /* Green */
   color: #ffffff;
 }
 
@@ -322,4 +370,6 @@ export default {
   background-color: #4285f4;
   color: white;
 }
+
+
 </style>

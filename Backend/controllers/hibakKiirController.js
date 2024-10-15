@@ -4,7 +4,7 @@ const connection = require('../config/database');
 const getHibakKiir = (req, res) => {
   const query = `
     SELECT Title AS 'Hiba neve', Priority AS 'Prioritás', Label AS 'Címke', Status AS 'Státusz', Location AS 'Terem', 
-           Reported_By AS 'Bejelentette', Reported_At AS 'Bejelntés ideje', Description AS 'Hiba leírása' 
+           Reported_By AS 'Bejelentette', Reported_At AS 'Bejelentés ideje', Description AS 'Hiba leírása' 
     FROM hibabejelentesek
   `;
   

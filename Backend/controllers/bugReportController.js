@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/upload'); // Import the upload middleware
-const bugReport = require('../config/database'); // Import the database connection
+const connection = require('../config/database');
 
 // API to handle bug report submissions
 router.post('/', upload.single('photo'), (req, res) => {
@@ -32,7 +32,7 @@ router.post('/', upload.single('photo'), (req, res) => {
   `;
 
   // Insert data into the database
-  bugReport.query(sql, [bugName, bugDescription, photo, reported_by, location, priority, label], (err, result) => {
+  connection.query(sql, [bugName, bugDescription, photo, reported_by, location, priority, label], (err, result) => {
     if (err) {
       console.error('Error inserting bug report:', err);
       return res.status(500).json({ msg: 'Something Went Wrong', error: err.message });

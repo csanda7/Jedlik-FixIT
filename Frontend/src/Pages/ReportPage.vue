@@ -57,7 +57,7 @@
 
       <div class="row">
         <div class="col-md-6 my-3">
-          <label for="priority" class="form-label">Prioritás: {{ priority }}</label>
+          <label for="priority" class="form-label">Prioritás: {{ priority === '0' ? 'Nincs megadva prioritás' : priority }}</label>
           <input type="range" class="form-range" min="0" max="5" v-model="priority" id="priority">
         </div>
         <div class="col-md-6 my-3">
