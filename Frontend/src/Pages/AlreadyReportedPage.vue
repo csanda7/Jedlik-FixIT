@@ -54,7 +54,7 @@
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <p><strong>Prioritás:</strong> {{ selectedBug.priority }}</p>
                 <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
                 <p><strong>Státusz:</strong> {{ selectedBug.status }}</p>
@@ -63,8 +63,31 @@
                 <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
                 <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p> <!-- New row for assigned user -->
               </div>
-              <div class="col-md-6 photo_box">
-                <img src="../assets/Jedlik_logo_2020_200_3c5beeccf8.png" class="modal_photo" alt="">
+              <div class="col-md-4 description">
+                <p><strong>Hiba leírása:</strong> {{ selectedBug.bugDescription }}</p>
+              </div>
+              <div class="col-md-4 photo_box">
+                <div id="bugCarousel" class="carousel slide" data-bs-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active">
+                      <img src="../assets/Jedlik_logo_2020_200_3c5beeccf8.png" class="d-block w-100" alt="First slide">
+                    </div>
+                    <div class="carousel-item">
+                      <img src="D:\Programs\Jedlik-FixIT\Frontend\src\assets\3101886743_5d9c49b9a5_b.jpg" class="d-block w-100" alt="Second slide">
+                    </div>
+                    <div class="carousel-item">
+                      <img src="D:\Programs\Jedlik-FixIT\Frontend\src\assets\BSOD_Windows_8-1080x660.png" class="d-block w-100" alt="Third slide">
+                    </div>
+                  </div>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#bugCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#bugCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
+                </div>
               </div>
           </div>
           </div>
@@ -93,6 +116,7 @@ export default {
           room: '116',
           reportedBy: 'Nagy Gergő',
           reportedAt: '2024-09-26 16:12',
+          bugDescription : 'Aliquam pharetra id eros quis fermentum. Ut varius, sem viverra malesuada feugiat, enim nisi laoreet urna, ut sollicitudin sapien libero ut dui. Etiam vel nibh tortor. Fusce elit sem, vulputate id semper ac, efficitur quis justo. Interdum et malesuada fames.',
           assignedTo: null
         },
         {
@@ -105,6 +129,7 @@ export default {
           room: '203',
           reportedBy: 'Csó Ronáldó',
           reportedAt: '2024-09-27 10:25',
+          bugDescription : 'Aliquam pharetra id eros quis fermentum. Ut varius, sem viverra malesuada feugiat, enim nisi laoreet urna, ut sollicitudin sapien libero ut dui. Etiam vel nibh tortor. Fusce elit sem, vulputate id semper ac, efficitur quis justo. Interdum et malesuada fames.',
           assignedTo: null
         },
       ],
@@ -131,7 +156,7 @@ export default {
       // Assign the task to the logged-in user
       this.selectedBug.assignedTo = username;
 
-      // Optionally, you can update the task in your `bugs` array if needed
+      // Optionally, you can update the task in your bugs array if needed
       const index = this.bugs.findIndex(bug => bug.name === this.selectedBug.name);
       if (index !== -1) {
         this.bugs[index].assignedTo = username;
@@ -256,10 +281,27 @@ export default {
   max-height: fit-content;
   width: 80%;
   height: 80%;
+  
 }
 .photo_box{
-  align-items: center;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  height: 100%; 
 }
+
+.carousel-item{
+  max-width: fit-content;
+  max-height: fit-content;
+  margin: 2%;
+  object-fit: contain;  /* Maintain aspect ratio and contain within the box */
+  width: 100%;  /* Take full width */
+  height: 25vh /* Fixed height */
+}
+
+
+
+
 .modal-title {
   padding-bottom: 1em;
 }
