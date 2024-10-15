@@ -1,9 +1,9 @@
-const mysql = require('mysql2');
+
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
+const app = express();
 
 const encoder = bodyParser.urlencoded({ extended: true });
 const authRoutes = require('./routes/authRoutes');
@@ -11,7 +11,7 @@ const bugReportController = require('./controllers/bugReportController'); // Imp
 const hibakKiirRoutes = require('./routes/hibakKiirRoutes');
 
 
-const app = express();
+
 
 const corsOptions = {
   origin: 'http://localhost:5173', // Change this to the correct URL of your Vue.js app
