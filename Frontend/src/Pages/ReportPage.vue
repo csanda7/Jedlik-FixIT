@@ -1,32 +1,33 @@
 <template>
-  <div class="container mt-5 align-center">
-    <div class="card p-4 shadow">
+  <div class="container mt-5">
+    <div class="card p-4 shadow mx-auto" style="max-width: 600px;">
       <h1 class="text-center my-2">HIBA BEJELENTÉSE</h1>
-      <div class="my-3">
-        <label for="bugName" class="form-label">Hiba megnevezése</label>
-        <input type="text" class="form-control" id="bugName" v-model="bugName"
-          placeholder="Adja meg a hiba nevét röviden">
-      </div>
-      <div class="mb-3">
-        <label for="bugDescription" class="form-label">Hiba leírása</label>
-        <textarea class="form-control" id="bugDescription" v-model="bugDescription" rows="3"
-          placeholder="Adja meg a hiba leírását" maxlength="300"  @input="adjustTextareaHeight($event)"></textarea>
+
+      <!-- Pop-Up Message -->
+      <div v-if="showPopup" class="alert alert-danger" role="alert">
+        Kérjük, töltse ki az összes kötelező mezőt!
       </div>
 
-      <div class="row mx-2">
+      <div class="my-3">
+        <label for="bugName" class="form-label">Hiba megnevezése <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="bugName" v-model="bugName" placeholder="Adja meg a hiba nevét röviden" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="bugDescription" class="form-label">Hiba leírása <span class="text-danger">*</span></label>
+        <textarea class="form-control" id="bugDescription" v-model="bugDescription" rows="3" placeholder="Adja meg a hiba leírását" maxlength="300" @input="adjustTextareaHeight($event)" required></textarea>
+      </div>
+
+      <div class="row mx-0">
         <div class="col-md-6 my-3">
           <div class="dropdown">
-            <button class="btn dropdown-toggle w-100 my-2" style="border: 2px solid gray;" type="button"
-              id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              {{ location || 'Helyszín' }}
+            <button class="btn dropdown-toggle w-100 my-2" style="border: 2px solid gray;" type="button" id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="locationDropdown">
-              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Első terem')">Első terem</a>
-              </li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 2')">Másik terem
-                  2</a></li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 3')">Másik terem
-                  3</a></li>
+              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Első terem')">Első terem</a></li>
+              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 2')">Másik terem 2</a></li>
+              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 3')">Másik terem 3</a></li>
               <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Egyéb')">Egyéb</a></li>
             </ul>
           </div>
@@ -34,9 +35,8 @@
 
         <div class="col-md-6 my-3">
           <div class="dropdown">
-            <button class="btn dropdown-toggle w-100 my-2" style="border: 2px solid gray;" type="button"
-              id="labelDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              {{ label || 'Címkék' }}
+            <button class="btn dropdown-toggle w-100 my-2" style="border: 2px solid gray;" type="button" id="labelDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ label || 'Címkék' }} <span class="text-danger" v-if="!label">*</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="labelDropdown">
               <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Hardver')">Hardver</a></li>
@@ -46,11 +46,10 @@
           </div>
         </div>
       </div>
-      <div class="row mx-2">
-        <!-- Conditionally render text box for 'Egyéb' location -->
+
+      <div class="row mx-0">
         <div v-if="showOtherLocation" class="col-sm-12 col-md-6 my-3 mt-0">
-          <input type="text" class="form-control border-secondary" id="otherLocation" v-model="otherLocation"
-            placeholder="Adja meg a helyszínt">
+          <input type="text" class="form-control border-secondary" id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt">
         </div>
         <div class="col-sm-0 col-md-6"></div>
       </div>
@@ -83,11 +82,12 @@ export default {
       bugName: '',
       priority: '0',
       bugDescription: '',
-      photos: [],  
-      location: '', 
-      label: '', 
-      showOtherLocation: false, 
-      otherLocation: '' 
+      photos: [],
+      location: '',
+      label: '',
+      showOtherLocation: false,
+      otherLocation: '',
+      showPopup: false, // State for the popup message
     };
   },
   methods: {
@@ -101,21 +101,22 @@ export default {
         this.photos.push(files[i]);
       }
     },
-    reset(){
+    reset() {
       this.bugName = '';
       this.priority = '0';
       this.bugDescription = '';
-      this.photos = []; 
-      this.location= ''; 
-      this.label= ''; 
-      this.showOtherLocation= false; 
-      this.otherLocation= '';
+      this.photos = [];
+      this.location = '';
+      this.label = '';
+      this.showOtherLocation = false;
+      this.otherLocation = '';
+      this.showPopup = false; // Reset the popup on reset
     },
     adjustTextareaHeight(event) {
-    const textarea = event.target;
-    textarea.style.height = 'auto'; // Reset height to auto to correctly calculate the new height
-    textarea.style.height = textarea.scrollHeight + 'px'; // Set height based on scroll height
-  },
+      const textarea = event.target;
+      textarea.style.height = 'auto'; // Reset height to auto to correctly calculate the new height
+      textarea.style.height = textarea.scrollHeight + 'px'; // Set height based on scroll height
+    },
     selectLocation(selectedLocation) {
       this.location = selectedLocation;
       this.showOtherLocation = selectedLocation === 'Egyéb';
@@ -123,7 +124,13 @@ export default {
     selectlabel(selectedlabel) {
       this.label = selectedlabel;
     },
-    bekuldes: function () {
+    bekuldes() {
+      // Validate required fields
+      if (!this.bugName || !this.bugDescription || !this.location || !this.label) {
+        this.showPopup = true; // Show popup if any required fields are empty
+        return;
+      }
+
       const username = sessionStorage.getItem('username'); // Get the username from sessionStorage
 
       if (!username) {
@@ -133,11 +140,11 @@ export default {
 
       const formData = new FormData();
       formData.append('bugName', this.bugName);
-      formData.append('priority', this.priority); // Priority should be passed here
+      formData.append('priority', this.priority);
       formData.append('bugDescription', this.bugDescription);
-      formData.append('location', this.location === 'Egyéb' ? this.otherLocation : this.location); // Use the other location if 'Egyéb' is selected
+      formData.append('location', this.location === 'Egyéb' ? this.otherLocation : this.location);
       formData.append('label', this.label);
-      formData.append('reported_by', username); // Attach the username as reported_by
+      formData.append('reported_by', username);
 
       // Append each photo to the FormData
       this.photos.forEach((photo, index) => {
@@ -170,7 +177,7 @@ export default {
             }
             alert(errorMsg);
           } else {
-            alert("Successfully Saved");
+            alert("Hiba sikeresen elküldve");
           }
         });
     }
