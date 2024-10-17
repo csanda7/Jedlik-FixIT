@@ -1,44 +1,53 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../middleware/upload'); // Import the upload middleware
+const upload = require('./../middleware/multer'); // Import the multer configuration
 const connection = require('../config/database');
 
-// API to handle bug report submissions
-router.post('/', upload.single('photo'), (req, res) => {
-  const { bugName, priority, bugDescription, location, label, reported_by } = req.body;
-  const file = req.file; // Access the file object here
+router.post('/bugReport', upload, (req, res) => {
 
-  // Use the filename of the uploaded file
-  const photo = file ? file.filename : null;
+    const { bugName, bugDescription, reported_by, location, priority } = req.body;
 
-  // Validate input fields
-  if (!bugName || !priority || !bugDescription || !location || !label || !reported_by) {
-    return res.status(400).json({
-      msg: 'Validation Failed',
-      errors: {
-        bugName: !bugName ? ['Bug name is required'] : [],
-        priority: !priority ? ['Priority is required'] : [],
-        bugDescription: !bugDescription ? ['Bug description is required'] : [],
-        location: !location ? ['Location is required'] : [],
-        label: !label ? ['Label is required'] : []
-      }
+    const photos = req.files; // Use req.files to access uploaded files
+
+    const sql = 'INSERT INTO hibabejelentesek (Title, Description, Location, Priority, Reported_By, Reported_At, Updated_At, Status) VALUES (?, ?, ?, ?, ?, NOW(), NOW(), "Bejelentve")';
+    
+    connection.query(sql, [bugName, bugDescription, location, priority, reported_by], (err, result) => {
+        if (err) {
+            console.error('Error inserting bug report:', err);
+            return res.status(500).json({ msg: 'Something Went Wrong', error: err.message });
+        }
+
+        // Handle photo uploads
+        if (photos && photos.length > 0) {
+            const insertPhotoSql = 'INSERT INTO kepek (ID, kep) VALUES (?, ?)';
+            const photoInsertPromises = [];
+
+            for (let i = 0; i < photos.length; i++) {
+                photoInsertPromises.push(
+                    new Promise((resolve, reject) => {
+                        connection.query(insertPhotoSql, [result.insertId, photos[i].filename], (err) => {
+                            if (err) {
+                                console.error('Error inserting into kepek:', err);
+                                reject(err);
+                            } else {
+                                resolve();
+                            }
+                        });
+                    })
+                );
+            }
+
+            Promise.all(photoInsertPromises)
+                .then(() => {
+                    res.json({ msg: 'Successfully Saved' });
+                })
+                .catch((error) => {
+                    res.status(500).json({ msg: 'Error saving photos', error });
+                });
+        } else {
+            res.json({ msg: 'Successfully Saved without photos' });
+        }
     });
-  }
-
-  // Prepare SQL query
-  const sql = `
-    INSERT INTO hibabejelentesek (Title, Description, Photo, Reported_by, Location, Reported_at, Updated_at, Priority, Status, Label)
-    VALUES (?, ?, ?, ?, ?, NOW(), NOW(), ?, 'Bejelentve', ?)
-  `;
-
-  // Insert data into the database
-  connection.query(sql, [bugName, bugDescription, photo, reported_by, location, priority, label], (err, result) => {
-    if (err) {
-      console.error('Error inserting bug report:', err);
-      return res.status(500).json({ msg: 'Something Went Wrong', error: err.message });
-    }
-    res.json({ msg: 'Successfully Saved' });
-  });
 });
 
-module.exports = router; // Export the router
+module.exports = router;

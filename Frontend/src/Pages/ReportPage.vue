@@ -137,62 +137,67 @@ export default {
       this.label = selectedlabel;
     },
     bekuldes() {
-      // Validate required fields
-      if (!this.bugName || !this.bugDescription || !this.location || !this.label) {
-        this.showPopup = true; // Show popup if any required fields are empty
-        return;
-      }
+  // Validate required fields
+  if (!this.bugName || !this.bugDescription || !this.location || !this.label) {
+    this.showPopup = true; // Show popup if any required fields are empty
+    return;
+  }
 
-      const username = sessionStorage.getItem('username'); // Get the username from sessionStorage
+  const username = sessionStorage.getItem('username'); // Get the username from sessionStorage
 
-      if (!username) {
-        alert('No user logged in');
-        return;
-      }
+  if (!username) {
+    alert('No user logged in');
+    return;
+  }
 
-      const formData = new FormData();
-      formData.append('bugName', this.bugName);
-      formData.append('priority', this.priority);
-      formData.append('bugDescription', this.bugDescription);
-      formData.append('location', this.location === 'Egyéb' ? this.otherLocation : this.location);
-      formData.append('label', this.label);
-      formData.append('reported_by', username);
+  const formData = new FormData();
+  formData.append('bugName', this.bugName); // Use 'this' to access component data
+  formData.append('bugDescription', this.bugDescription); // Use 'this'
+  formData.append('reported_by', username); // Use username from sessionStorage
+  formData.append('location', this.location); // Use 'this'
+  formData.append('priority', this.priority); // Use 'this'
 
-      // Append each photo to the FormData
-      this.photos.forEach((photo, index) => {
-        formData.append(`photo${index}`, photo); // Key with index (photo0, photo1, photo2)
-      });
+  // Append photos to formData
+  this.photos.forEach(photo => {
+    formData.append('photos', photo); // 'photos' should match the key in multerConfig
+  });
 
-      axios.post("http://localhost:4500/api/bugReport", formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-        .then((res) => {
-          if (res.data.msg === "Validation Failed") {
-            let errors = res.data.errors;
-            let errorMsg = "";
-            if (errors.bugName) {
-              errorMsg += errors.bugName.join("\n");
-            }
-            if (errors.priority) {
-              errorMsg += errors.priority.join("\n");
-            }
-            if (errors.bugDescription) {
-              errorMsg += errors.bugDescription.join("\n");
-            }
-            if (errors.location) {
-              errorMsg += errors.location.join("\n");
-            }
-            if (errors.label) {
-              errorMsg += errors.label.join("\n");
-            }
-            alert(errorMsg);
-          } else {
-            alert("Hiba sikeresen elküldve");
-          }
-        });
+  axios.post("http://localhost:4500/api/bugReport", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
     }
+  })
+    .then((res) => {
+      if (res.data.msg === "Validation Failed") {
+        let errors = res.data.errors;
+        let errorMsg = "";
+        if (errors.bugName) {
+          errorMsg += errors.bugName.join("\n");
+        }
+        if (errors.priority) {
+          errorMsg += errors.priority.join("\n");
+        }
+        if (errors.bugDescription) {
+          errorMsg += errors.bugDescription.join("\n");
+        }
+        if (errors.location) {
+          errorMsg += errors.location.join("\n");
+        }
+        if (errors.label) {
+          errorMsg += errors.label.join("\n");
+        }
+        alert(errorMsg);
+      } else {
+        alert("Hiba sikeresen elküldve");
+        this.reset(); // Optionally reset form after successful submission
+      }
+    })
+    .catch((error) => {
+      console.error('Error submitting bug report:', error);
+      alert('Error: Unable to submit bug report.');
+    });
+}
+
   }
 };
 </script>

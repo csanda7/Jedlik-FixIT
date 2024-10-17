@@ -29,6 +29,7 @@ app.use(express.static(frontendPath));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // For parsing application/json
 app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+app.use('/api', bugReportController); // Make sure the route prefix is correct
 
 // Routes
 app.use(authRoutes);
