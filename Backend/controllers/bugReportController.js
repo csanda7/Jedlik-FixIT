@@ -5,13 +5,13 @@ const connection = require('../config/database');
 
 router.post('/bugReport', upload, (req, res) => {
 
-    const { bugName, bugDescription, reported_by, location, priority } = req.body;
+    const { bugName, bugDescription, reported_by, location, priority, label} = req.body;
 
     const photos = req.files; // Use req.files to access uploaded files
 
-    const sql = 'INSERT INTO hibabejelentesek (Title, Description, Location, Priority, Reported_By, Reported_At, Updated_At, Status) VALUES (?, ?, ?, ?, ?, NOW(), NOW(), "Bejelentve")';
+    const sql = 'INSERT INTO hibabejelentesek (Title, Description, Location, Priority, Reported_By, Reported_At, Updated_At, Status, label) VALUES (?, ?, ?,?, ?, NOW(), NOW(), "Bejelentve",?)';
     
-    connection.query(sql, [bugName, bugDescription, location, priority, reported_by], (err, result) => {
+    connection.query(sql, [bugName, bugDescription, location, priority, reported_by, label], (err, result) => {
         if (err) {
             console.error('Error inserting bug report:', err);
             return res.status(500).json({ msg: 'Something Went Wrong', error: err.message });

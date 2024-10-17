@@ -34,10 +34,8 @@
         <span>{{ bug.priority }}</span>
       </div>
     </td>
-    <td>
-      <span :class="['badge', bug.badgeClass]">{{ bug.label }}</span>
-    </td>
-    <td>{{ bug.status }}</td>
+    <td>{{ bug.label }}</td>
+        <td calls="status-column"> <span :class="['badge', bug.badgeClass]">{{bug.status }}</span></td>
     <td>{{ bug.room }}</td>
     <td>{{ bug.reportedBy }}</td>
     <td>{{ bug.reportedAt }}</td>
@@ -121,10 +119,10 @@ export default {
         priority: bug['Prioritás'],
         priorityColor: this.getPriorityColor(bug['Prioritás']),
         label: bug['Címke'],
-        badgeClass: bug['Címke'] === 'Hardver' ? 'badge-hardware' : 
-                bug['Címke'] === 'Szoftver' ? 'badge-software' : 
-                bug['Címke'] === 'Egyéb' ? 'badge-other' : '',
         status: bug['Státusz'],
+        badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' : 
+                bug['Státusz'] === 'Kész' ? 'badge-done' : 
+                bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : '',
         room: bug['Terem'],
         reportedBy: bug['Bejelentette'],
         reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
@@ -258,25 +256,33 @@ export default {
 }
 
 .badge {
-  padding: 0.5rem 1rem;
-  font-size: 0.8rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
+    display: inline-block;
+    width: 120px;
+    text-align: center;
+    padding: 0.5rem 0.5rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 0.5rem;
 }
 
-.badge-hardware {
-  background-color: #9757f8;
+.badge-reported {
+  background-color: #f7a611;
   color: #ffffff;
 }
 
-.badge-software {
-  background-color: #ffa73e;
+.badge-done {
+  background-color: #35b821;
   color: #ffffff;
 }
 
-.badge-other {
-  background-color: #28a745; /* Green */
+.badge-progress {
+  background-color: #2850a7; /* Green */
   color: #ffffff;
+}
+
+.table tbody td.status-column {
+width: 150px;
+text-align: center;
 }
 
 .modal-overlay {

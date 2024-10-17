@@ -151,15 +151,19 @@ export default {
   }
 
   const formData = new FormData();
-  formData.append('bugName', this.bugName); // Use 'this' to access component data
-  formData.append('bugDescription', this.bugDescription); // Use 'this'
-  formData.append('reported_by', username); // Use username from sessionStorage
-  formData.append('location', this.location); // Use 'this'
-  formData.append('priority', this.priority); // Use 'this'
+  formData.append('bugName', this.bugName);
+  formData.append('bugDescription', this.bugDescription);
+  formData.append('reported_by', username);
+  formData.append('location', this.location);
+  formData.append('priority', this.priority);
+  
+  // Debugging line for label
+  console.log('Label:', this.label); 
+  formData.append('label', this.label);
 
   // Append photos to formData
   this.photos.forEach(photo => {
-    formData.append('photos', photo); // 'photos' should match the key in multerConfig
+    formData.append('photos', photo);
   });
 
   axios.post("http://localhost:4500/api/bugReport", formData, {
@@ -167,36 +171,37 @@ export default {
       'Content-Type': 'multipart/form-data'
     }
   })
-    .then((res) => {
-      if (res.data.msg === "Validation Failed") {
-        let errors = res.data.errors;
-        let errorMsg = "";
-        if (errors.bugName) {
-          errorMsg += errors.bugName.join("\n");
-        }
-        if (errors.priority) {
-          errorMsg += errors.priority.join("\n");
-        }
-        if (errors.bugDescription) {
-          errorMsg += errors.bugDescription.join("\n");
-        }
-        if (errors.location) {
-          errorMsg += errors.location.join("\n");
-        }
-        if (errors.label) {
-          errorMsg += errors.label.join("\n");
-        }
-        alert(errorMsg);
-      } else {
-        alert("Hiba sikeresen elküldve");
-        this.reset(); // Optionally reset form after successful submission
+  .then((res) => {
+    if (res.data.msg === "Validation Failed") {
+      let errors = res.data.errors;
+      let errorMsg = "";
+      if (errors.bugName) {
+        errorMsg += errors.bugName.join("\n");
       }
-    })
-    .catch((error) => {
-      console.error('Error submitting bug report:', error);
-      alert('Error: Unable to submit bug report.');
-    });
+      if (errors.priority) {
+        errorMsg += errors.priority.join("\n");
+      }
+      if (errors.bugDescription) {
+        errorMsg += errors.bugDescription.join("\n");
+      }
+      if (errors.location) {
+        errorMsg += errors.location.join("\n");
+      }
+      if (errors.label) {
+        errorMsg += errors.label.join("\n");
+      }
+      alert(errorMsg);
+    } else {
+      alert("Hiba sikeresen elküldve");
+      this.reset(); // Optionally reset form after successful submission
+    }
+  })
+  .catch((error) => {
+    console.error('Error submitting bug report:', error);
+    alert('Error: Unable to submit bug report.');
+  });
 }
+
 
   }
 };
