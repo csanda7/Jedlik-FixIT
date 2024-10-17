@@ -18,8 +18,8 @@
         <textarea class="form-control" id="bugDescription" v-model="bugDescription" rows="3" placeholder="Adja meg a hiba leírását" maxlength="300" @input="adjustTextareaHeight($event)" required></textarea>
       </div>
 
-      <div class="row mx-0">
-        <div class="col-md-6 my-3">
+      <div class="row ">
+        <div class="col-md-6  my-1">
           <div class="dropdown">
             <button class="btn dropdown-toggle w-100 my-2" style="border: 2px solid gray;" type="button" id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
               {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
@@ -32,8 +32,16 @@
             </ul>
           </div>
         </div>
+      </div>
 
-        <div class="col-md-6 my-3">
+      <div class="row ">
+        <div v-if="showOtherLocation" class="col-sm-12 col-md-6 my-3 mt-0">
+          <input type="text" class="form-control border-secondary" id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt">
+        </div>
+        <div class="col-sm-0 col-md-6"></div>
+      </div>
+      <div class="row   ">
+      <div class="col-md-6 my-1">
           <div class="dropdown">
             <button class="btn dropdown-toggle w-100 my-2" style="border: 2px solid gray;" type="button" id="labelDropdown" data-bs-toggle="dropdown" aria-expanded="false">
               {{ label || 'Címkék' }} <span class="text-danger" v-if="!label">*</span>
@@ -48,17 +56,20 @@
       </div>
 
       <div class="row mx-0">
-        <div v-if="showOtherLocation" class="col-sm-12 col-md-6 my-3 mt-0">
-          <input type="text" class="form-control border-secondary" id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt">
-        </div>
-        <div class="col-sm-0 col-md-6"></div>
-      </div>
-
-      <div class="row">
         <div class="col-md-6 my-3">
-          <label for="priority" class="form-label">Prioritás: {{ priority === '0' ? 'Nincs megadva prioritás' : priority }}</label>
-          <input type="range" class="form-range" min="0" max="5" v-model="priority" id="priority">
+          <label for="priority" class="form-label">Prioritás:</label>
+          <div class="d-flex flex-row">
+            <div class="form-check me-2">
+              <input class="form-check-input" type="radio" v-model="priority" id="priority0" value="0" />
+              <label class="form-check-label" for="priority0" data-bs-toggle="tooltip" data-bs-placement="top" title="Nincs megadva prioritás">Nincs</label>
+            </div>
+            <div class="form-check me-2" v-for="n in 5" :key="n">
+              <input class="form-check-input" type="radio" v-model="priority" :id="'priority' + n" :value="n" />
+              <label class="form-check-label" :for="'priority' + n">{{ n }}</label>
+            </div>
+          </div>
         </div>
+
         <div class="col-md-6 my-3">
           <label for="photo" class="form-label">Fotók feltöltése</label>
           <input type="file" class="form-control" id="photo" @change="onFileChange" accept=".png, .jpg, .jpeg, .heic" multiple>
@@ -72,6 +83,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
