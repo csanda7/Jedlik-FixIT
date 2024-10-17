@@ -10,16 +10,16 @@
 
       <div class="my-3">
         <label for="bugName" class="form-label">Hiba megnevezése <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" id="bugName" v-model="bugName" placeholder="Adja meg a hiba nevét röviden" required>
+        <input type="text" class="form-control" id="bugName" v-model="bugName" placeholder="Adja meg a hiba nevét röviden" required @input="setCookie('bugName', bugName)">
       </div>
 
       <div class="mb-3">
         <label for="bugDescription" class="form-label">Hiba leírása <span class="text-danger">*</span></label>
-        <textarea class="form-control" id="bugDescription" v-model="bugDescription" rows="3" placeholder="Adja meg a hiba leírását" maxlength="300" @input="adjustTextareaHeight($event)" required></textarea>
+        <textarea class="form-control" id="bugDescription" v-model="bugDescription" rows="3" placeholder="Adja meg a hiba leírását" maxlength="300" @input="adjustTextareaHeight($event); setCookie('bugDescription', bugDescription);" required></textarea>
       </div>
 
       <div class="row ">
-        <div class="col-md-6  my-1">
+        <div class="col-md-6 my-1">
           <div class="dropdown">
             <button class="btn dropdown-toggle w-100 my-2" style="border: 2px solid gray;" type="button" id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
               {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
@@ -36,12 +36,12 @@
 
       <div class="row ">
         <div v-if="showOtherLocation" class="col-sm-12 col-md-6 my-3 mt-0">
-          <input type="text" class="form-control border-secondary" id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt">
+          <input type="text" class="form-control border-secondary" id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt" @input="setCookie('otherLocation', otherLocation)">
         </div>
         <div class="col-sm-0 col-md-6"></div>
       </div>
-      <div class="row   ">
-      <div class="col-md-6 my-1">
+      <div class="row ">
+        <div class="col-md-6 my-1">
           <div class="dropdown">
             <button class="btn dropdown-toggle w-100 my-2" style="border: 2px solid gray;" type="button" id="labelDropdown" data-bs-toggle="dropdown" aria-expanded="false">
               {{ label || 'Címkék' }} <span class="text-danger" v-if="!label">*</span>
@@ -60,11 +60,11 @@
           <label for="priority" class="form-label">Prioritás:</label>
           <div class="d-flex flex-row">
             <div class="form-check me-2">
-              <input class="form-check-input" type="radio" v-model="priority" id="priority0" value="0" />
+              <input class="form-check-input" type="radio" v-model="priority" id="priority0" value="0" @change="setCookie('priority', priority)" />
               <label class="form-check-label" for="priority0" data-bs-toggle="tooltip" data-bs-placement="top" title="Nincs megadva prioritás">Nincs</label>
             </div>
             <div class="form-check me-2" v-for="n in 5" :key="n">
-              <input class="form-check-input" type="radio" v-model="priority" :id="'priority' + n" :value="n" />
+              <input class="form-check-input" type="radio" v-model="priority" :id="'priority' + n" :value="n" @change="setCookie('priority', priority)" />
               <label class="form-check-label" :for="'priority' + n">{{ n }}</label>
             </div>
           </div>
@@ -84,25 +84,40 @@
   </div>
 </template>
 
-
 <script>
 import axios from 'axios';
 
 export default {
   data() {
     return {
-      bugName: '',
-      priority: '0',
-      bugDescription: '',
+      bugName: this.getCookie('bugName') || '',
+      priority: this.getCookie('priority') || '0',
+      bugDescription: this.getCookie('bugDescription') || '',
       photos: [],
-      location: '',
-      label: '',
+      location: this.getCookie('location') || '',
+      label: this.getCookie('label') || '',
       showOtherLocation: false,
-      otherLocation: '',
+      otherLocation: this.getCookie('otherLocation') || '',
       showPopup: false, // State for the popup message
     };
   },
   methods: {
+    setCookie(name, value, days = 7) {
+      const d = new Date();
+      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+      const expires = "expires=" + d.toUTCString();
+      document.cookie = name + "=" + value + ";" + expires + ";path=/";
+    },
+    getCookie(name) {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return '';
+    },
     onFileChange(event) {
       const files = event.target.files;
       if (files.length + this.photos.length > 3) {
@@ -123,6 +138,14 @@ export default {
       this.showOtherLocation = false;
       this.otherLocation = '';
       this.showPopup = false; // Reset the popup on reset
+
+      // Clear cookies
+      this.setCookie('bugName', '');
+      this.setCookie('priority', '0');
+      this.setCookie('bugDescription', '');
+      this.setCookie('location', '');
+      this.setCookie('label', '');
+      this.setCookie('otherLocation', '');
     },
     adjustTextareaHeight(event) {
       const textarea = event.target;
@@ -132,77 +155,77 @@ export default {
     selectLocation(selectedLocation) {
       this.location = selectedLocation;
       this.showOtherLocation = selectedLocation === 'Egyéb';
+      this.setCookie('location', selectedLocation);
     },
     selectlabel(selectedlabel) {
       this.label = selectedlabel;
+      this.setCookie('label', selectedlabel);
     },
     bekuldes() {
-  // Validate required fields
-  if (!this.bugName || !this.bugDescription || !this.location || !this.label) {
-    this.showPopup = true; // Show popup if any required fields are empty
-    return;
-  }
+      // Validate required fields
+      if (!this.bugName || !this.bugDescription || !this.location || !this.label) {
+        this.showPopup = true; // Show popup if any required fields are empty
+        return;
+      }
 
-  const username = sessionStorage.getItem('username'); // Get the username from sessionStorage
+      const username = sessionStorage.getItem('username'); // Get the username from sessionStorage
 
-  if (!username) {
-    alert('No user logged in');
-    return;
-  }
+      if (!username) {
+        alert('No user logged in');
+        return;
+      }
 
-  const formData = new FormData();
-  formData.append('bugName', this.bugName);
-  formData.append('bugDescription', this.bugDescription);
-  formData.append('reported_by', username);
-  formData.append('location', this.location);
-  formData.append('priority', this.priority);
-  
-  // Debugging line for label
-  console.log('Label:', this.label); 
-  formData.append('label', this.label);
+      const formData = new FormData();
+      formData.append('bugName', this.bugName);
+      formData.append('bugDescription', this.bugDescription);
+      formData.append('reported_by', username);
+      formData.append('location', this.location);
+      formData.append('priority', this.priority);
 
-  // Append photos to formData
-  this.photos.forEach(photo => {
-    formData.append('photos', photo);
-  });
+      // Debugging line for label
+      console.log('Label:', this.label);
+      formData.append('label', this.label);
 
-  axios.post("http://localhost:4500/api/bugReport", formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
+      // Append photos to formData
+      this.photos.forEach(photo => {
+        formData.append('photos', photo);
+      });
+
+      axios.post("http://localhost:4500/api/bugReport", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then((res) => {
+        if (res.data.msg === "Validation Failed") {
+          let errors = res.data.errors;
+          let errorMsg = "";
+          if (errors.bugName) {
+            errorMsg += errors.bugName.join("\n");
+          }
+          if (errors.priority) {
+            errorMsg += errors.priority.join("\n");
+          }
+          if (errors.bugDescription) {
+            errorMsg += errors.bugDescription.join("\n");
+          }
+          if (errors.location) {
+            errorMsg += errors.location.join("\n");
+          }
+          if (errors.label) {
+            errorMsg += errors.label.join("\n");
+          }
+          alert(errorMsg);
+        } else {
+          alert("Hiba sikeresen elküldve");
+          this.reset(); // Optionally reset form after successful submission
+        }
+      })
+      .catch((error) => {
+        console.error('Error submitting bug report:', error);
+        alert('Error: Unable to submit bug report.');
+      });
     }
-  })
-  .then((res) => {
-    if (res.data.msg === "Validation Failed") {
-      let errors = res.data.errors;
-      let errorMsg = "";
-      if (errors.bugName) {
-        errorMsg += errors.bugName.join("\n");
-      }
-      if (errors.priority) {
-        errorMsg += errors.priority.join("\n");
-      }
-      if (errors.bugDescription) {
-        errorMsg += errors.bugDescription.join("\n");
-      }
-      if (errors.location) {
-        errorMsg += errors.location.join("\n");
-      }
-      if (errors.label) {
-        errorMsg += errors.label.join("\n");
-      }
-      alert(errorMsg);
-    } else {
-      alert("Hiba sikeresen elküldve");
-      this.reset(); // Optionally reset form after successful submission
-    }
-  })
-  .catch((error) => {
-    console.error('Error submitting bug report:', error);
-    alert('Error: Unable to submit bug report.');
-  });
-}
-
-
   }
 };
 </script>

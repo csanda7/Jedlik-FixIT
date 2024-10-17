@@ -34,7 +34,9 @@
         <span>{{ bug.priority }}</span>
       </div>
     </td>
-    <td>{{ bug.label }}</td>
+    <td>
+     {{ bug.label }}
+</td>
         <td calls="status-column"> <span :class="['badge', bug.badgeClass]">{{bug.status }}</span></td>
     <td>{{ bug.room }}</td>
     <td>{{ bug.reportedBy }}</td>
