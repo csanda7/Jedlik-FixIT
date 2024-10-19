@@ -101,6 +101,8 @@ export default {
       showPopup: false, // State for the popup message
     };
   },
+
+
   methods: {
     setCookie(name, value, days = 7) {
       const d = new Date();
@@ -120,8 +122,8 @@ export default {
     },
     onFileChange(event) {
       const files = event.target.files;
-      if (files.length + this.photos.length > 3) {
-        alert('Maximum 3 képet tölthet fel.');
+      if (files.length + this.photos.length > 4) {
+        alert('Maximum 4 képet tölthet fel.');
         return;
       }
       for (let i = 0; i < files.length; i++) {
@@ -248,4 +250,204 @@ export default {
 .btn-secondary {
   background-color: #6c757d;
 }
+
+.reported-bugs-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.h2 {
+  color: rgb(59, 59, 59);
+  padding: 0.5em;
+}
+
+.card-header {
+  background-color: #f93943;
+  color: white;
+  padding: 1.2rem;
+  border-bottom: none;
+}
+
+.card-header h1 {
+  margin-left: -10px;
+}
+
+.search-input {
+  width: 200px;
+  border: solid 2px #4285f4;
+}
+
+.filter-icon {
+  font-size: 1.5rem;
+  color: #4285f4;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  padding-left: 2em;
+  text-align: left;
+}
+
+.table tbody td {
+  padding-left: 2em;
+  text-align: left;
+}
+
+.priority-container {
+  display: flex;
+  align-items: center;
+}
+
+.priority-bar {
+  display: inline-block;
+  width: 50px;
+  height: 4px;
+  margin-right: 5px;
+}
+
+
+.priority-bar.darkgreen {
+  background-color: darkgreen;
+}
+
+.priority-bar.lightgreen {
+  background-color: lightgreen;
+}
+
+.priority-bar.yellow {
+  background-color: yellow;
+}
+
+.priority-bar.orange {
+  background-color: #ff8c00;
+}
+
+.priority-bar.red {
+  background-color: red;
+}
+
+.badge {
+    display: inline-block;
+    width: 120px;
+    text-align: center;
+    padding: 0.5rem 0.5rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 0.5rem;
+}
+
+.badge-reported {
+  background-color: #f7a611;
+  color: #ffffff;
+}
+
+.badge-done {
+  background-color: #35b821;
+  color: #ffffff;
+}
+
+.badge-progress {
+  background-color: #2850a7; /* Green */
+  color: #ffffff;
+}
+
+.table tbody td.status-column {
+width: 150px;
+text-align: center;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  /* Dark background overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 5vh;
+  max-width: 70vw;
+  min-width: 80vw;
+  width: 100%;
+
+  z-index: 1000;
+}
+.modal_photo{
+  max-width: fit-content;
+  max-height: fit-content;
+  width: 80%;
+  height: 80%;
+  
+}
+.photo_box{
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  height: 100%; 
+}
+
+.carousel-item{
+  max-width: fit-content;
+  max-height: fit-content;
+  margin: 2%;
+  object-fit: contain;  /* Maintain aspect ratio and contain within the box */
+  width: 100%;  /* Take full width */
+  height: 25vh /* Fixed height */
+}
+
+
+
+
+.modal-title {
+  padding-bottom: 1em;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bg {
+  background-color: rgb(255, 255, 255);
+  z-index: 500;
+  border-radius: 5vh;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-footer {
+  text-align: right;
+}
+
+.btn-secondary {
+  background-color: #636363;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: #4285f4;
+  color: white;
+}
+
+
 </style>

@@ -8,7 +8,8 @@ const app = express();
 const encoder = bodyParser.urlencoded({ extended: true });
 const authRoutes = require('./routes/authRoutes');
 const bugReportController = require('./controllers/bugReportController'); // Import bug report routes
-const hibakKiirRoutes = require('./routes/hibakKiirRoutes');
+const hibakKiirRoutes = require('./routes/hibaKiirRoutes');
+const hibaFelvetel = require('./routes/hibaFelvetelRoutes');  // Import bug routes
 
 
 
@@ -35,7 +36,7 @@ app.use('/api', bugReportController); // Make sure the route prefix is correct
 app.use(authRoutes);
 app.use('/api/bugReport', bugReportController);
 app.use('/api/hibakKiir', hibakKiirRoutes);
-
+app.use('/api', hibaFelvetel);
 
 // Start the server
 const PORT = 4500;

@@ -51,48 +51,45 @@
     </div>
 
     <!-- Modal -->
-    <div v-if="showModal" class="modal-overlay" @click="closeModal">
-      <div class="bg" @click.stop>
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3 class="modal-title">{{ selectedBug.name }}</h3>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-md-4">
-                <p><strong>Prioritás:</strong> {{ selectedBug.priority }}</p>
-                <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-                <p><strong>Státusz:</strong> {{ selectedBug.status }}</p>
-                <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
-                <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-                <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-                <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p> <!-- New row for assigned user -->
-              </div>
-              <div class="col-md-4 description">
-                <p><strong>Hiba leírása:</strong> {{ selectedBug.description }}</p>
-              </div>
-              <div class="col-md-4 photo_box">
-                <div id="bugCarousel" class="carousel slide" data-bs-ride="carousel">
-                  
-                  <button class="carousel-control-prev" type="button" data-bs-target="#bugCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                  </button>
-                  <button class="carousel-control-next" type="button" data-bs-target="#bugCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                  </button>
-                </div>
-              </div>
-          </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary mx-1" v-if="selectedBug.assignedTo == null" @click="takeTask">Elvállalom</button>
-            <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
-          </div>
-        </div>
+<div v-if="showModal" class="modal-overlay" @click="closeModal">
+  <div class="bg" @click.stop>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">{{ selectedBug.name }}</h3>
+      </div>
+      <div class="modal-body">
+  <div class="row">
+    <div class="col-md-4">
+      <p><strong>Prioritás:</strong> {{ selectedBug.priority }}</p>
+      <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
+      <p><strong>Státusz:</strong> {{ selectedBug.status }}</p>
+      <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
+      <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+      <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+      <!-- Show "Feladatot elvállalta" only if assignedTo is not null -->
+      <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
+    </div>
+    <div class="col-md-4 description">
+      <p><strong>Hiba leírása:</strong> {{ selectedBug.description }}</p>
+    </div>
+    <div class="col-md-4 photo_box">
+      <div id="bugCarousel" class="carousel slide" data-bs-ride="carousel">
+        <!-- Add carousel items here for photos if applicable -->
       </div>
     </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <!-- Only show the button if assignedTo is null -->
+  <button type="button" class="btn btn-primary mx-1" v-if="!selectedBug.assignedTo" @click="takeTask">Elvállalom</button>
+  <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
+</div>
+
+
+    </div>
+  </div>
+</div>
+
   </div>
 </template>
 
@@ -110,32 +107,36 @@ export default {
     this.fetchBugs();
   },
   methods: {
-  async fetchBugs() {
-    try {
-      const response = await fetch('http://localhost:4500/api/hibakKiir');
-      if (!response.ok) throw new Error('Network response was not ok');
-      const data = await response.json();
-      console.log(data);
-      this.bugs = data.map(bug => ({
-        name: bug['Hiba neve'],
-        priority: bug['Prioritás'],
-        priorityColor: this.getPriorityColor(bug['Prioritás']),
-        label: bug['Címke'],
-        status: bug['Státusz'],
-        badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' : 
-                bug['Státusz'] === 'Kész' ? 'badge-done' : 
-                bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : '',
-        room: bug['Terem'],
-        reportedBy: bug['Bejelentette'],
-        reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
-        assignedTo: null,
-        description: bug['Hiba leírása']
-      }));
-    } catch (error) {
-      console.error('Error fetching bug data:', error);
-    }
-  },
-  
+    async fetchBugs() {
+  try {
+    const response = await fetch('http://localhost:4500/api/hibakKiir');
+    if (!response.ok) throw new Error('Network response was not ok');
+    
+    const data = await response.json();
+    console.log('API Response:', data); // Log the entire response to check if ID is present
+    
+    this.bugs = data.map(bug => ({
+  id: bug.ID,
+  name: bug['Hiba neve'],
+  priority: bug['Prioritás'],
+  priorityColor: this.getPriorityColor(bug['Prioritás']),
+  label: bug['Címke'],
+  status: bug['Státusz'],
+  badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
+              bug['Státusz'] === 'Kész' ? 'badge-done' :
+              bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : '',
+  room: bug['Terem'],
+  reportedBy: bug['Bejelentette'],
+  reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
+  assignedTo: bug['assignedTo'], // Ensure this is fetched correctly
+  description: bug['Hiba leírása']
+}));
+
+  } catch (error) {
+    console.error('Error fetching bug data:', error);
+  }
+},
+
   getPriorityColor(priority) {
     switch (priority) {
       case 1:
@@ -163,16 +164,51 @@ export default {
     closeModal() {
       this.showModal = false; // Hide the modal
     },
-    takeTask() {
-      const username = sessionStorage.getItem('username'); // Get logged-in user's username
 
-      if (!username) {
-        alert('No user logged in'); // Error handling if username is not available
-        return;
-      }
 
-      this.selectedBug.assignedTo = username;
+
+
+    async takeTask() {
+  const username = sessionStorage.getItem('username'); // Get logged-in user's username
+
+  if (!username) {
+    alert('No user logged in');
+    return;
+  }
+
+  // Log selected bug before sending the request
+  console.log('Taking task for Bug ID:', this.selectedBug.id);
+
+  if (!this.selectedBug.id) {
+    alert('Bug ID is missing');
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ assignedTo: username }), // Send the assigned user to backend
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to assign the task');
     }
+
+    // Update the frontend after successful response
+    this.selectedBug.assignedTo = username;
+    alert('Task successfully assigned to you.');
+  } catch (error) {
+    console.error('Error assigning task:', error);
+    alert('Failed to assign the task.');
+  }
+}
+
+
+
+
     
   },
   
