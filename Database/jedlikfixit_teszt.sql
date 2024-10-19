@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Okt 17. 11:25
+-- Létrehozás ideje: 2024. Okt 19. 11:58
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -63,18 +63,21 @@ CREATE TABLE `hibabejelentesek` (
   `Updated_at` timestamp NULL DEFAULT NULL,
   `Priority` int(11) DEFAULT NULL,
   `Status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci DEFAULT NULL,
-  `Label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci DEFAULT NULL
+  `Label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci DEFAULT NULL,
+  `assignedTo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `hibabejelentesek`
 --
 
-INSERT INTO `hibabejelentesek` (`ID`, `Title`, `Description`, `Reported_by`, `Location`, `Reported_at`, `Updated_at`, `Priority`, `Status`, `Label`) VALUES
-(60, 'fasfsd', 'sdfs', 'kovacs.bela', 'Első terem', '2024-10-17 09:11:49', '2024-10-17 09:11:49', 3, 'Bejelentve', NULL),
-(61, 'asd', 'asd', 'kovacs.bela', 'Első terem', '2024-10-17 09:13:46', '2024-10-17 09:13:46', 3, 'Bejelentve', NULL),
-(62, 'asd', 'asd', 'kovacs.bela', 'Másik terem 2', '2024-10-17 09:23:46', '2024-10-17 09:23:46', 3, 'Bejelentve', 'Hardver'),
-(63, 'gfhdgh', 'dfghdfgh', 'kovacs.bela', 'Másik terem 2', '2024-10-17 09:24:19', '2024-10-17 09:24:19', 4, 'Bejelentve', 'Szoftver');
+INSERT INTO `hibabejelentesek` (`ID`, `Title`, `Description`, `Reported_by`, `Location`, `Reported_at`, `Updated_at`, `Priority`, `Status`, `Label`, `assignedTo`) VALUES
+(60, 'fasfsd', 'sdfs', 'kovacs.bela', 'Első terem', '2024-10-17 09:11:49', '2024-10-17 09:11:49', 3, 'Bejelentve', NULL, 'kovacs.bela'),
+(61, 'asd', 'asd', 'kovacs.bela', 'Első terem', '2024-10-17 09:13:46', '2024-10-17 09:13:46', 3, 'Bejelentve', NULL, NULL),
+(71, 'dfghdfgh', 'dfghdfgh', 'kovacs.bela', 'Másik terem 3', '2024-10-19 09:53:32', '2024-10-19 09:53:32', 2, 'Bejelentve', 'Szoftver', NULL),
+(72, 'dfghdfgh', 'dfghdfgh', 'kovacs.bela', 'Másik terem 3', '2024-10-19 09:54:49', '2024-10-19 09:54:49', 2, 'Bejelentve', 'Szoftver', NULL),
+(73, 'gsdfg', 'sdfg', 'kovacs.bela', 'Első terem', '2024-10-19 09:55:06', '2024-10-19 09:55:06', 2, 'Bejelentve', 'Szoftver', NULL),
+(74, 'fhgsdfg', 'sdfgsdfggsdfgsfdggsdfg', 'kovacs.bela', 'Másik terem 2', '2024-10-19 09:55:39', '2024-10-19 09:55:51', 2, 'Bejelentve', 'Hardver', 'kovacs.bela');
 
 -- --------------------------------------------------------
 
@@ -84,17 +87,22 @@ INSERT INTO `hibabejelentesek` (`ID`, `Title`, `Description`, `Reported_by`, `Lo
 
 CREATE TABLE `kepek` (
   `ID` int(11) NOT NULL,
-  `kep` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci NOT NULL
+  `kep` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci NOT NULL,
+  `kep_id` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `kepek`
 --
 
-INSERT INTO `kepek` (`ID`, `kep`) VALUES
-(63, '1729157058998-kÃ©p2.png'),
-(63, '1729157059000-kÃ©p3.png'),
-(63, '1729157059003-kÃ©pe1.png');
+INSERT INTO `kepek` (`ID`, `kep`, `kep_id`) VALUES
+(72, '1729331689221-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata (2', 1),
+(72, '1729331689224-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata (3', 2),
+(72, '1729331689227-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata.PN', 3),
+(72, '1729331689237-KÃ©pkivÃ¡gÃ¡s mÃ¡solata.PNG', 4),
+(74, '1729331739551-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata (2', 1),
+(74, '1729331739553-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata (3', 2),
+(74, '1729331739554-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata.PN', 3);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -132,7 +140,7 @@ ALTER TABLE `felhasznalok`
 -- AUTO_INCREMENT a táblához `hibabejelentesek`
 --
 ALTER TABLE `hibabejelentesek`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- Megkötések a kiírt táblákhoz
