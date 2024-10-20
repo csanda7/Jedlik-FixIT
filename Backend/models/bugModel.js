@@ -8,7 +8,7 @@ const getAllBugs = (callback) => {
 
 // Function to update assignedTo
 const updateAssignedTo = (id, assignedTo, callback) => {
-  const updateQuery = 'UPDATE hibabejelentesek SET assignedTo = ?, Updated_at = NOW() WHERE ID = ?';
+  const updateQuery = 'UPDATE hibabejelentesek SET assignedTo = ?, Updated_at = NOW(), Status = "Folyamatban"  WHERE ID = ?';
   connection.query(updateQuery, [assignedTo, id], callback);
 };
 

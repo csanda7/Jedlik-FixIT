@@ -1,37 +1,55 @@
 <template>
-  <div>
+  <div :class="{ 'dark-mode': isDarkMode }">
     <!-- Navbar is always visible at the top -->
-    <NavbarComponent class="navbar" />
+    <NavbarComponent @toggle-dark-mode="toggleDarkMode" />
     <div class="content">
-      <router-view/>
+      <router-view />
     </div>
   </div>
 </template>
 
 <script>
 import NavbarComponent from './components/NavbarComponent.vue';
-import FooterComponent from './components/FooterComponent.vue';
 
 export default {
   components: {
     NavbarComponent,
-    FooterComponent
+  },
+  data() {
+    return {
+      isDarkMode: false,
+    };
+  },
+  mounted() {
+    this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    window.addEventListener('theme-changed', this.updateTheme);
+  },
+  beforeDestroy() {
+    window.removeEventListener('theme-changed', this.updateTheme);
+  },
+  methods: {
+    updateTheme() {
+      this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    },
   }
-};
+};  
 </script>
 
 <style scoped>
-.navbar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000; /* Ensure the navbar is above other content */
-  background-color: white; /* Add background color to prevent overlapping content */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: adds shadow for better visibility */
+html, body {
+  height: 100%; /* Ensure html and body take full height */
+  margin: 0;
+}
+
+.dark-mode {
+  background-color: #222222; /* Dark mode background color */
+  color: white; /* Text color for dark mode */
+  min-height: 100vh; /* Ensure it takes full height */
 }
 
 .content {
-  margin-top: 18vh; /* Adjust margin to prevent content from being hidden under the navbar */
-  margin-bottom: 8vh; /* Adjust margin to prevent content from being hidden under the navbar */
+  flex: 1; /* Allow content to grow and fill the remaining space */
 }
+
+/* Other global styles can go here */
 </style>

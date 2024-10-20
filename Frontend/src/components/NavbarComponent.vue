@@ -1,9 +1,9 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+  <nav :class="['navbar', 'navbar-expand-lg', isDarkMode ? 'bg-dark-blue' : 'bg-primary']">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="">
         <img src="../assets/Jedlik_logo_2020_200_3c5beeccf8.png" alt="Jedlik FixIT Logo" style="max-height: 50px;" class="me-2">
-        <span class="text-white fw-bold fs-3">Jedlik FixIT</span>
+        <span :class="{ 'text-white': isDarkMode, 'text-dark': !isDarkMode }" class="fw-bold fs-3">Jedlik FixIT</span>
       </a>
       <button
         class="navbar-toggler"
@@ -52,6 +52,9 @@
           </li>
         </ul>
         <div class="d-lg-flex justify-content-lg-end col-lg-2 mt-lg-0 mt-3" v-if="isAuthenticated">
+          <button @click="toggleTheme" class="theme-toggle-btn">
+            {{ isDarkMode ? 'Light' : 'Dark' }} Mode
+          </button>
           <button class="btn btn-outline-light logout" @click="logout">
             KILÉPÉS <i class="bi bi-box-arrow-right"></i>
           </button>
@@ -61,10 +64,6 @@
   </nav>
 </template>
 
-
-
-
-
 <script>
 import { useAuthStore } from '../modules/AuthModule';
 import { RouterLink } from 'vue-router';
@@ -72,8 +71,14 @@ import { RouterLink } from 'vue-router';
 export default {
   name: 'NavbarComponent',
   components: {
-    RouterLink // Ensure router-link is available
+    RouterLink, // Ensure router-link is available
   },
+  data() {
+    return {
+      isDarkMode: localStorage.getItem('theme') === 'dark',
+    };
+  },
+  
   computed: {
     isAuthenticated() {
       const authStore = useAuthStore();
@@ -89,12 +94,17 @@ export default {
       const authStore = useAuthStore();
       authStore.logout(); // You would implement this method in AuthModule
       this.$router.push('/login'); // Redirect to login page on logout
+    },
+    toggleTheme() {
+      // Toggle the theme and update isDarkMode
+      this.isDarkMode = !this.isDarkMode;
+      localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light'); // Update local storage
+      document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light'); // Set the document theme
+      window.dispatchEvent(new Event('theme-changed')); // Dispatch a custom event
     }
   }
-};
+}
 </script>
-
-
 
 <style scoped>
 .navbar-brand {
@@ -149,4 +159,17 @@ export default {
   }
 }
 
+.theme-toggle-btn {
+  cursor: pointer;
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 5px;
+  background-color: #4285f4;
+  color: white;
+}
+
+/* Define the background color for dark mode */
+.bg-dark-blue {
+  background-color: #004080; /* Darker shade of blue */
+}
 </style>
