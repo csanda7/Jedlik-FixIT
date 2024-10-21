@@ -498,5 +498,10 @@ text-align: center;
   background-color: #555;
 }
 
-
+#bugName::placeholder{
+  color: rgb(168, 168, 168);
+}
+#bugDescription::placeholder{
+  color: rgb(168, 168, 168);
+}
 </style>
