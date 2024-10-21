@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div :class="['container', 'mt-5', isDarkMode ? 'dark-mode' : 'light-mode']">
     <div class="card p-4 shadow mx-auto" style="max-width: 600px;">
       <h1 class="text-center my-2">HIBA BEJELENTÉSE</h1>
 
@@ -10,18 +10,39 @@
 
       <div class="my-3">
         <label for="bugName" class="form-label">Hiba megnevezése <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" id="bugName" v-model="bugName" placeholder="Adja meg a hiba nevét röviden" required @input="setCookie('bugName', bugName)">
+        <input 
+          type="text" 
+          :class="['form-control', isDarkMode ? 'dark-textbox' : '']"
+          id="bugName" 
+          v-model="bugName" 
+          placeholder="Adja meg a hiba nevét röviden" 
+          required 
+          @input="setCookie('bugName', bugName)">
       </div>
 
       <div class="mb-3">
         <label for="bugDescription" class="form-label">Hiba leírása <span class="text-danger">*</span></label>
-        <textarea class="form-control" id="bugDescription" v-model="bugDescription" rows="3" placeholder="Adja meg a hiba leírását" maxlength="300" @input="adjustTextareaHeight($event); setCookie('bugDescription', bugDescription);" required></textarea>
+        <textarea 
+          :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 
+          id="bugDescription" 
+          v-model="bugDescription" 
+          rows="3" 
+          placeholder="Adja meg a hiba leírását" 
+          maxlength="300" 
+          @input="adjustTextareaHeight($event); setCookie('bugDescription', bugDescription);" 
+          required>
+        </textarea>
       </div>
 
-      <div class="row ">
+      <div class="row">
         <div class="col-md-6 my-1">
           <div class="dropdown">
-            <button class="btn dropdown-toggle w-100 my-2" style="border: 2px solid gray;" type="button" id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <button 
+              :class="['btn dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" 
+              type="button" 
+              id="locationDropdown" 
+              data-bs-toggle="dropdown" 
+              aria-expanded="false">
               {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="locationDropdown">
@@ -41,19 +62,24 @@
         <div class="col-sm-0 col-md-6"></div>
       </div>
       <div class="row ">
-        <div class="col-md-6 my-1">
-          <div class="dropdown">
-            <button class="btn dropdown-toggle w-100 my-2" style="border: 2px solid gray;" type="button" id="labelDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              {{ label || 'Címkék' }} <span class="text-danger" v-if="!label">*</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="labelDropdown">
-              <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Hardver')">Hardver</a></li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Szoftver')">Szoftver</a></li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Egyéb')">Egyéb</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+  <div class="col-md-6 my-1">
+    <div class="dropdown">
+      <button 
+        :class="['btn dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" 
+        type="button" 
+        id="labelDropdown" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false">
+        {{ label || 'Címkék' }} <span class="text-danger" v-if="!label">*</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="labelDropdown">
+        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Hardver')">Hardver</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Szoftver')">Szoftver</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Egyéb')">Egyéb</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
 
       <div class="row mx-0">
         <div class="col-md-6 my-3">
@@ -99,11 +125,20 @@ export default {
       showOtherLocation: false,
       otherLocation: this.getCookie('otherLocation') || '',
       showPopup: false, // State for the popup message
+      isDarkMode: false,
     };
   },
 
-
+  mounted() {
+    this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    window.addEventListener('theme-changed', this.updateTheme);
+  },
+  beforeDestroy() {
+    window.removeEventListener('theme-changed', this.updateTheme);
+  },
   methods: {
+
+    
     setCookie(name, value, days = 7) {
       const d = new Date();
       d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -148,6 +183,9 @@ export default {
       this.setCookie('location', '');
       this.setCookie('label', '');
       this.setCookie('otherLocation', '');
+    },
+    updateTheme() {
+      this.isDarkMode = localStorage.getItem('theme') === 'dark';
     },
     adjustTextareaHeight(event) {
       const textarea = event.target;
@@ -294,38 +332,7 @@ export default {
   text-align: left;
 }
 
-.priority-container {
-  display: flex;
-  align-items: center;
-}
 
-.priority-bar {
-  display: inline-block;
-  width: 50px;
-  height: 4px;
-  margin-right: 5px;
-}
-
-
-.priority-bar.darkgreen {
-  background-color: darkgreen;
-}
-
-.priority-bar.lightgreen {
-  background-color: lightgreen;
-}
-
-.priority-bar.yellow {
-  background-color: yellow;
-}
-
-.priority-bar.orange {
-  background-color: #ff8c00;
-}
-
-.priority-bar.red {
-  background-color: red;
-}
 
 .badge {
     display: inline-block;
@@ -447,6 +454,48 @@ text-align: center;
 .btn-secondary:hover {
   background-color: #4285f4;
   color: white;
+}
+
+.dropdown-toggle {
+  border: 1px solid black; /* Black border for dropdown button in light mode */
+}
+
+.dropdown-menu {
+  border: 1px solid black; /* Black border for dropdown menu */
+}
+
+
+/* General dark mode styles */
+.dark-mode {
+  background-color: #222;
+  color: white;
+}
+
+/* Dark mode textbox */
+.dark-textbox {
+  background-color: #444;
+  color: white;
+  border: 1px solid #777;
+}
+
+/* Dark mode dropdown */
+.dark-dropdown {
+  background-color: #444;
+  color: white;
+  border: 1px solid #777;
+}
+
+.dark-dropdown .dropdown-menu {
+  background-color: #444;
+  color: white;
+}
+
+.dark-dropdown .dropdown-item {
+  color: white;
+}
+
+.dark-dropdown .dropdown-item:hover {
+  background-color: #555;
 }
 
 

@@ -56,26 +56,35 @@
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
           </div>
           <div class="modal-body">
-            <div class="row">
-              <div class="col-md-4">
-                <p><strong>Prioritás:</strong> {{ selectedBug.priority }}</p>
-                <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-                <p><strong>Státusz:</strong> {{ selectedBug.status }}</p>
-                <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
-                <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-                <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-                <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
-              </div>
-              <div class="col-md-4 description">
-                <p><strong>Hiba leírása:</strong> {{ selectedBug.description }}</p>
-              </div>
-              <div class="col-md-4 photo_box">
-                <div id="bugCarousel" class="carousel slide" data-bs-ride="carousel">
-                  <!-- Add carousel items here for photos if applicable -->
-                </div>
-              </div>
-            </div>
-          </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="d-flex align-items-center mb-2">
+        <strong>Prioritás: </strong>
+        <div class="priority-container ms-2">
+          <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+          <span>{{ selectedBug.priority }}</span>
+        </div>
+      </div>
+      <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
+      <div class="d-flex align-items-center mb-2">
+        <strong>Státusz: </strong>
+        <span :class="['badge', selectedBug.badgeClass,'ms-2',  { 'dark-mode': isDarkMode }] ">{{ selectedBug.status }}</span>
+      </div>
+      <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
+      <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+      <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+      <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
+    </div>
+    <div class="col-md-4 description">
+      <p><strong>Hiba leírása:</strong> {{ selectedBug.description }}</p>
+    </div>
+    <div class="col-md-4 photo_box">
+      <div id="bugCarousel" class="carousel slide" data-bs-ride="carousel">
+        <!-- Add carousel items here for photos if applicable -->
+      </div>
+    </div>
+  </div>
+</div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary mx-1" v-if="!selectedBug.assignedTo" @click="takeTask">Elvállalom</button>
             <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
@@ -270,7 +279,7 @@ export default {
 
 .badge-reported { background-color: #f7a611; color: #ffffff; }
 .badge-done { background-color: #35b821; color: #ffffff; }
-.badge-progress { background-color: #2850a7; color: #ffffff; }
+.badge-progress { background-color: #4169E1; color: #ffffff; }
 
 .table tbody td.status-column {
   width: 150px;
@@ -294,7 +303,7 @@ export default {
 .modal-content {
   background: white;
   padding: 2rem;
-  border-radius: 5vh;
+  border-radius: 2vh;
   max-width: 70vw;
   min-width: 80vw;
   width: 100%;
@@ -402,7 +411,7 @@ export default {
 
 .dark-mode .badge-reported { background-color: #f7a611; color: #ffffff; }
 .dark-mode .badge-done { background-color: #35b821; color: #ffffff; }
-.dark-mode .badge-progress { background-color: #2850a7; color: #ffffff; }
+.dark-mode .badge-progress { background-color: #4169E1; color: #ffffff; }
 
 /* Adjust hover effect for table rows in dark mode */
 .dark-mode .table tbody tr:hover {
@@ -423,15 +432,16 @@ export default {
 .dark-mode .modal-content {
   background-color: #444; /* Dark background for modal */
   color: white; /* Text color for modal */
+  border-radius: 2vh;
 }
 
 .dark-mode .modal-header {
-  background-color: #555; /* Header background for modal */
+  background-color: #444; /* Header background for modal */
   color: white; /* Text color for modal header */
 }
 
 .dark-mode .modal-footer {
-  background-color: #555; /* Footer background for modal */
+  background-color: #444; /* Footer background for modal */
   color: white; /* Text color for modal footer */
 }
 
@@ -471,6 +481,16 @@ export default {
 /* Change the line between the data and the headers to grey in dark mode */
 .dark-mode .table thead th {
   border-bottom: 1px solid grey; /* Grey border for the header */
+}
+
+.dark-mode .search-input {
+  background-color: #A9A9A9; /* Light gray background */
+  color: white; /* White text */
+  border-color: black; /* Keep the same blue border */
+}
+
+.dark-mode .search-input::placeholder {
+  color: white; /* Make placeholder text white as well */
 }
 
 

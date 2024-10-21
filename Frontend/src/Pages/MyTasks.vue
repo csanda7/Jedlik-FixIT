@@ -51,22 +51,31 @@
     </div>
 
     <!-- Modal -->
-<div v-if="showModal" class="modal-overlay" @click="closeModal">
-  <div class="bg" @click.stop>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">{{ selectedBug.name }}</h3>
-      </div>
-      <div class="modal-body">
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+      <div class="bg" @click.stop>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">{{ selectedBug.name }}</h3>
+          </div>
+          <div class="modal-body">
   <div class="row">
     <div class="col-md-4">
-      <p><strong>Prioritás:</strong> {{ selectedBug.priority }}</p>
+      <div class="d-flex align-items-center mb-2">
+        <strong>Prioritás: </strong>
+        <div class="priority-container ms-2">
+          <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+          <span>{{ selectedBug.priority }}</span>
+        </div>
+      </div>
       <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-      <p><strong>Státusz:</strong> {{ selectedBug.status }}</p>
+      <div class="d-flex align-items-center mb-2">
+        <strong>Státusz: </strong>
+        <span :class="['badge', selectedBug.badgeClass,'ms-2',  { 'dark-mode': isDarkMode }] ">{{ selectedBug.status }}</span>
+      </div>
       <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
       <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
       <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-      <p><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
+      <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
     </div>
     <div class="col-md-4 description">
       <p><strong>Hiba leírása:</strong> {{ selectedBug.description }}</p>
@@ -78,15 +87,13 @@
     </div>
   </div>
 </div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
-</div>
-
-
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary mx-1" v-if="!selectedBug.assignedTo" @click="takeTask">Elvállalom</button>
+            <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
   </div>
 </template>
 
