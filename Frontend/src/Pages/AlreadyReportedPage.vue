@@ -382,10 +382,16 @@ export default {
   color: white;
 }
 
+html, body {
+  height: 100%; /* Ensure html and body take full height */
+  margin: 0;
+  overflow: hidden; /* Prevent scroll in dark mode */
+}
 
 .dark-mode {
   background-color: black; /* Set background color to black */
   color: white; /* Set default text color to white */
+  overflow: hidden; /* Prevent scroll in dark mode */
 }
 
 .dark-mode .card {

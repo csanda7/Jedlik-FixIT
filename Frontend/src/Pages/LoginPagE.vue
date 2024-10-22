@@ -86,8 +86,6 @@ export default {
 
 <style scoped>
 
-
-
 .login-container {
   position: absolute;
   top: 50%;
@@ -100,28 +98,15 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.bg::before{
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('../assets/Jedlik_logo_2020_200_3c5beeccf8.png'); /* Replace with your image path */
-  background-size: contain; /* Ensures the image scales to fit the container */
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  opacity: 0.07; /* Set the opacity of the image */
-  z-index: -1;
-}
+
+/* Removed the background logo */
+
+/* Responsive styles */
 @media (max-width: 400px) {
   .bg::before {
-    max-width: 100%; /* Ensure the image fills the screen on smaller devices */
+    max-width: 100%;
   }
 }
-
-
 
 .login-box {
   border-radius: 10px;
@@ -148,15 +133,8 @@ export default {
 
 .btn:hover {
   background-color: #ffffff;
-  color:rgb(0, 0, 86);
+  color: rgb(0, 0, 86);
 }
-
-
-@media (max-width: 400px) {
-  .bg::before {
-    max-width: 100%;
-  }
-}
-
 
 </style>
+
