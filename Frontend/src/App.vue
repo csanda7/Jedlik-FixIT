@@ -36,11 +36,7 @@ export default {
 </script>
 
 <style scoped>
-html, body {
-  height: 100%; /* Ensure html and body take full height */
-  margin: 0;
-  overflow: hidden; /* Prevent scroll in dark mode */
-}
+
 
 .dark-mode {
   background-color: #222222; /* Dark mode background color */
@@ -56,5 +52,4 @@ html, body {
   overflow: auto; /* Allow scrolling within content if needed */
 }
 
-/* Other global styles can go here */
 </style>

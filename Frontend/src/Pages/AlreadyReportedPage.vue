@@ -63,8 +63,37 @@
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
           </div>
           <div class="modal-body">
-            <!-- Modal content -->
-          </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="d-flex align-items-center mb-2">
+        <strong>Prioritás: </strong>
+        <div v-if="selectedBug.priority === 0"  class="ms-2">Nincs prioritás</div>
+        <div v-else class="priority-container ms-2">
+      <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+      <span>{{ selectedBug.priority }}</span>
+      </div>
+
+      </div>
+      <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
+      <div class="d-flex align-items-center mb-2">
+        <strong>Státusz: </strong>
+        <span :class="['badge', selectedBug.badgeClass,'ms-2',  { 'dark-mode': isDarkMode }] ">{{ selectedBug.status }}</span>
+      </div>
+      <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
+      <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+      <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+      <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
+    </div>
+    <div class="col-md-4 description">
+      <p><strong>Hiba leírása:</strong> {{ selectedBug.description }}</p>
+    </div>
+    <div class="col-md-4 photo_box">
+      <div id="bugCarousel" class="carousel slide" data-bs-ride="carousel">
+        <!-- Add carousel items here for photos if applicable -->
+      </div>
+    </div>
+  </div>
+</div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
           </div>
@@ -205,6 +234,14 @@ export default {
 
 
 <style>
+html,
+body {
+  height: 100%;
+  /* Ensure html and body take full height */
+  margin: 0;
+  overflow: hidden;
+  /* Prevent scroll in dark mode */
+}
 .reported-bugs-container {
   max-width: 900px;
   margin: 0 auto;
@@ -401,23 +438,9 @@ export default {
   color: white;
 }
 
-html,
-body {
-  height: 100%;
-  /* Ensure html and body take full height */
-  margin: 0;
-  overflow: hidden;
-  /* Prevent scroll in dark mode */
-}
 
-.dark-mode {
-  background-color: black;
-  /* Set background color to black */
-  color: white;
-  /* Set default text color to white */
-  overflow: hidden;
-  /* Prevent scroll in dark mode */
-}
+
+
 
 .dark-mode .card {
   background-color: #333;
@@ -441,7 +464,7 @@ body {
 }
 
 .dark-mode .table tbody {
-  background-color: #222;
+  background-color: #222 ;
   /* Set tbody background color for dark mode */
 }
 
@@ -577,18 +600,40 @@ body {
   /* Make placeholder text white as well */
 }
 
-.tooltip-custom {
+.alert {
   position: absolute;
-  background-color: #fcc9137f;
-  color: #000000;
+  background-color: #fcc913; /* Background color for light mode */
+  color: #000000; /* Text color for light mode */
   padding: 8px;
   border-radius: 4px;
   top: -3.5rem; /* Adjust according to your layout */
-  left: 0; /* Adjust according to your layout */
+  left: 50%; /* Center the tooltip */
+  transform: translateX(-50%); /* Ensure centering */
   z-index: 1000;
   white-space: nowrap;
   font-size: 14px;
+  text-align: center; /* Center the text */
 }
+.dark-mode .tooltip-custom {
+  background-color: rgba(255, 0, 0) !important; /* Use a bright color for testing */
+  color: #ffffff; /* Text color for dark mode */
+  fill: #ffffff;
+  padding: 8px;
+  border-radius: 4px;
+  top: -3.5rem; /* Adjust positioning if necessary */
+  left: 50%; /* Center the tooltip */
+  transform: translateX(-50%); /* Center horizontally */
+  z-index: 2000; /* Very high z-index to bring it above other elements */
+  white-space: nowrap;
+  font-size: 14px;
+  text-align: center; /* Center the text */
+  
+}
+
+
+
+
+
 
 
 </style>

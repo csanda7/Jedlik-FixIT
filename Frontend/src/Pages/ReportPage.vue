@@ -1,7 +1,7 @@
 <template>
   <div :class="['container', 'mt-5', isDarkMode ? 'dark-mode' : 'light-mode']">
     <div class="card p-4 shadow mx-auto" style="max-width: 600px;">
-      <h1 class="text-center my-2">HIBA BEJELENTÉSE</h1>
+     <div> <h1 class="text-center my-2">HIBA BEJELENTÉSE</h1></div>
 
       <!-- Pop-Up Message -->
       <div v-if="showPopup" class="alert alert-danger" role="alert">
@@ -55,32 +55,32 @@
         </div>
       </div>
 
-      <div class="row ">
+      <div class="row">
         <div v-if="showOtherLocation" class="col-sm-12 col-md-6 my-3 mt-0">
-  <input type="text" :class="['form-control border-secondary', isDarkMode ? 'dark-textbox' : '']" id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt" 
-    @input="setCookie('otherLocation', otherLocation)">
-    </div>
-
+          <input type="text" :class="['form-control border-secondary', isDarkMode ? 'dark-textbox' : '']" id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt" 
+            @input="setCookie('otherLocation', otherLocation)">
+        </div>
       </div>
-      <div class="row ">
-  <div class="col-md-6 my-1">
-    <div class="dropdown">
-      <button 
-        :class="['btn dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" 
-        type="button" 
-        id="labelDropdown" 
-        data-bs-toggle="dropdown" 
-        aria-expanded="false">
-        {{ label || 'Címkék' }} <span class="text-danger" v-if="!label">*</span>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="labelDropdown">
-        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Hardver')">Hardver</a></li>
-        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Szoftver')">Szoftver</a></li>
-        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Egyéb')">Egyéb</a></li>
-      </ul>
-    </div>
-  </div>
-</div>
+
+      <div class="row">
+        <div class="col-md-6 my-1">
+          <div class="dropdown">
+            <button 
+              :class="['btn dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" 
+              type="button" 
+              id="labelDropdown" 
+              data-bs-toggle="dropdown" 
+              aria-expanded="false">
+              {{ label || 'Címkék' }} <span class="text-danger" v-if="!label">*</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="labelDropdown">
+              <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Hardver')">Hardver</a></li>
+              <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Szoftver')">Szoftver</a></li>
+              <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Egyéb')">Egyéb</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
       <div class="row mx-0">
         <div class="col-md-6 my-3">
@@ -110,6 +110,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -276,6 +277,9 @@ export default {
   max-width: 600px;
   margin: 0 auto;
 }
+.alert-danger {
+  margin-top: 0rem;
+}
 
 .form-range {
   width: 100%;
@@ -290,10 +294,6 @@ export default {
   background-color: #6c757d;
 }
 
-.reported-bugs-container {
-  max-width: 900px;
-  margin: 0 auto;
-}
 
 .h2 {
   color: rgb(59, 59, 59);
@@ -335,113 +335,14 @@ export default {
 
 
 
-.badge {
-    display: inline-block;
-    width: 120px;
-    text-align: center;
-    padding: 0.5rem 0.5rem;
-    font-size: 0.9rem;
-    font-weight: bold;
-    border-radius: 0.5rem;
-}
-
-.badge-reported {
-  background-color: #f7a611;
-  color: #ffffff;
-}
-
-.badge-done {
-  background-color: #35b821;
-  color: #ffffff;
-}
-
-.badge-progress {
-  background-color: #2850a7; /* Green */
-  color: #ffffff;
-}
 
 .table tbody td.status-column {
 width: 150px;
 text-align: center;
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  max-width: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  /* Dark background overlay */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 5vh;
-  max-width: 70vw;
-  min-width: 80vw;
-  width: 100%;
-
-  z-index: 1000;
-}
-.modal_photo{
-  max-width: fit-content;
-  max-height: fit-content;
-  width: 80%;
-  height: 80%;
-  
-}
-.photo_box{
-  display: flex;
-  justify-content: center; 
-  align-items: center; 
-  height: 100%; 
-}
-
-.carousel-item{
-  max-width: fit-content;
-  max-height: fit-content;
-  margin: 2%;
-  object-fit: contain;  /* Maintain aspect ratio and contain within the box */
-  width: 100%;  /* Take full width */
-  height: 25vh /* Fixed height */
-}
 
 
-
-
-.modal-title {
-  padding-bottom: 1em;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.bg {
-  background-color: rgb(255, 255, 255);
-  z-index: 500;
-  border-radius: 5vh;
-}
-
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.modal-footer {
-  text-align: right;
-}
 
 .btn-secondary {
   background-color: #636363;

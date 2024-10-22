@@ -2,7 +2,7 @@
   <div class="reported-bugs-container container mt-5">
     <div class="card shadow-sm">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <h2 class="mb-0 h2">BEJELENTETT HIBÁK</h2>
+        <h2 class="mb-0 h2">Feladataim</h2>
         <div class="user-actions d-flex">
           <input type="text" class="form-control search-input me-3" placeholder="Keresés..." />
           <i class="fas fa-filter filter-icon"></i>
@@ -50,7 +50,6 @@
       </div>
     </div>
 
-    <!-- Modal -->
     <div v-if="showModal" class="modal-overlay" @click="closeModal">
       <div class="bg" @click.stop>
         <div class="modal-content">
@@ -60,30 +59,25 @@
           <div class="modal-body">
   <div class="row">
     <div class="col-md-4">
-  <div class="d-flex align-items-center mb-2">
-    <strong>Prioritás: </strong>
-    <div class="ms-2">
-      <template v-if="selectedBug.priority === 0">
-        Nincs prioritás
-      </template>
-      <template v-else>
-        <div class="priority-container">
-          <span :class="['priority-bar', selectedBug.priorityColor]"></span>
-          <span>{{ selectedBug.priority }}</span>
-        </div>
-      </template>
+      <div class="d-flex align-items-center mb-2">
+        <strong>Prioritás: </strong>
+        <div v-if="selectedBug.priority === 0"  class="ms-2">Nincs prioritás</div>
+        <div v-else class="priority-container ms-2">
+      <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+      <span>{{ selectedBug.priority }}</span>
+      </div>
+
+      </div>
+      <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
+      <div class="d-flex align-items-center mb-2">
+        <strong>Státusz: </strong>
+        <span :class="['badge', selectedBug.badgeClass,'ms-2',  { 'dark-mode': isDarkMode }] ">{{ selectedBug.status }}</span>
+      </div>
+      <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
+      <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+      <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+      <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
     </div>
-  </div>
-  <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-  <div class="d-flex align-items-center mb-2">
-    <strong>Státusz: </strong>
-    <span :class="['badge', selectedBug.badgeClass,'ms-2', { 'dark-mode': isDarkMode }]">{{ selectedBug.status }}</span>
-  </div>
-  <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
-  <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-  <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-  <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
-</div>
     <div class="col-md-4 description">
       <p><strong>Hiba leírása:</strong> {{ selectedBug.description }}</p>
     </div>
@@ -95,7 +89,6 @@
   </div>
 </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary mx-1" v-if="!selectedBug.assignedTo" @click="takeTask">Elvállalom</button>
             <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
           </div>
         </div>
