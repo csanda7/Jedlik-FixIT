@@ -274,7 +274,31 @@ export default {
   color: #cecece;
 }
 
+/* Dark Mode */
+.dark-mode .nav-link {
+  color: #cecece;
+  border-radius: 5px;
+  transition: background-color 0.5s ease, color 0.5s ease, border-radius 0.5s ease, border 0.5s ease;
+  border: 2px solid transparent; /* Default border set to transparent */
+}
 
+.dark-mode .nav-link.active-link {
+  background-color: #212121; /* Dark background for active link in dark mode */
+  color: white; 
+  border-radius: 5px;
+}
+
+.dark-mode .nav-item:hover .nav-link {
+  background-color: #333; /* Dark background on hover in dark mode */
+  color: white;
+  border-radius: 5px;
+}
+
+.dark-mode .nav-item:hover .nav-link.active-link {
+  background-color: #333; /* Darker background for active link on hover in dark mode */
+  color: white;
+  border-radius: 5px;
+}
 
 
 </style>

@@ -57,9 +57,10 @@
 
       <div class="row ">
         <div v-if="showOtherLocation" class="col-sm-12 col-md-6 my-3 mt-0">
-          <input type="text" class="form-control border-secondary" id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt" @input="setCookie('otherLocation', otherLocation)">
-        </div>
-        <div class="col-sm-0 col-md-6"></div>
+  <input type="text" :class="['form-control border-secondary', isDarkMode ? 'dark-textbox' : '']" id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt" 
+    @input="setCookie('otherLocation', otherLocation)">
+    </div>
+
       </div>
       <div class="row ">
   <div class="col-md-6 my-1">
@@ -466,10 +467,7 @@ text-align: center;
 
 
 /* General dark mode styles */
-.dark-mode {
-  background-color: #222;
-  color: white;
-}
+
 
 /* Dark mode textbox */
 .dark-textbox {
@@ -485,18 +483,10 @@ text-align: center;
   border: 1px solid #777;
 }
 
-.dark-dropdown .dropdown-menu {
-  background-color: #444;
-  color: white;
-}
-
-.dark-dropdown .dropdown-item {
-  color: white;
-}
-
 .dark-dropdown .dropdown-item:hover {
   background-color: #555;
 }
+
 
 #bugName::placeholder{
   color: rgb(168, 168, 168);
@@ -504,4 +494,8 @@ text-align: center;
 #bugDescription::placeholder{
   color: rgb(168, 168, 168);
 }
+#otherLocation::placeholder{
+  color: rgb(168, 168, 168);
+}
+
 </style>

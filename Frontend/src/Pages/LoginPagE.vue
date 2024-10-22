@@ -1,4 +1,5 @@
 <template>
+<div :class="{'bg': true, 'dark-mode': isDarkMode}">
 <div class="bg">
 <div class="login-container container d-flex justify-content-center align-items-center vh-100">
   <div class="login-box card p-4 shadow-sm" style="max-width: 400px; width: 100%;">
@@ -31,6 +32,7 @@
   </div>
 </div>
 </div>
+</div>
 </template>
 
 <script>
@@ -42,8 +44,16 @@ export default {
     return {
       username: '',
       password: '',
-      loginError: false
+      loginError: false,
+      isDarkMode: false,
     };
+  },
+  mounted() {
+    this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    window.addEventListener('theme-changed', this.updateTheme);
+  },
+  beforeDestroy() {
+    window.removeEventListener('theme-changed', this.updateTheme);
   },
   methods: {
     async handleLogin() {
@@ -66,9 +76,12 @@ export default {
         console.error("Login failed", error);
         this.loginError = true;
       }
-    }
-  }
-};
+    },  },
+    updateTheme() {
+      this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    },
+    
+  };
 </script>
 
 <style scoped>
@@ -136,6 +149,13 @@ export default {
 .btn:hover {
   background-color: #ffffff;
   color:rgb(0, 0, 86);
+}
+
+
+@media (max-width: 400px) {
+  .bg::before {
+    max-width: 100%;
+  }
 }
 
 

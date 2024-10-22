@@ -19,7 +19,7 @@
                 <th>Státusz</th>
                 <th>Terem</th>
                 <th>Bejelentette</th>
-                <th>Bejelntés ideje</th>
+                <th>Bejelentés ideje</th>
               </tr>
             </thead>
             <tbody>
@@ -27,7 +27,7 @@
     <td>{{ bug.name }}</td>
     <td>
       <div v-if="bug.priority === 0">
-        Nincs megadva prioritás
+        Nincs prioritás
       </div>
       <div v-else class="priority-container">
         <span :class="['priority-bar', bug.priorityColor]"></span>
@@ -60,23 +60,30 @@
           <div class="modal-body">
   <div class="row">
     <div class="col-md-4">
-      <div class="d-flex align-items-center mb-2">
-        <strong>Prioritás: </strong>
-        <div class="priority-container ms-2">
+  <div class="d-flex align-items-center mb-2">
+    <strong>Prioritás: </strong>
+    <div class="ms-2">
+      <template v-if="selectedBug.priority === 0">
+        Nincs prioritás
+      </template>
+      <template v-else>
+        <div class="priority-container">
           <span :class="['priority-bar', selectedBug.priorityColor]"></span>
           <span>{{ selectedBug.priority }}</span>
         </div>
-      </div>
-      <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-      <div class="d-flex align-items-center mb-2">
-        <strong>Státusz: </strong>
-        <span :class="['badge', selectedBug.badgeClass,'ms-2',  { 'dark-mode': isDarkMode }] ">{{ selectedBug.status }}</span>
-      </div>
-      <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
-      <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-      <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-      <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
+      </template>
     </div>
+  </div>
+  <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
+  <div class="d-flex align-items-center mb-2">
+    <strong>Státusz: </strong>
+    <span :class="['badge', selectedBug.badgeClass,'ms-2', { 'dark-mode': isDarkMode }]">{{ selectedBug.status }}</span>
+  </div>
+  <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
+  <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+  <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+  <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
+</div>
     <div class="col-md-4 description">
       <p><strong>Hiba leírása:</strong> {{ selectedBug.description }}</p>
     </div>
