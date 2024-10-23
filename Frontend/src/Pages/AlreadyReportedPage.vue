@@ -67,34 +67,40 @@
     <div class="col-md-4">
       <div class="d-flex align-items-center mb-2">
         <strong>Prioritás: </strong>
-        <div v-if="selectedBug.priority === 0"  class="ms-2">Nincs prioritás</div>
-        <div v-else class="priority-container ms-2">
-      <span :class="['priority-bar', selectedBug.priorityColor]"></span>
-      <span>{{ selectedBug.priority }}</span>
-      </div>
-
+        <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
+        <div v-else class="priority-container ms-2 my-1">
+          <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+          <span>{{ selectedBug.priority }}</span>
+        </div>
       </div>
       <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-      <div class="d-flex align-items-center mb-2">
+      <div class="d-flex align-items-center mb-2 my-1">
         <strong>Státusz: </strong>
-        <span :class="['badge', selectedBug.badgeClass,'ms-2',  { 'dark-mode': isDarkMode }] ">{{ selectedBug.status }}</span>
+        <span :class="['badge', selectedBug.badgeClass, 'ms-2', { 'dark-mode': isDarkMode }]">{{ selectedBug.status }}</span>
       </div>
-      <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
-      <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-      <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-      <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
+      <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
+      <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+      <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+      <p class="my-3" v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
     </div>
     <div class="col-md-4 description">
-      <p><strong>Hiba leírása:</strong> {{ selectedBug.description }}</p>
+      <p><strong>Hiba leírása:</strong></p>
+      <div class="description-content">{{ selectedBug.description }}</div>
     </div>
     <div class="col-md-4 photo_box">
-      <div id="bugCarousel" class="carousel slide" data-bs-ride="carousel">
-        <!-- Add carousel items here for photos if applicable -->
+      <div class="photo-grid">
+        <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
+          <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+
+
           <div class="modal-footer">
+            <button type="button" class="btn btn-primary mx-1" v-if="selectedBug.assignedTo == null" @click="takeTask">Elvállalom</button>
             <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
           </div>
         </div>
@@ -166,32 +172,39 @@ export default {
   },
   methods: {
     async fetchBugs() {
-      try {
-        const response = await fetch('http://localhost:4500/api/hibakKiir');
-        if (!response.ok) throw new Error('Network response was not ok');
+  try {
+    const response = await fetch('http://localhost:4500/api/hibakKiir');
+    if (!response.ok) throw new Error('Network response was not ok');
 
-        const data = await response.json();
+    const data = await response.json();
 
-        this.bugs = data.map(bug => ({
-          id: bug.ID,
-          name: bug['Hiba neve'],
-          priority: bug['Prioritás'],
-          priorityColor: this.getPriorityColor(bug['Prioritás']),
-          label: bug['Címke'],
-          status: bug['Státusz'],
-          badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
-            bug['Státusz'] === 'Kész' ? 'badge-done' :
-              bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : '',
-          room: bug['Terem'],
-          reportedBy: bug['Bejelentette'],
-          reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
-          assignedTo: bug['assignedTo'],
-          description: bug['Hiba leírása']
-        }));
-      } catch (error) {
-        console.error('Error fetching bug data:', error);
-      }
-    },
+    this.bugs = data.map(bug => ({
+      id: bug.ID,
+      name: bug['Hiba neve'],
+      priority: bug['Prioritás'],
+      priorityColor: this.getPriorityColor(bug['Prioritás']),
+      label: bug['Címke'],
+      status: bug['Státusz'],
+      badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
+        bug['Státusz'] === 'Kész' ? 'badge-done' :
+        bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : '',
+      room: bug['Terem'],
+      reportedBy: bug['Bejelentette'],
+      reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
+      assignedTo: bug['assignedTo'],
+      description: bug['Hiba leírása'],
+      photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format
+    }));
+  } catch (error) {
+    console.error('Error fetching bug data:', error);
+  }
+},
+
+openPhoto(photo) {
+    // Logic to open a larger view of the image
+    const imgWindow = window.open(photo, '_blank');
+    imgWindow.focus(); // Focus on the new window
+  },
     sortBy(key) {
       if (this.sortKey === key) {
         // If the same column is clicked, toggle the sort order
@@ -204,6 +217,7 @@ export default {
     },
     toggleTooltip() {
       this.showTooltip = true;
+      console.log("Button clicked to toggle tooltip"); // Debugging log
       setTimeout(() => {
         this.showTooltip = false; // Hide the tooltip after a few seconds
       }, 7000); // Tooltip disappears after 7 seconds
@@ -227,6 +241,14 @@ export default {
     },
     closeModal() {
       this.showModal = false;
+    },
+    takeTask() {
+      const username = sessionStorage.getItem('username');
+      if (!username) {
+        alert('No user logged in');
+        return;
+      }
+      this.selectedBug.assignedTo = username;
     }
   }
 };
@@ -234,33 +256,10 @@ export default {
 
 
 <style>
-html,
-body {
-  height: 100%;
-  /* Ensure html and body take full height */
-  margin: 0;
-  overflow: hidden;
-  /* Prevent scroll in dark mode */
-}
+
 .reported-bugs-container {
   max-width: 900px;
   margin: 0 auto;
-}
-
-.h2 {
-  color: rgb(59, 59, 59);
-  padding: 0.5em;
-}
-
-.card-header {
-  background-color: #f93943;
-  color: white;
-  padding: 1.2rem;
-  border-bottom: none;
-}
-
-.card-header h1 {
-  margin-left: -10px;
 }
 
 .search-input {
@@ -371,12 +370,48 @@ body {
   z-index: 1000;
 }
 
-.modal_photo {
-  max-width: fit-content;
-  max-height: fit-content;
-  width: 80%;
-  height: 80%;
+.description {
+  max-width: 100%; /* Ensure it takes full width of the column */
+  height: auto; /* Let it grow automatically */
+  overflow: hidden; /* Prevent overflow */
+  word-wrap: break-word; /* Break long words if necessary */
 }
+
+.description-content {
+  padding: 0.5rem; /* Add some padding for aesthetics */
+  white-space: normal; /* Allow text to wrap onto new lines */
+}
+
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 10px; /* Space between photos */
+ 
+  margin-bottom: 2rem;
+}
+
+.photo-item {
+  cursor: pointer; /* Indicate that the item is clickable */
+}
+
+.photo-item img {
+  width: 120px; /* Make the image take the full width of the item */
+  height: 120px; /* Maintain aspect ratio */
+  border-radius: 0.5rem; /* Optional: Rounded corners */
+}
+
+.image-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none !important; /* Remove the border */
+  box-shadow: none !important; /* Remove any shadow */
+  padding: 0 !important; /* Ensure no padding */
+  margin: 0; /* Make sure there is no margin */
+  background-color: transparent; /* Remove background color */
+}
+
 
 .photo_box {
   display: flex;
@@ -407,47 +442,28 @@ body {
   align-items: center;
 }
 
-.bg {
-  background-color: rgb(255, 255, 255);
-  z-index: 500;
-  border-radius: 5vh;
-}
-
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
 .modal-footer {
   text-align: right;
 }
 
-.btn-secondary {
-  background-color: #636363;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.tooltip-custom {
+  position: absolute;
+  background-color: #fcc913; /* Background color for light mode */
+  color: #000000; /* Text color for light mode */
+  padding: 8px;
+  border-radius: 4px;
+  top: -3.5rem; /* Adjust according to your layout */
+  left: 50%; /* Center the tooltip */
+  transform: translateX(-50%); /* Ensure centering */
+  z-index: 1000;
+  white-space: nowrap;
+  font-size: 14px;
+  text-align: center; /* Center the text */
 }
 
-.btn-secondary:hover {
-  background-color: #4285f4;
-  color: white;
-}
 
+/* DARK MODE */
 
-
-
-
-.dark-mode .card {
-  background-color: #333;
-  /* Card background for dark mode */
-  color: white;
-  /* Text color inside card */
-}
 
 .dark-mode .table {
   background-color: #222;
@@ -538,28 +554,6 @@ body {
   /* Text color for modal footer */
 }
 
-/* Dark mode button styles */
-.dark-mode .btn-primary {
-  background-color: #007bff;
-  /* Keep primary button color */
-  border-color: #007bff;
-  /* Border color for primary button */
-}
-
-.dark-mode .btn-secondary {
-  background-color: #636363;
-  /* Dark mode secondary button color */
-  color: white;
-  /* Text color for secondary button */
-}
-
-.dark-mode .btn-secondary:hover {
-  background-color: #4285f4;
-  /* Change hover color for secondary button */
-  color: white;
-  /* Text color on hover */
-}
-
 
 /* Change the line between the data and the headers to grey in dark mode */
 .dark-mode .table thead th {
@@ -599,41 +593,5 @@ body {
   color: white;
   /* Make placeholder text white as well */
 }
-
-.alert {
-  position: absolute;
-  background-color: #fcc913; /* Background color for light mode */
-  color: #000000; /* Text color for light mode */
-  padding: 8px;
-  border-radius: 4px;
-  top: -3.5rem; /* Adjust according to your layout */
-  left: 50%; /* Center the tooltip */
-  transform: translateX(-50%); /* Ensure centering */
-  z-index: 1000;
-  white-space: nowrap;
-  font-size: 14px;
-  text-align: center; /* Center the text */
-}
-.dark-mode .tooltip-custom {
-  background-color: rgba(255, 0, 0) !important; /* Use a bright color for testing */
-  color: #ffffff; /* Text color for dark mode */
-  fill: #ffffff;
-  padding: 8px;
-  border-radius: 4px;
-  top: -3.5rem; /* Adjust positioning if necessary */
-  left: 50%; /* Center the tooltip */
-  transform: translateX(-50%); /* Center horizontally */
-  z-index: 2000; /* Very high z-index to bring it above other elements */
-  white-space: nowrap;
-  font-size: 14px;
-  text-align: center; /* Center the text */
-  
-}
-
-
-
-
-
-
 
 </style>

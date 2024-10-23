@@ -177,77 +177,32 @@ export default {
 
 
 <style>
-.reported-bugs-container {
-  max-width: 900px;
-  margin: 0 auto; /* Center align */
+.dark-mode .card {
+  background-color: #333;
+  /* Card background for dark mode */
+  color: white;
+  /* Text color inside card */
+}
+/* Dark mode button styles */
+.dark-mode .btn-primary {
+  background-color: #007bff;
+  /* Keep primary button color */
+  border-color: #007bff;
+  /* Border color for primary button */
 }
 
-.card-header {
+.dark-mode .btn-secondary {
+  background-color: #636363;
+  /* Dark mode secondary button color */
+  color: white;
+  /* Text color for secondary button */
+}
+
+.dark-mode .btn-secondary:hover {
   background-color: #4285f4;
-  color: rgb(255, 255, 255);
-  padding: 1.2rem;
-  border-bottom: none;
-}
-
-.search-input {
-  width: 200px;
-}
-
-.filter-icon {
-  font-size: 1.5rem;
-  color: #4285f4;
-}
-
-.table thead th {
-  background-color: #f8f9fa;
-  font-weight: bold;
-  text-align: left;
-}
-
-.priority-container {
-  display: flex;
-  align-items: center;
-}
-
-.priority-bar {
-  display: inline-block;
-  width: 50px;
-  height: 4px;
-  margin-right: 5px;
-}
-
-.priority-bar.yellow {
-  background-color: #ffc107;
-}
-
-.priority-bar.red {
-  background-color: #dc3545;
-}
-
-.badge {
-  padding: 0.5rem 1rem;
-  font-size: 0.8rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-}
-
-.badge-hardware {
-  background-color: #9757f8;
-  color: #ffffff;
-}
-
-.badge-software {
-  background-color: #ffa73e;
-  color: #ffffff;
-}
-
-.btn-primary {
-  background-color: #4285f4;
-  border-color: #4285f4;
-}
-
-.btn-primary:hover {
-  background-color: #356cc1;
+  /* Change hover color for secondary button */
+  color: white;
+  /* Text color on hover */
 }
 
 

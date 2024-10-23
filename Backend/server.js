@@ -37,6 +37,7 @@ app.use(authRoutes);
 app.use('/api/bugReport', bugReportController);
 app.use('/api/hibakKiir', hibakKiirRoutes);
 app.use('/api', hibaFelvetel);
+app.use('/uploads', express.static(path.join(__dirname, '../uploads'))); // Adjust to your actual path
 
 // Start the server
 const PORT = 4500;

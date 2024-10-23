@@ -119,21 +119,9 @@ export default {
   color: #343a40;
 }
 
-.form-control {
-  height: 45px;
-  font-size: 1rem;
-}
-
-.btn {
-  padding: 10px;
-  font-size: 1.1rem;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: #ffffff;
-  color: rgb(0, 0, 86);
+.dark-mode .login-box {
+  border-radius: 10px;
+  background-color: white
 }
 
 </style>

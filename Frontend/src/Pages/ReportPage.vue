@@ -1,7 +1,7 @@
 <template>
   <div :class="['container', 'mt-5', isDarkMode ? 'dark-mode' : 'light-mode']">
     <div class="card p-4 shadow mx-auto" style="max-width: 600px;">
-     <div> <h1 class="text-center my-2">HIBA BEJELENTÉSE</h1></div>
+      <h1 class="text-center my-2">HIBA BEJELENTÉSE</h1>
 
       <!-- Pop-Up Message -->
       <div v-if="showPopup" class="alert alert-danger" role="alert">
@@ -34,74 +34,94 @@
         </textarea>
       </div>
 
-      <div class="row">
-        <div class="col-md-6 my-1">
-          <div class="dropdown">
-            <button 
-              :class="['btn dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" 
-              type="button" 
-              id="locationDropdown" 
-              data-bs-toggle="dropdown" 
-              aria-expanded="false">
-              {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="locationDropdown">
-              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Első terem')">Első terem</a></li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 2')">Másik terem 2</a></li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 3')">Másik terem 3</a></li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Egyéb')">Egyéb</a></li>
-            </ul>
-          </div>
+     <div class="row">
+  <!-- Left Column: Location, Label, and Priority -->
+  <div class="col-md-6">
+    <!-- Location Dropdown -->
+    <div class="dropdown mb-2">
+      <button 
+        :class="['btn dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" 
+        type="button" 
+        id="locationDropdown" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false">
+        {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="locationDropdown">
+        <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Első terem')">Első terem</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 2')">Másik terem 2</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 3')">Másik terem 3</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Egyéb')">Egyéb</a></li>
+      </ul>
+    </div>
+    <div v-if="showOtherLocation" class="my-3 mt-0">
+      <input type="text" 
+        :class="['form-control border-secondary', isDarkMode ? 'dark-textbox' : '']" 
+        id="otherLocation" 
+        v-model="otherLocation" 
+        placeholder="Adja meg a helyszínt" 
+        @input="setCookie('otherLocation', otherLocation)">
+    </div>
+
+    <!-- Label Dropdown -->
+    <div class="dropdown mb-2">
+      <button 
+        :class="['btn dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" 
+        type="button" 
+        id="labelDropdown" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false">
+        {{ label || 'Címkék' }} <span class="text-danger" v-if="!label">*</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="labelDropdown">
+        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Hardver')">Hardver</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Szoftver')">Szoftver</a></li>
+        <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Egyéb')">Egyéb</a></li>
+      </ul>
+    </div>
+
+    <!-- Priority Radio Buttons -->
+    <div class="mb-2">
+      <label for="priority" class="form-label">Prioritás:</label>
+      <div class="d-flex flex-row">
+        <div class="form-check me-2">
+          <input class="form-check-input" type="radio" v-model="priority" id="priority0" value="0" @change="setCookie('priority', priority)" />
+          <label class="form-check-label" for="priority0">Nincs</label>
+        </div>
+        <div class="form-check me-2" v-for="n in 5" :key="n">
+          <input class="form-check-input" type="radio" v-model="priority" :id="'priority' + n" :value="n" @change="setCookie('priority', priority)" />
+          <label class="form-check-label" :for="'priority' + n">{{ n }}</label>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="row">
-        <div v-if="showOtherLocation" class="col-sm-12 col-md-6 my-3 mt-0">
-          <input type="text" :class="['form-control border-secondary', isDarkMode ? 'dark-textbox' : '']" id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt" 
-            @input="setCookie('otherLocation', otherLocation)">
-        </div>
-      </div>
+  <!-- Right Column: Picture Upload Button aligned with Location -->
+  <div class="col-md-6">
+    <!-- Picture Upload Button -->
+    <!-- Picture Upload Button -->
+<div >
+  <label for="photo" class="btn-primary pictureUploadButton w-100 ">Kép feltöltése</label>
+  <input 
+    type="file" 
+    class="form-control" 
+    id="photo" 
+    @change="onFileChange" 
+    accept=".png, .jpg, .jpeg, .heic" 
+    multiple 
+    style="display: none;"  
+  >
+</div>
+<div class="image-preview-container mt-3">
+  <div v-for="(photo, index) in photoPreviews" :key="index" class="image-preview">
+    <img :src="photo" class="img-thumbnail" alt="Preview" />
+    <button type="button" class="btn btn-danger btn-sm" @click="removePhoto(index)">X</button>
+  </div>
+</div>
+    
+  </div>
+</div>
 
-      <div class="row">
-        <div class="col-md-6 my-1">
-          <div class="dropdown">
-            <button 
-              :class="['btn dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" 
-              type="button" 
-              id="labelDropdown" 
-              data-bs-toggle="dropdown" 
-              aria-expanded="false">
-              {{ label || 'Címkék' }} <span class="text-danger" v-if="!label">*</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="labelDropdown">
-              <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Hardver')">Hardver</a></li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Szoftver')">Szoftver</a></li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Egyéb')">Egyéb</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="row mx-0">
-        <div class="col-md-6 my-3">
-          <label for="priority" class="form-label">Prioritás:</label>
-          <div class="d-flex flex-row">
-            <div class="form-check me-2">
-              <input class="form-check-input" type="radio" v-model="priority" id="priority0" value="0" @change="setCookie('priority', priority)" />
-              <label class="form-check-label" for="priority0" data-bs-toggle="tooltip" data-bs-placement="top" title="Nincs megadva prioritás">Nincs</label>
-            </div>
-            <div class="form-check me-2" v-for="n in 5" :key="n">
-              <input class="form-check-input" type="radio" v-model="priority" :id="'priority' + n" :value="n" @change="setCookie('priority', priority)" />
-              <label class="form-check-label" :for="'priority' + n">{{ n }}</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6 my-3">
-          <label for="photo" class="form-label">Fotók feltöltése</label>
-          <input type="file" class="form-control" id="photo" @change="onFileChange" accept=".png, .jpg, .jpeg, .heic" multiple>
-        </div>
-      </div>
 
       <div class="d-grid gap-2 d-flex justify-content-center my-3">
         <button type="button" class="btn btn-secondary w-100" @click="reset">Adatok törlése</button>
@@ -112,8 +132,12 @@
 </template>
 
 
+
+
+
 <script>
 import axios from 'axios';
+import CryptoJS from 'crypto-js'; // Import the crypto-js library
 
 export default {
   data() {
@@ -122,6 +146,7 @@ export default {
       priority: this.getCookie('priority') || '0',
       bugDescription: this.getCookie('bugDescription') || '',
       photos: [],
+      photoPreviews: [],
       location: this.getCookie('location') || '',
       label: this.getCookie('label') || '',
       showOtherLocation: false,
@@ -157,16 +182,41 @@ export default {
       }
       return '';
     },
+
+
     onFileChange(event) {
-      const files = event.target.files;
-      if (files.length + this.photos.length > 4) {
-        alert('Maximum 4 képet tölthet fel.');
-        return;
-      }
-      for (let i = 0; i < files.length; i++) {
-        this.photos.push(files[i]);
-      }
-    },
+    const files = event.target.files;
+    if (files.length + this.photos.length > 4) {
+      alert('Maximum 4 képet tölthet fel.');
+      return;
+    }
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // Hash the filename
+      const hashedName = CryptoJS.MD5(file.name).toString(); // Create a hash of the filename
+
+      // Create a new file with the hashed name and the same type
+      const newFile = new File([file], hashedName + '.' + file.name.split('.').pop(), {
+        type: file.type,
+      });
+      
+      this.photos.push(newFile); // Add the new file to the photos array
+
+      // Create a FileReader to generate preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.photoPreviews.push(e.target.result);
+      };
+      reader.readAsDataURL(file); // Read file as data URL to display it as an image
+    }
+  },
+
+  removePhoto(index) {
+    this.photos.splice(index, 1); // Remove photo from the photos array
+    this.photoPreviews.splice(index, 1); // Remove the preview as well
+  },
     reset() {
       this.bugName = '';
       this.priority = '0';
@@ -273,42 +323,51 @@ export default {
 </script>
 
 <style scoped>
-.card {
-  max-width: 600px;
-  margin: 0 auto;
-}
-.alert-danger {
-  margin-top: 0rem;
+.image-preview-container {
+  margin-left: 3rem;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
 }
 
-.form-range {
+.image-preview {
+  position: relative;
+  width: 85px; /* Set a smaller fixed width */
+  height: 85px; /* Set a smaller fixed height */
+}
+
+.img-thumbnail {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none !important; /* Remove the border */
+  box-shadow: none !important; /* Remove any shadow */
+  padding: 0 !important; /* Ensure no padding */
+  margin: 0; /* Make sure there is no margin */
+  background-color: transparent; /* Remove background color */
 }
 
-.btn-primary {
-  background-color: #4285f4;
-  border-color: #4285f4;
+.btn-danger {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 2px 4px;
+  font-size: 10px;
+}
+.pictureUploadButton{
+  margin-top: 0.5rem;
+  padding: 5px;
+  font-size: 1.1rem;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  border: px solid black;
 }
 
-.btn-secondary {
-  background-color: #6c757d;
-}
-
-
-.h2 {
-  color: rgb(59, 59, 59);
-  padding: 0.5em;
-}
-
-.card-header {
-  background-color: #f93943;
-  color: white;
-  padding: 1.2rem;
-  border-bottom: none;
-}
-
-.card-header h1 {
-  margin-left: -10px;
+.alert {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  max-height: fit-content;
 }
 
 .search-input {
@@ -319,43 +378,6 @@ export default {
 .filter-icon {
   font-size: 1.5rem;
   color: #4285f4;
-}
-
-.table thead th {
-  background-color: #f8f9fa;
-  font-weight: bold;
-  padding-left: 2em;
-  text-align: left;
-}
-
-.table tbody td {
-  padding-left: 2em;
-  text-align: left;
-}
-
-
-
-
-.table tbody td.status-column {
-width: 150px;
-text-align: center;
-}
-
-
-
-
-.btn-secondary {
-  background-color: #636363;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.btn-secondary:hover {
-  background-color: #4285f4;
-  color: white;
 }
 
 .dropdown-toggle {
@@ -370,13 +392,6 @@ text-align: center;
 /* General dark mode styles */
 
 
-/* Dark mode textbox */
-.dark-textbox {
-  background-color: #444;
-  color: white;
-  border: 1px solid #777;
-}
-
 /* Dark mode dropdown */
 .dark-dropdown {
   background-color: #444;
@@ -387,6 +402,13 @@ text-align: center;
 .dark-dropdown .dropdown-item:hover {
   background-color: #555;
 }
+/* Dark mode textbox */
+.dark-textbox {
+  background-color: #444;
+  color: white;
+  border: 1px solid #777;
+}
+
 
 
 #bugName::placeholder{
