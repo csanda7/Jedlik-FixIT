@@ -361,9 +361,9 @@ openPhoto(photo) {
 }
 
 .modal-content {
-  background: white;
+  background: white !important;
   padding: 2rem;
-  border-radius: 2vh;
+  border-radius: 2vh !important;
   max-width: 70vw;
   min-width: 80vw;
   width: 100%;
@@ -441,7 +441,6 @@ openPhoto(photo) {
   justify-content: space-between;
   align-items: center;
 }
-
 .modal-footer {
   text-align: right;
 }
@@ -533,7 +532,7 @@ openPhoto(photo) {
 
 /* Modal styles for dark mode */
 .dark-mode .modal-content {
-  background-color: #444;
+  background-color: #444 !important;
   /* Dark background for modal */
   color: white;
   /* Text color for modal */

@@ -362,6 +362,9 @@ export default {
   transition: background-color 0.3s ease;
   text-align: center;
   border: px solid black;
+  background-color: #4285f4;
+  border-color: #4285f4;
+  color: white;
 }
 
 .alert {
