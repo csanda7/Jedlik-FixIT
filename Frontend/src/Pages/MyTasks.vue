@@ -2,7 +2,7 @@
   <div class="reported-bugs-container container mt-5">
     <div class="card shadow-sm">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <h2 class="mb-0 h2">Feladataim</h2>
+        <h2 class="mb-0 h2">FELADATAIM</h2>
         <div class="user-actions d-flex">
           <input type="text" class="form-control search-input me-3" placeholder="Keresés..." />
           <i class="fas fa-filter filter-icon"></i>
