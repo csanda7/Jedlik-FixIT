@@ -6,11 +6,6 @@
         <h2 class="mb-0 h2">FELADATAIM</h2>
         <div class="user-actions d-flex">
           <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
-          <button type="button" class="btn btn-dark" @click="toggleTooltip">Rendezés</button>
-          <div v-if="showTooltip" class="tooltip-custom my-2">
-            A rendezéshez kattints a mező címére, ami szerint rendezni szeretnéd. Kattints mégegyszer, hogy
-            megváltoztasd a rendezés sorrendjét.
-          </div>
           
         </div>
       </div>
@@ -233,13 +228,6 @@ export default {
         this.sortKey = key;
         this.sortOrder = 'asc';
       }
-    },
-    toggleTooltip() {
-      this.showTooltip = true;
-      console.log("Button clicked to toggle tooltip"); // Debugging log
-      setTimeout(() => {
-        this.showTooltip = false; // Hide the tooltip after a few seconds
-      }, 7000); // Tooltip disappears after 7 seconds
     },
     getPriorityColor(priority) {
       switch (priority) {

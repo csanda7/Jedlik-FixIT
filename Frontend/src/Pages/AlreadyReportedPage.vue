@@ -1,13 +1,77 @@
 <template>
   <div :class="['reported-bugs-container', { 'dark-mode': isDarkMode }, 'container', 'mt-5']">
     <div :class="['card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
-      <div
-        :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
+      <div :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
         <h2 class="mb-0 h2">BEJELENTETT HIBÁK</h2>
         <div class="user-actions d-flex">
-          <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" /> 
+          <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
+          <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
+            <i class="bi bi-funnel-fill"></i>
+          </button>
         </div>
       </div>
+      <div v-if="showFilters" class="d-flex justify-content-end my-auto">
+        <div class="dropdown mx-2 p-3">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Prioritás
+          </button>
+          <ul class="dropdown-menu">
+            <li v-for="priority in uniquePriorities" :key="priority" class="p-1">
+              <label>
+                <input class="form-check-input" type="checkbox" :value="priority" v-model="selectedPriorities" /> {{ priority }}
+              </label>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Second Dropdown (Címke) -->
+        <div class="dropdown mx-2 p-3">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Címke
+          </button>
+          <ul class="dropdown-menu">
+            <li v-for="label in uniqueLabels" :key="label" class="p-1">
+              <label>
+                <input class="form-check-input" type="checkbox" :value="label" v-model="selectedLabels" /> {{ label }}
+              </label>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Third Dropdown (Státusz) -->
+        <div class="dropdown mx-2 p-3">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Státusz
+          </button>
+          <ul class="dropdown-menu">
+            <li v-for="status in uniqueStatuses" :key="status" class="p-1">
+              <label>
+                <input class="form-check-input" type="checkbox" :value="status" v-model="selectedStatuses" /> {{ status }}
+              </label>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Fourth Dropdown (Terem) -->
+        <div class="dropdown mx-2 p-3">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Terem
+          </button>
+          <ul class="dropdown-menu">
+            <li v-for="room in uniqueRooms" :key="room" class="p-1">
+              <label >
+                <input class="form-check-input" type="checkbox" :value="room" v-model="selectedRooms" /> {{ room }}
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+
       <div class="card-body p-0">
         <div class="table-responsive">
           <table :class="['table', { 'dark-mode': isDarkMode }, 'table-hover', 'p-4']">
@@ -15,25 +79,30 @@
               <tr>
                 <th @click="sortBy('name')" style="cursor: pointer;">
                   Hiba neve
-                  <i v-if="sortKey === 'name'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                  <i v-if="sortKey === 'name'"
+                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
                 </th>
                 <th @click="sortBy('priority')" style="cursor: pointer;">
                   Prioritás
-                  <i v-if="sortKey === 'priority'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                  <i v-if="sortKey === 'priority'"
+                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
                 </th>
                 <th>Címke</th>
                 <th>Státusz</th>
                 <th @click="sortBy('room')" style="cursor: pointer;">
                   Terem
-                  <i v-if="sortKey === 'room'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                  <i v-if="sortKey === 'room'"
+                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
                 </th>
                 <th @click="sortBy('reportedBy')" style="cursor: pointer;">
                   Bejelentette
-                  <i v-if="sortKey === 'reportedBy'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                  <i v-if="sortKey === 'reportedBy'"
+                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
                 </th>
                 <th @click="sortBy('reportedAt')" style="cursor: pointer;">
                   Bejelentés ideje
-                  <i v-if="sortKey === 'reportedAt'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                  <i v-if="sortKey === 'reportedAt'"
+                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
                 </th>
               </tr>
             </thead>
@@ -72,44 +141,47 @@
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
           </div>
           <div class="modal-body">
-  <div class="row">
-    <div class="col-md-4">
-      <div class="d-flex align-items-center mb-2">
-        <strong>Prioritás: </strong>
-        <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
-        <div v-else class="priority-container ms-2 my-1">
-          <span :class="['priority-bar', selectedBug.priorityColor]"></span>
-          <span>{{ selectedBug.priority }}</span>
-        </div>
-      </div>
-      <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-      <div class="d-flex align-items-center mb-2 my-1">
-        <strong>Státusz: </strong>
-        <span :class="['badge', selectedBug.badgeClass, 'ms-2', { 'dark-mode': isDarkMode }]">{{ selectedBug.status }}</span>
-      </div>
-      <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
-      <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-      <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-      <p class="my-3" v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
-    </div>
-    <div class="col-md-4 description">
-      <p><strong>Hiba leírása:</strong></p>
-      <div class="description-content">{{ selectedBug.description }}</div>
-    </div>
-    <div class="col-md-4 photo_box">
-      <div class="photo-grid">
-        <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
-          <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="d-flex align-items-center mb-2">
+                  <strong>Prioritás: </strong>
+                  <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
+                  <div v-else class="priority-container ms-2 my-1">
+                    <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+                    <span>{{ selectedBug.priority }}</span>
+                  </div>
+                </div>
+                <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
+                <div class="d-flex align-items-center mb-2 my-1">
+                  <strong>Státusz: </strong>
+                  <span :class="['badge', selectedBug.badgeClass, 'ms-2', { 'dark-mode': isDarkMode }]">{{
+                    selectedBug.status }}</span>
+                </div>
+                <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
+                <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+                <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+                <p class="my-3" v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{
+                  selectedBug.assignedTo }}</p>
+              </div>
+              <div class="col-md-4 description">
+                <p><strong>Hiba leírása:</strong></p>
+                <div class="description-content">{{ selectedBug.description }}</div>
+              </div>
+              <div class="col-md-4 photo_box">
+                <div class="photo-grid">
+                  <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
+                    <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
 
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary mx-1" v-if="selectedBug.assignedTo == null" @click="takeTask">Elvállalom</button>
+            <button type="button" class="btn btn-primary mx-1" v-if="selectedBug.assignedTo == null"
+              @click="takeTask">Elvállalom</button>
             <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
           </div>
         </div>
@@ -126,20 +198,47 @@ export default {
       selectedBug: {},
       showModal: false,
       isDarkMode: false,
+      showFilters: false,
       searchTerm: '',
       sortKey: '',
       sortOrder: 'asc',
-      showTooltip: false
+      selectedPriorities: [],
+      selectedLabels: [],
+      selectedStatuses: [],
+      selectedRooms: [],
     };
   },
   computed: {
+    uniquePriorities() {
+      return [...new Set(this.bugs.map(bug => bug.priority))];
+    },
+    uniqueLabels() {
+      return [...new Set(this.bugs.map(bug => bug.label))];
+    },
+    uniqueStatuses() {
+      return [...new Set(this.bugs.map(bug => bug.status))];
+    },
+    uniqueRooms() {
+      return [...new Set(this.bugs.map(bug => bug.room))];
+    },
     filteredBugs() {
       let filtered = this.bugs.filter(bug => {
+        // Apply text search
         const searchTermLower = this.searchTerm.toLowerCase();
-        return (
-          bug.name.toLowerCase().includes(searchTermLower)
-        );
+        const matchesSearch = bug.name.toLowerCase().includes(searchTermLower);
+
+        // Apply filters
+        const matchesPriority = !this.selectedPriorities.length || this.selectedPriorities.includes(bug.priority);
+        const matchesLabel = !this.selectedLabels.length || this.selectedLabels.includes(bug.label);
+        const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
+        const matchesRoom = !this.selectedRooms.length || this.selectedRooms.includes(bug.room);
+
+        return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom;
       });
+
+
+
+      
 
       // Sorting logic based on sortKey and sortOrder
       return filtered.sort((a, b) => {
@@ -181,43 +280,46 @@ export default {
   },
   methods: {
     async fetchBugs() {
-  try {
-    const response = await fetch('http://localhost:4500/api/hibakKiir');
-    if (!response.ok) throw new Error('Network response was not ok');
+      try {
+        const response = await fetch('http://localhost:4500/api/hibakKiir');
+        if (!response.ok) throw new Error('Network response was not ok');
 
-    const data = await response.json();
+        const data = await response.json();
 
-    this.bugs = data.map(bug => ({
-      id: bug.ID,
-      name: bug['Hiba neve'],
-      priority: bug['Prioritás'],
-      priorityColor: this.getPriorityColor(bug['Prioritás']),
-      label: bug['Címke'],
-      status: bug['Státusz'],
-      badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
-        bug['Státusz'] === 'Kész' ? 'badge-done' :
-        bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : 
-        bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' : 
-        bug['Státusz'] === 'Beszerzés szükséges' ? 'badge-supply' :
-        bug['Státusz'] === 'Ellenőrzésre vár' ? 'badge-check' : '',
-        
-      room: bug['Terem'],
-      reportedBy: bug['Bejelentette'],
-      reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
-      assignedTo: bug['assignedTo'],
-      description: bug['Hiba leírása'],
-      photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format
-    }));
-  } catch (error) {
-    console.error('Error fetching bug data:', error);
-  }
-},
+        this.bugs = data.map(bug => ({
+          id: bug.ID,
+          name: bug['Hiba neve'],
+          priority: bug['Prioritás'],
+          priorityColor: this.getPriorityColor(bug['Prioritás']),
+          label: bug['Címke'],
+          status: bug['Státusz'],
+          badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
+            bug['Státusz'] === 'Kész' ? 'badge-done' :
+              bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
+                bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' :
+                  bug['Státusz'] === 'Beszerzés szükséges' ? 'badge-supply' :
+                    bug['Státusz'] === 'Ellenőrzésre vár' ? 'badge-check' : '',
 
-openPhoto(photo) {
-    // Logic to open a larger view of the image
-    const imgWindow = window.open(photo, '_blank');
-    imgWindow.focus(); // Focus on the new window
-  },
+          room: bug['Terem'],
+          reportedBy: bug['Bejelentette'],
+          reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
+          assignedTo: bug['assignedTo'],
+          description: bug['Hiba leírása'],
+          photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format
+        }));
+      } catch (error) {
+        console.error('Error fetching bug data:', error);
+      }
+    },
+    toggleFilterVisibility() {
+      this.showFilters = !this.showFilters;
+    },
+
+    openPhoto(photo) {
+      // Logic to open a larger view of the image
+      const imgWindow = window.open(photo, '_blank');
+      imgWindow.focus(); // Focus on the new window
+    },
     sortBy(key) {
       if (this.sortKey === key) {
         // If the same column is clicked, toggle the sort order
@@ -249,36 +351,36 @@ openPhoto(photo) {
       this.showModal = false;
     },
     async takeTask() {
-  const username = sessionStorage.getItem('username'); // Get logged-in user's username
+      const username = sessionStorage.getItem('username'); // Get logged-in user's username
 
-  if (!username) {
-    alert('No user logged in'); // Error handling if username is not available
-    return;
-  }
+      if (!username) {
+        alert('No user logged in'); // Error handling if username is not available
+        return;
+      }
 
-  // Update the selected bug with the assigned user
-  try {
-    const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ assignedTo: username }), // Send the assigned user to backend
-    });
+      // Update the selected bug with the assigned user
+      try {
+        const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ assignedTo: username }), // Send the assigned user to backend
+        });
 
-    if (!response.ok) {
-      throw new Error('Failed to assign the task');
+        if (!response.ok) {
+          throw new Error('Failed to assign the task');
+        }
+
+        // Update the frontend after successful response
+        this.selectedBug.assignedTo = username;
+        alert('Task successfully assigned to you.');
+        this.fetchBugs();
+      } catch (error) {
+        console.error('Error assigning task:', error);
+        alert('Failed to assign the task.');
+      }
     }
-
-    // Update the frontend after successful response
-    this.selectedBug.assignedTo = username;
-    alert('Task successfully assigned to you.');
-    this.fetchBugs();
-  } catch (error) {
-    console.error('Error assigning task:', error);
-    alert('Failed to assign the task.');
-  }
-}
 
   }
 };
@@ -286,7 +388,6 @@ openPhoto(photo) {
 
 
 <style>
-
 .reported-bugs-container {
   max-width: 900px;
   margin: 0 auto;
@@ -418,45 +519,62 @@ openPhoto(photo) {
 }
 
 .description {
-  max-width: 100%; /* Ensure it takes full width of the column */
-  height: auto; /* Let it grow automatically */
-  overflow: hidden; /* Prevent overflow */
-  word-wrap: break-word; /* Break long words if necessary */
+  max-width: 100%;
+  /* Ensure it takes full width of the column */
+  height: auto;
+  /* Let it grow automatically */
+  overflow: hidden;
+  /* Prevent overflow */
+  word-wrap: break-word;
+  /* Break long words if necessary */
 }
 
 .description-content {
-  padding: 0.5rem; /* Add some padding for aesthetics */
-  white-space: normal; /* Allow text to wrap onto new lines */
+  padding: 0.5rem;
+  /* Add some padding for aesthetics */
+  white-space: normal;
+  /* Allow text to wrap onto new lines */
 }
 
 
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Two columns */
-  gap: 10px; /* Space between photos */
- 
+  grid-template-columns: repeat(2, 1fr);
+  /* Two columns */
+  gap: 10px;
+  /* Space between photos */
+
   margin-bottom: 2rem;
 }
 
 .photo-item {
-  cursor: pointer; /* Indicate that the item is clickable */
+  cursor: pointer;
+  /* Indicate that the item is clickable */
 }
 
 .photo-item img {
-  width: 120px; /* Make the image take the full width of the item */
-  height: 120px; /* Maintain aspect ratio */
-  border-radius: 0.5rem; /* Optional: Rounded corners */
+  width: 120px;
+  /* Make the image take the full width of the item */
+  height: 120px;
+  /* Maintain aspect ratio */
+  border-radius: 0.5rem;
+  /* Optional: Rounded corners */
 }
 
 .image-thumbnail {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border: none !important; /* Remove the border */
-  box-shadow: none !important; /* Remove any shadow */
-  padding: 0 !important; /* Ensure no padding */
-  margin: 0; /* Make sure there is no margin */
-  background-color: transparent; /* Remove background color */
+  border: none !important;
+  /* Remove the border */
+  box-shadow: none !important;
+  /* Remove any shadow */
+  padding: 0 !important;
+  /* Ensure no padding */
+  margin: 0;
+  /* Make sure there is no margin */
+  background-color: transparent;
+  /* Remove background color */
 }
 
 
@@ -488,23 +606,30 @@ openPhoto(photo) {
   justify-content: space-between;
   align-items: center;
 }
+
 .modal-footer {
   text-align: right;
 }
 
 .tooltip-custom {
   position: absolute;
-  background-color: #fcc913; /* Background color for light mode */
-  color: #000000; /* Text color for light mode */
+  background-color: #fcc913;
+  /* Background color for light mode */
+  color: #000000;
+  /* Text color for light mode */
   padding: 8px;
   border-radius: 4px;
-  top: -3.5rem; /* Adjust according to your layout */
-  left: 50%; /* Center the tooltip */
-  transform: translateX(-50%); /* Ensure centering */
+  top: -3.5rem;
+  /* Adjust according to your layout */
+  left: 50%;
+  /* Center the tooltip */
+  transform: translateX(-50%);
+  /* Ensure centering */
   z-index: 1000;
   white-space: nowrap;
   font-size: 14px;
-  text-align: center; /* Center the text */
+  text-align: center;
+  /* Center the text */
 }
 
 
@@ -526,7 +651,7 @@ openPhoto(photo) {
 }
 
 .dark-mode .table tbody {
-  background-color: #222 ;
+  background-color: #222;
   /* Set tbody background color for dark mode */
 }
 
@@ -654,5 +779,4 @@ openPhoto(photo) {
   color: white;
   /* Make placeholder text white as well */
 }
-
 </style>
