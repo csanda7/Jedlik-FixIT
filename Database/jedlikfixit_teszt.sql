@@ -95,15 +95,6 @@ CREATE TABLE `kepek` (
 -- A tábla adatainak kiíratása `kepek`
 --
 
-INSERT INTO `kepek` (`ID`, `kep`, `kep_id`) VALUES
-(72, '1729331689221-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata (2', 1),
-(72, '1729331689224-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata (3', 2),
-(72, '1729331689227-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata.PN', 3),
-(72, '1729331689237-KÃ©pkivÃ¡gÃ¡s mÃ¡solata.PNG', 4),
-(74, '1729331739551-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata (2', 1),
-(74, '1729331739553-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata (3', 2),
-(74, '1729331739554-KÃ©pkivÃ¡gÃ¡s mÃ¡solata mÃ¡solata.PN', 3);
-
 --
 -- Indexek a kiírt táblákhoz
 --
