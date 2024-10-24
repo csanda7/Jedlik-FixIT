@@ -242,14 +242,38 @@ openPhoto(photo) {
     closeModal() {
       this.showModal = false;
     },
-    takeTask() {
-      const username = sessionStorage.getItem('username');
-      if (!username) {
-        alert('No user logged in');
-        return;
-      }
-      this.selectedBug.assignedTo = username;
+    async takeTask() {
+  const username = sessionStorage.getItem('username'); // Get logged-in user's username
+
+  if (!username) {
+    alert('No user logged in'); // Error handling if username is not available
+    return;
+  }
+
+  // Update the selected bug with the assigned user
+  try {
+    const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ assignedTo: username }), // Send the assigned user to backend
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to assign the task');
     }
+
+    // Update the frontend after successful response
+    this.selectedBug.assignedTo = username;
+    alert('Task successfully assigned to you.');
+    this.fetchBugs();
+  } catch (error) {
+    console.error('Error assigning task:', error);
+    alert('Failed to assign the task.');
+  }
+}
+
   }
 };
 </script>
