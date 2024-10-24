@@ -124,7 +124,7 @@
 
 
       <div class="d-grid gap-2 d-flex justify-content-center my-3">
-        <button type="button" class="btn btn-secondary w-100" @click="reset">Adatok törlése</button>
+        <button type="button" class="btn btn-secondary w-100" @click="confirmReset">Adatok törlése</button>
         <button type="submit" class="btn btn-primary w-100" @click="bekuldes">Hiba beküldése</button>
       </div>
     </div>
@@ -253,6 +253,11 @@ export default {
     selectlabel(selectedlabel) {
       this.label = selectedlabel;
       this.setCookie('label', selectedlabel);
+    },
+    confirmReset() {
+      if (confirm("Biztosan törölni szeretnéd az összes adatot?")) {
+        this.reset();
+      }
     },
     bekuldes() {
       // Validate required fields
