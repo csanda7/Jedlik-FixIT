@@ -1,5 +1,5 @@
 <template>
-  <nav :class="['navbar', 'navbar-expand-lg', isDarkMode ? 'bg-dark-blue' : 'bg-primary']">
+  <nav :class="['navbar', 'navbar-expand-lg', isDarkMode ? 'bg-dark-blue' : 'bg-primary']" id="navbar">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="">
         <img src="../assets/Jedlik_logo_2020_200_3c5beeccf8.png" alt="Jedlik FixIT Logo" style="max-height: 50px;" class="me-2">
@@ -300,6 +300,15 @@ export default {
   color: white;
   border-radius: 5px;
 }
+
+#navbar{
+  position: fixed; /* Ensure the navbar stays at the top */
+  top: 0; /* Stick the navbar to the top */
+  width: 100%; /* Make sure it takes the full width */
+  z-index: 1000; /* Ensure it's above other elements */
+}
+
+
 
 
 </style>

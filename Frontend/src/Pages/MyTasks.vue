@@ -1,55 +1,61 @@
 <template>
-  <div class="reported-bugs-container container mt-5">
-    <div class="card shadow-sm">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h2 class="mb-0 h2">Feladataim</h2>
+  <div :class="['reported-bugs-container', { 'dark-mode': isDarkMode }, 'container', 'mt-5']">
+    <div :class="['card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
+      <div
+        :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
+        <h2 class="mb-0 h2">FELADATAIM</h2>
         <div class="user-actions d-flex">
-          <input type="text" class="form-control search-input me-3" placeholder="Keresés..." />
-          <i class="fas fa-filter filter-icon"></i>
+          <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
+          <button type="button" class="btn btn-dark" @click="toggleTooltip">Rendezés</button>
+          <div v-if="showTooltip" class="tooltip-custom my-2">
+            A rendezéshez kattints a mező címére, ami szerint rendezni szeretnéd. Kattints mégegyszer, hogy
+            megváltoztasd a rendezés sorrendjét.
+          </div>
+          
         </div>
       </div>
       <div class="card-body p-0">
         <div class="table-responsive">
-          <table class="table table-hover p-4">
+          <table :class="['table', { 'dark-mode': isDarkMode }, 'table-hover', 'p-4']">
             <thead>
               <tr>
-                <th>Hiba neve</th>
-                <th>Prioritás</th>
+                <th @click="sortBy('name')" style="cursor: pointer;">Hiba neve </th>
+                <th @click="sortBy('priority')" style="cursor: pointer;">Prioritás</th>
                 <th>Címke</th>
                 <th>Státusz</th>
-                <th>Terem</th>
-                <th>Bejelentette</th>
-                <th>Bejelentés ideje</th>
+                <th @click="sortBy('room')" style="cursor: pointer;">Terem</th>
+                <th @click="sortBy('reportedBy')" style="cursor: pointer;">Bejelentette</th>
+                <th @click="sortBy('reportedAt')" style="cursor: pointer;">Bejelentés ideje</th>
               </tr>
             </thead>
             <tbody>
-  <tr v-for="(bug, index) in bugs" :key="index" @click="openModal(bug)" style="cursor: pointer">
-    <td>{{ bug.name }}</td>
-    <td>
-      <div v-if="bug.priority === 0">
-        Nincs prioritás
-      </div>
-      <div v-else class="priority-container">
-        <span :class="['priority-bar', bug.priorityColor]"></span>
-        <span>{{ bug.priority }}</span>
-      </div>
-    </td>
-    <td>
-     {{ bug.label }}
-</td>
-        <td calls="status-column"> <span :class="['badge', bug.badgeClass]">{{bug.status }}</span></td>
-    <td>{{ bug.room }}</td>
-    <td>{{ bug.reportedBy }}</td>
-    <td>{{ bug.reportedAt }}</td>
-  </tr>
-</tbody>
-
-
+              <tr v-for="(bug, index) in filteredBugs" :key="index" @click="openModal(bug)" style="cursor: pointer">
+                <td>{{ bug.name }}</td>
+                <td>
+                  <div v-if="bug.priority === 0">Nincs prioritás</div>
+                  <div v-else class="priority-container">
+                    <span :class="['priority-bar', bug.priorityColor]"></span>
+                    <span>{{ bug.priority }}</span>
+                  </div>
+                </td>
+                <td>{{ bug.label }}</td>
+                <td class="status-column">
+                  <span :class="['badge', bug.badgeClass, { 'dark-mode': isDarkMode }]">{{ bug.status }}</span>
+                </td>
+                <td>{{ bug.room }}</td>
+                <td>{{ bug.reportedBy }}</td>
+                <td>{{ bug.reportedAt }}</td>
+              </tr>
+              <tr v-if="filteredBugs.length === 0">
+                <td colspan="7" class="text-center">Nincs találat</td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>
     </div>
 
+    <!-- Modal -->
     <div v-if="showModal" class="modal-overlay" @click="closeModal">
       <div class="bg" @click.stop>
         <div class="modal-content">
@@ -61,34 +67,40 @@
     <div class="col-md-4">
       <div class="d-flex align-items-center mb-2">
         <strong>Prioritás: </strong>
-        <div v-if="selectedBug.priority === 0"  class="ms-2">Nincs prioritás</div>
-        <div v-else class="priority-container ms-2">
-      <span :class="['priority-bar', selectedBug.priorityColor]"></span>
-      <span>{{ selectedBug.priority }}</span>
-      </div>
-
+        <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
+        <div v-else class="priority-container ms-2 my-1">
+          <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+          <span>{{ selectedBug.priority }}</span>
+        </div>
       </div>
       <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-      <div class="d-flex align-items-center mb-2">
+      <div class="d-flex align-items-center mb-2 my-1">
         <strong>Státusz: </strong>
-        <span :class="['badge', selectedBug.badgeClass,'ms-2',  { 'dark-mode': isDarkMode }] ">{{ selectedBug.status }}</span>
+        <span :class="['badge', selectedBug.badgeClass, 'ms-2', { 'dark-mode': isDarkMode }]">{{ selectedBug.status }}</span>
       </div>
-      <p><strong>Terem:</strong> {{ selectedBug.room }}</p>
-      <p><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-      <p><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-      <p v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
+      <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
+      <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+      <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+      <p class="my-3" v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
     </div>
     <div class="col-md-4 description">
-      <p><strong>Hiba leírása:</strong> {{ selectedBug.description }}</p>
+      <p><strong>Hiba leírása:</strong></p>
+      <div class="description-content">{{ selectedBug.description }}</div>
     </div>
     <div class="col-md-4 photo_box">
-      <div id="bugCarousel" class="carousel slide" data-bs-ride="carousel">
-        <!-- Add carousel items here for photos if applicable -->
+      <div class="photo-grid">
+        <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
+          <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+
+
           <div class="modal-footer">
+            <button type="button" class="btn btn-primary mx-1" v-if="selectedBug.assignedTo == null" @click="takeTask">Elvállalom</button>
             <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
           </div>
         </div>
@@ -101,79 +113,143 @@
 export default {
   data() {
     return {
-      bugs: [], // Initially empty array
+      bugs: [],
       selectedBug: {},
       showModal: false,
+      isDarkMode: false,
+      searchTerm: '',
+      sortKey: '',
+      sortOrder: 'asc',
+      showTooltip: false,
+      loggedInUser: sessionStorage.getItem('username') || '' // Get the logged-in user's username from sessionStorage
     };
   },
+  computed: {
+    filteredBugs() {
+      let filtered = this.bugs
+        .filter(bug => {
+          const searchTermLower = this.searchTerm.toLowerCase();
+
+          // Filter bugs based on search term and assignedTo field matching the logged-in user
+          return (
+            bug.name.toLowerCase().includes(searchTermLower) &&
+            (bug.assignedTo === this.loggedInUser) // Shows bugs only assigned to the user or unassigned
+          );
+        });
+
+      // Sorting logic based on sortKey and sortOrder
+      return filtered.sort((a, b) => {
+        let compareA, compareB;
+
+        switch (this.sortKey) {
+          case 'name':
+          case 'room':
+          case 'reportedBy':
+            compareA = a[this.sortKey].toLowerCase();
+            compareB = b[this.sortKey].toLowerCase();
+            if (compareA < compareB) return this.sortOrder === 'asc' ? -1 : 1;
+            if (compareA > compareB) return this.sortOrder === 'asc' ? 1 : -1;
+            return 0;
+
+          case 'priority':
+            compareA = a.priority;
+            compareB = b.priority;
+            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+          case 'reportedAt':
+            compareA = new Date(a.reportedAt);
+            compareB = new Date(b.reportedAt);
+            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+          default:
+            return 0; // Default sorting if no key is selected
+        }
+      });
+    }
+  },
   mounted() {
-    // Fetch bugs from backend when the component is mounted
     this.fetchBugs();
+    this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    window.addEventListener('theme-changed', this.updateTheme);
+  },
+  beforeDestroy() {
+    window.removeEventListener('theme-changed', this.updateTheme);
   },
   methods: {
     async fetchBugs() {
       try {
         const response = await fetch('http://localhost:4500/api/hibakKiir');
         if (!response.ok) throw new Error('Network response was not ok');
-        
+
         const data = await response.json();
-        console.log('API Response:', data); // Log the entire response to check if ID is present
-        
-        const username = sessionStorage.getItem('username'); // Get logged-in user's username
 
-        // Filter bugs based on assignedTo
-        this.bugs = data
-          .filter(bug => bug.assignedTo === username) // Only show bugs assigned to the logged-in user
-          .map(bug => ({
-            id: bug.ID,
-            name: bug['Hiba neve'],
-            priority: bug['Prioritás'],
-            priorityColor: this.getPriorityColor(bug['Prioritás']),
-            label: bug['Címke'],
-            status: bug['Státusz'],
-            badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
-                        bug['Státusz'] === 'Kész' ? 'badge-done' :
-                        bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : '',
-            room: bug['Terem'],
-            reportedBy: bug['Bejelentette'],
-            reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
-            assignedTo: bug['assignedTo'], // Ensure this is fetched correctly
-            description: bug['Hiba leírása']
-          }));
-
+        this.bugs = data.map(bug => ({
+          id: bug.ID,
+          name: bug['Hiba neve'],
+          priority: bug['Prioritás'],
+          priorityColor: this.getPriorityColor(bug['Prioritás']),
+          label: bug['Címke'],
+          status: bug['Státusz'],
+          badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
+                      bug['Státusz'] === 'Kész' ? 'badge-done' :
+                      bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : '',
+          room: bug['Terem'],
+          reportedBy: bug['Bejelentette'],
+          reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
+          assignedTo: bug['assignedTo'],
+          description: bug['Hiba leírása'],
+          photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format
+        }));
       } catch (error) {
         console.error('Error fetching bug data:', error);
       }
     },
 
-    getPriorityColor(priority) {
-      switch (priority) {
-        case 1:
-          return 'darkgreen';
-        case 2:
-          return 'lightgreen';
-        case 3:
-          return 'yellow';
-        case 4:
-          return 'orange';
-        case 5:
-          return 'red';
-        default:
-          return ''; // No color for 0 or invalid values
+    openPhoto(photo) {
+      const imgWindow = window.open(photo, '_blank');
+      imgWindow.focus(); // Focus on the new window
+    },
+    sortBy(key) {
+      if (this.sortKey === key) {
+        // If the same column is clicked, toggle the sort order
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        // If a new column is clicked, set it as the sorting key and default to ascending
+        this.sortKey = key;
+        this.sortOrder = 'asc';
       }
     },
-
+    toggleTooltip() {
+      this.showTooltip = true;
+      console.log("Button clicked to toggle tooltip"); // Debugging log
+      setTimeout(() => {
+        this.showTooltip = false; // Hide the tooltip after a few seconds
+      }, 7000); // Tooltip disappears after 7 seconds
+    },
+    getPriorityColor(priority) {
+      switch (priority) {
+        case 1: return 'darkgreen';
+        case 2: return 'lightgreen';
+        case 3: return 'yellow';
+        case 4: return 'orange';
+        case 5: return 'red';
+        default: return '';
+      }
+    },
+    updateTheme() {
+      this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    },
     openModal(bug) {
       this.selectedBug = bug;
-      this.showModal = true; // Show the modal
+      this.showModal = true;
     },
     closeModal() {
-      this.showModal = false; // Hide the modal
+      this.showModal = false;
     },
-
-  },
+  }
 };
 </script>
+
 
 
 <style>

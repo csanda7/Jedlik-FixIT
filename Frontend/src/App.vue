@@ -65,6 +65,7 @@ body {
   flex-direction: column;
   min-height: 100vh; /* Ensure content takes up full height */
   overflow: auto; /* Allow scrolling within content if needed */
+  margin-top: 4rem;
 }
 .card {
   max-width: 600px;
