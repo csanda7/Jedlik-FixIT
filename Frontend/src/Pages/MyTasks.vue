@@ -19,13 +19,28 @@
           <table :class="['table', { 'dark-mode': isDarkMode }, 'table-hover', 'p-4']">
             <thead>
               <tr>
-                <th @click="sortBy('name')" style="cursor: pointer;">Hiba neve </th>
-                <th @click="sortBy('priority')" style="cursor: pointer;">Prioritás</th>
+                <th @click="sortBy('name')" style="cursor: pointer;">
+                  Hiba neve
+                  <i v-if="sortKey === 'name'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
+                <th @click="sortBy('priority')" style="cursor: pointer;">
+                  Prioritás
+                  <i v-if="sortKey === 'priority'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
                 <th>Címke</th>
                 <th>Státusz</th>
-                <th @click="sortBy('room')" style="cursor: pointer;">Terem</th>
-                <th @click="sortBy('reportedBy')" style="cursor: pointer;">Bejelentette</th>
-                <th @click="sortBy('reportedAt')" style="cursor: pointer;">Bejelentés ideje</th>
+                <th @click="sortBy('room')" style="cursor: pointer;">
+                  Terem
+                  <i v-if="sortKey === 'room'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
+                <th @click="sortBy('reportedBy')" style="cursor: pointer;">
+                  Bejelentette
+                  <i v-if="sortKey === 'reportedBy'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
+                <th @click="sortBy('reportedAt')" style="cursor: pointer;">
+                  Bejelentés ideje
+                  <i v-if="sortKey === 'reportedAt'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
               </tr>
             </thead>
             <tbody>
