@@ -5,13 +5,7 @@
         :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
         <h2 class="mb-0 h2">BEJELENTETT HIBÁK</h2>
         <div class="user-actions d-flex">
-          <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
-          <button type="button" class="btn btn-dark" @click="toggleTooltip">Rendezés</button>
-          <div v-if="showTooltip" class="tooltip-custom my-2">
-            A rendezéshez kattints a mező címére, ami szerint rendezni szeretnéd. Kattints mégegyszer, hogy
-            megváltoztasd a rendezés sorrendjét.
-          </div>
-          
+          <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" /> 
         </div>
       </div>
       <div class="card-body p-0">
@@ -19,13 +13,28 @@
           <table :class="['table', { 'dark-mode': isDarkMode }, 'table-hover', 'p-4']">
             <thead>
               <tr>
-                <th @click="sortBy('name')" style="cursor: pointer;">Hiba neve </th>
-                <th @click="sortBy('priority')" style="cursor: pointer;">Prioritás</th>
+                <th @click="sortBy('name')" style="cursor: pointer;">
+                  Hiba neve
+                  <i v-if="sortKey === 'name'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
+                <th @click="sortBy('priority')" style="cursor: pointer;">
+                  Prioritás
+                  <i v-if="sortKey === 'priority'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
                 <th>Címke</th>
                 <th>Státusz</th>
-                <th @click="sortBy('room')" style="cursor: pointer;">Terem</th>
-                <th @click="sortBy('reportedBy')" style="cursor: pointer;">Bejelentette</th>
-                <th @click="sortBy('reportedAt')" style="cursor: pointer;">Bejelentés ideje</th>
+                <th @click="sortBy('room')" style="cursor: pointer;">
+                  Terem
+                  <i v-if="sortKey === 'room'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
+                <th @click="sortBy('reportedBy')" style="cursor: pointer;">
+                  Bejelentette
+                  <i v-if="sortKey === 'reportedBy'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
+                <th @click="sortBy('reportedAt')" style="cursor: pointer;">
+                  Bejelentés ideje
+                  <i v-if="sortKey === 'reportedAt'" :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -214,13 +223,6 @@ openPhoto(photo) {
         this.sortKey = key;
         this.sortOrder = 'asc';
       }
-    },
-    toggleTooltip() {
-      this.showTooltip = true;
-      console.log("Button clicked to toggle tooltip"); // Debugging log
-      setTimeout(() => {
-        this.showTooltip = false; // Hide the tooltip after a few seconds
-      }, 7000); // Tooltip disappears after 7 seconds
     },
     getPriorityColor(priority) {
       switch (priority) {
