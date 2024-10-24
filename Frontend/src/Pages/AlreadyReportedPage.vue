@@ -187,7 +187,11 @@ export default {
       status: bug['Státusz'],
       badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
         bug['Státusz'] === 'Kész' ? 'badge-done' :
-        bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : '',
+        bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : 
+        bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' : 
+        bug['Státusz'] === 'Beszerzés szükséges' ? 'badge-supply' :
+        bug['Státusz'] === 'Ellenőrzésre vár' ? 'badge-check' : '',
+        
       room: bug['Terem'],
       reportedBy: bug['Bejelentette'],
       reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
@@ -364,6 +368,23 @@ openPhoto(photo) {
   background-color: #4169E1;
   color: #ffffff;
 }
+
+.badge-failed {
+  background-color: red;
+  color: #ffffff;
+}
+
+.badge-supply {
+  background-color: brown;
+  color: #ffffff;
+}
+
+.badge-check {
+  background-color: rgb(10, 231, 220);
+  color: #ffffff;
+}
+
+
 
 .table tbody td.status-column {
   width: 150px;
