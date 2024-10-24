@@ -559,6 +559,21 @@ openPhoto(photo) {
   color: #ffffff;
 }
 
+.dark-mode .badge-failed {
+  background-color: red;
+  color: #ffffff;
+}
+
+.dark-mode .badge-supply {
+  background-color: brown;
+  color: #ffffff;
+}
+
+.dark-mode .badge-check {
+  background-color: rgb(10, 231, 220);
+  color: #ffffff;
+}
+
 /* Adjust hover effect for table rows in dark mode */
 .dark-mode .table tbody tr:hover {
   background-color: #444;
