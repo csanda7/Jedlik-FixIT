@@ -1,9 +1,8 @@
 <template>
-  <div :class="['reported-bugs-container', { 'dark-mode': isDarkMode }, 'container', 'mt-5']">
-    <div :class="['card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
-      <div
-        :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
-        <h2 class="mb-0 h2">BEJELENTETT HIBÁK</h2>
+  <div class="reported-bugs-container container mt-5">
+    <div class="card shadow-sm">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="mb-0 h2">Feladataim</h2>
         <div class="user-actions d-flex">
           <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
           <button type="button" class="btn btn-dark" @click="toggleTooltip">Rendezés</button>

@@ -222,6 +222,7 @@ export default {
       this.priority = '0';
       this.bugDescription = '';
       this.photos = [];
+      this.photoPreviews = [];
       this.location = '';
       this.label = '';
       this.showOtherLocation = false;
