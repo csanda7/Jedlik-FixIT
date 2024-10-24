@@ -135,6 +135,7 @@ export default {
 .dark-textbox {
   background-color: #555;
   border: #555;
+  color: white;
 }
 
 #username::placeholder{
