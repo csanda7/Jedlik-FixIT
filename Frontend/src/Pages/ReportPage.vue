@@ -47,7 +47,7 @@
         aria-expanded="false">
         {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
       </button>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="locationDropdown">
+      <ul class="dropdown-menu w-100" aria-labelledby="locationDropdown">
         <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Első terem')">Első terem</a></li>
         <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 2')">Másik terem 2</a></li>
         <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 3')">Másik terem 3</a></li>
@@ -73,7 +73,7 @@
         aria-expanded="false">
         {{ label || 'Címkék' }} <span class="text-danger" v-if="!label">*</span>
       </button>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="labelDropdown">
+      <ul class="dropdown-menu w-100" aria-labelledby="labelDropdown">
         <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Hardver')">Hardver</a></li>
         <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Szoftver')">Szoftver</a></li>
         <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Egyéb')">Egyéb</a></li>
@@ -423,6 +423,11 @@ export default {
 }
 #otherLocation::placeholder{
   color: rgb(168, 168, 168);
+}
+
+.dropdown-item {
+  width: auto !important;
+  min-width: unset !important;
 }
 
 </style>
