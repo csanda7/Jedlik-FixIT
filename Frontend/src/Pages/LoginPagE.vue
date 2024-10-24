@@ -10,6 +10,7 @@
       <div class="form-group mb-3">
         <input
           type="text"
+          :class="['form-control', isDarkMode ? 'dark-textbox' : '']"
           v-model="username"
           class="form-control"
           placeholder="Felhasználónév"
@@ -20,10 +21,12 @@
       <div class="form-group mb-3">
         <input
           type="password"
+          :class="['form-control', isDarkMode ? 'dark-textbox' : '']"
           v-model="password"
           class="form-control"
           placeholder="Jelszó"
           required
+          id="password"
         />
       </div>
       <button type="submit" class="btn btn-primary w-100">Bejelentkezés</button>
@@ -90,9 +93,9 @@ export default {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Center the container */
+  transform: translate(-50%, -50%);
   width: 100%;
-  max-width: 400px; /* Set a max width for the form */
+  max-width: 400px;
   padding: 20px;
   display: flex;
   justify-content: center;
@@ -110,19 +113,40 @@ export default {
 
 .login-box {
   border-radius: 10px;
-  background-color: #ffffff;
+  background-color: #ffffff; /* Original light mode background color */
+  color: #343a40; /* Original text color */
 }
 
 .title-bar h1 {
   font-size: 1.8rem;
   font-weight: 600;
-  color: #343a40;
+  color: #343a40; /* Original text color */
 }
 
 .dark-mode .login-box {
-  border-radius: 10px;
-  background-color: white
+  background-color: #3a3a3a; /* Dark grey for dark mode */
+  color: #ffffff; /* Text color for better contrast in dark mode */
 }
+
+.dark-mode .title-bar h1 {
+  color: white;
+}
+
+.dark-textbox {
+  background-color: #555;
+  border: #555;
+}
+
+#username::placeholder{
+  color: rgb(168, 168, 168);
+}
+
+#password::placeholder{
+  color: rgb(168, 168, 168);
+}
+
+
+
 
 </style>
 
