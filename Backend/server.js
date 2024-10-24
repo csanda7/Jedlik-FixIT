@@ -1,18 +1,13 @@
-
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const app = express();
 
-const encoder = bodyParser.urlencoded({ extended: true });
-const authRoutes = require('./routes/authRoutes');
+const app = express();
+const authRoutes = require('./routes/authRoutes'); // Adjusted to match your routes
 const bugReportController = require('./controllers/bugReportController'); // Import bug report routes
 const hibakKiirRoutes = require('./routes/hibaKiirRoutes');
-const hibaFelvetel = require('./routes/hibaFelvetelRoutes');  // Import bug routes
-
-
-
+const hibaFelvetelRoutes = require('./routes/hibaFelvetelRoutes'); // Import bug routes
 
 const corsOptions = {
   origin: 'http://localhost:5173', // Change this to the correct URL of your Vue.js app
@@ -21,22 +16,19 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json()); // For parsing application/json
+app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
 
 // Serve static files from the frontend (if necessary)
 const frontendPath = path.join(__dirname, '..', '..', 'frontend');
 app.use(express.static(frontendPath));
 
-// Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json()); // For parsing application/json
-app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
-app.use('/api', bugReportController); // Make sure the route prefix is correct
-
 // Routes
-app.use(authRoutes);
+app.use('/api/login', authRoutes); // Ensure the route prefix is correct
 app.use('/api/bugReport', bugReportController);
 app.use('/api/hibakKiir', hibakKiirRoutes);
-app.use('/api', hibaFelvetel);
+app.use('/api', hibaFelvetelRoutes);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads'))); // Adjust to your actual path
 
 // Start the server

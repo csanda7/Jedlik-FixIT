@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('./../middleware/multer'); // Import the multer configuration
+const upload = require('../middlewares/multer'); // Import the multer configuration
 const connection = require('../config/database');
 
 router.post('/bugReport', upload, (req, res) => {
