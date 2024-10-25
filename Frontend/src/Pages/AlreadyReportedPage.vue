@@ -1,6 +1,6 @@
 <template>
   <div :class="['reported-bugs-container', { 'dark-mode': isDarkMode }, 'container', 'mt-5']">
-    <div :class="['card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
+    <div :class="[ 'card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
       <div :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
         <h2 class="mb-0 h2">BEJELENTETT HIBÁK</h2>
         <div class="user-actions d-flex">
@@ -10,64 +10,68 @@
           </button>
         </div>
       </div>
-      <div v-if="showFilters" class="d-flex justify-content-end my-auto">
-        <div class="dropdown mx-2 p-3">
-          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Prioritás
-          </button>
-          <ul class="dropdown-menu">
-            <li v-for="priority in uniquePriorities" :key="priority" class="p-1">
-              <label>
-                <input class="form-check-input" type="checkbox" :value="priority" v-model="selectedPriorities" /> {{ priority }}
-              </label>
-            </li>
-          </ul>
-        </div>
+      <!-- Updated filters section with responsive design -->
+      <div v-if="showFilters" class="filters-container">
+        <div class="filters-wrapper">
+          <!-- Priority Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Prioritás
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="priority in uniquePriorities" :key="priority" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="priority" v-model="selectedPriorities" /> {{ priority }}
+                </label>
+              </li>
+            </ul>
+          </div>
 
-        <!-- Second Dropdown (Címke) -->
-        <div class="dropdown mx-2 p-3">
-          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Címke
-          </button>
-          <ul class="dropdown-menu">
-            <li v-for="label in uniqueLabels" :key="label" class="p-1">
-              <label>
-                <input class="form-check-input" type="checkbox" :value="label" v-model="selectedLabels" /> {{ label }}
-              </label>
-            </li>
-          </ul>
-        </div>
+          <!-- Label Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Címke
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="label in uniqueLabels" :key="label" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="label" v-model="selectedLabels" /> {{ label }}
+                </label>
+              </li>
+            </ul>
+          </div>
 
-        <!-- Third Dropdown (Státusz) -->
-        <div class="dropdown mx-2 p-3">
-          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Státusz
-          </button>
-          <ul class="dropdown-menu">
-            <li v-for="status in uniqueStatuses" :key="status" class="p-1">
-              <label>
-                <input class="form-check-input" type="checkbox" :value="status" v-model="selectedStatuses" /> {{ status }}
-              </label>
-            </li>
-          </ul>
-        </div>
+          <!-- Status Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Státusz
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="status in uniqueStatuses" :key="status" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="status" v-model="selectedStatuses" /> {{ status }}
+                </label>
+              </li>
+            </ul>
+          </div>
 
-        <!-- Fourth Dropdown (Terem) -->
-        <div class="dropdown mx-2 p-3">
-          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Terem
-          </button>
-          <ul class="dropdown-menu">
-            <li v-for="room in uniqueRooms" :key="room" class="p-1">
-              <label >
-                <input class="form-check-input" type="checkbox" :value="room" v-model="selectedRooms" /> {{ room }}
-              </label>
-            </li>
-          </ul>
+          <!-- Room Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Terem
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="room in uniqueRooms" :key="room" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="room" v-model="selectedRooms" /> {{ room }}
+                </label>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -778,5 +782,55 @@ export default {
 .dark-mode .search-input::placeholder {
   color: white;
   /* Make placeholder text white as well */
+}
+
+
+.filters-container {
+  width: 100%;
+  padding: 1rem;
+}
+
+.filters-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.filter-dropdown {
+  margin: 0;
+  /* Remove default margin */
+}
+
+/* Update FilterDropDown styling */
+#FilterDropDown {
+  width: 7vw;
+  min-width: 100px;
+  /* Ensure minimum width on small screens */
+  padding: 0.5rem;
+  white-space: nowrap;
+}
+
+/* Media query for smaller screens */
+@media screen and (max-width: 768px) {
+  .filters-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-dropdown {
+    width: 100%;
+  }
+
+  #FilterDropDown {
+    width: 100%;
+    /* Full width on mobile */
+  }
+
+  /* Adjust dropdown menu position on mobile */
+  .dropdown-menu {
+    width: 100%;
+    /* Full width dropdowns on mobile */
+  }
 }
 </style>
