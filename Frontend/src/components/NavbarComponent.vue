@@ -308,7 +308,46 @@ export default {
   z-index: 1000; /* Ensure it's above other elements */
 }
 
+@media (max-width: 991.98px) {
+  /* Mobil nézetben középre igazítás */
+  .navbar-collapse {
+    text-align: center;
+    width: 100%;
+  }
 
+  .navbar-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Teljes szélességre nyújtás */
+    width: 100%;
+  }
+
+  /* Menüpontok teljes szélességűek legyenek */
+  .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    box-sizing: border-box;
+  }
+
+  /* Sötét mód kapcsoló és Kilépés gomb */
+  .d-lg-flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .logout {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    margin-top: 0.5rem;
+    box-sizing: border-box;
+  }
+}
 
 
 </style>

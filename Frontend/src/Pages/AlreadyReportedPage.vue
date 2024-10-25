@@ -79,60 +79,60 @@
       <div class="card-body p-0">
         <div class="table-responsive">
           <table :class="['table', { 'dark-mode': isDarkMode }, 'table-hover', 'p-4']">
-            <thead>
-              <tr>
-                <th @click="sortBy('name')" style="cursor: pointer;">
-                  Hiba neve
-                  <i v-if="sortKey === 'name'"
-                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
-                </th>
-                <th @click="sortBy('priority')" style="cursor: pointer;">
-                  Prioritás
-                  <i v-if="sortKey === 'priority'"
-                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
-                </th>
-                <th>Címke</th>
-                <th>Státusz</th>
-                <th @click="sortBy('room')" style="cursor: pointer;">
-                  Terem
-                  <i v-if="sortKey === 'room'"
-                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
-                </th>
-                <th @click="sortBy('reportedBy')" style="cursor: pointer;">
-                  Bejelentette
-                  <i v-if="sortKey === 'reportedBy'"
-                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
-                </th>
-                <th @click="sortBy('reportedAt')" style="cursor: pointer;">
-                  Bejelentés ideje
-                  <i v-if="sortKey === 'reportedAt'"
-                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(bug, index) in filteredBugs" :key="index" @click="openModal(bug)" style="cursor: pointer">
-                <td>{{ bug.name }}</td>
-                <td>
-                  <div v-if="bug.priority === 0">Nincs prioritás</div>
-                  <div v-else class="priority-container">
-                    <span :class="['priority-bar', bug.priorityColor]"></span>
-                    <span>{{ bug.priority }}</span>
-                  </div>
-                </td>
-                <td>{{ bug.label }}</td>
-                <td class="status-column">
-                  <span :class="['badge', bug.badgeClass, { 'dark-mode': isDarkMode }]">{{ bug.status }}</span>
-                </td>
-                <td>{{ bug.room }}</td>
-                <td>{{ bug.reportedBy }}</td>
-                <td>{{ bug.reportedAt }}</td>
-              </tr>
-              <tr v-if="filteredBugs.length === 0">
-                <td colspan="7" class="text-center">Nincs találat</td>
-              </tr>
-            </tbody>
-          </table>
+          <thead>
+            <tr>
+              <th @click="sortBy('name')" style="cursor: pointer;">
+                Hiba neve
+                <i v-if="sortKey === 'name'"
+                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+              </th>
+              <th @click="sortBy('priority')" style="cursor: pointer;">
+                Prioritás
+                <i v-if="sortKey === 'priority'"
+                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+              </th>
+              <th class="hide-mobile">Címke</th>
+              <th class="hide-mobile">Státusz</th>
+              <th class="hide-mobile" @click="sortBy('room')" style="cursor: pointer;">
+                Terem
+                <i v-if="sortKey === 'room'"
+                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+              </th>
+              <th class="hide-mobile" @click="sortBy('reportedBy')" style="cursor: pointer;">
+                Bejelentette
+                <i v-if="sortKey === 'reportedBy'"
+                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+              </th>
+              <th class="hide-mobile" @click="sortBy('reportedAt')" style="cursor: pointer;">
+                Bejelentés ideje
+                <i v-if="sortKey === 'reportedAt'"
+                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(bug, index) in filteredBugs" :key="index" @click="openModal(bug)" style="cursor: pointer">
+              <td>{{ bug.name }}</td>
+              <td>
+                <div v-if="bug.priority === 0">Nincs prioritás</div>
+                <div v-else class="priority-container">
+                  <span :class="['priority-bar', bug.priorityColor]"></span>
+                  <span>{{ bug.priority }}</span>
+                </div>
+              </td>
+              <td class="hide-mobile">{{ bug.label }}</td>
+              <td class="hide-mobile status-column">
+                <span :class="['badge', bug.badgeClass, { 'dark-mode': isDarkMode }]">{{ bug.status }}</span>
+              </td>
+              <td class="hide-mobile">{{ bug.room }}</td>
+              <td class="hide-mobile">{{ bug.reportedBy }}</td>
+              <td class="hide-mobile">{{ bug.reportedAt }}</td>
+            </tr>
+            <tr v-if="filteredBugs.length === 0">
+              <td colspan="7" class="text-center">Nincs találat</td>
+            </tr>
+          </tbody>
+        </table>
         </div>
       </div>
     </div>
@@ -831,6 +831,45 @@ export default {
   .dropdown-menu {
     width: 100%;
     /* Full width dropdowns on mobile */
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+
+  .table thead th,
+  .table tbody td {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+
+  .priority-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    white-space: nowrap;
+  }
+
+  .priority-bar {
+    width: 30px; /* Slightly smaller on mobile */
+  }
+
+  /* Ensure the table takes full width on mobile */
+  .table-responsive {
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  /* Adjust the container padding for mobile */
+  .reported-bugs-container {
+    padding: 0 10px;
+  }
+
+  /* Ensure the "No results" message spans correct number of columns */
+  tr:last-child td[colspan="7"] {
+    column-span: 2;
   }
 }
 </style>
