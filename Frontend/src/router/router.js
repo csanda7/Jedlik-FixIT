@@ -5,7 +5,6 @@ import AlreadyReportedPage from '../Pages/AlreadyReportedPage.vue'; // Import th
 import LoginPage from '../Pages/LoginPagE.vue'; // Updated import
 import MyTasks from '../Pages/MyTasks.vue';
 import Archive from '../Pages/Archive.vue';
-import Profile from '../Pages/Profile.vue';
 
 const routes = [
   {
@@ -36,11 +35,6 @@ const routes = [
     path: '/archive',
     name: 'Archive',
     component: Archive
-  },
-  {
-    path: '/myprofile',
-    name: 'MyProfile',
-    component: Profile
   },
 ];
 
