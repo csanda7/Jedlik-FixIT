@@ -278,7 +278,7 @@ export default {
       formData.append('bugName', this.bugName);
       formData.append('bugDescription', this.bugDescription);
       formData.append('reported_by', username);
-      formData.append('location', this.location);
+      formData.append('location', this.location === 'Egyéb' ? this.otherLocation : this.location);
       formData.append('priority', this.priority);
 
       // Debugging line for label
