@@ -49,7 +49,7 @@ export default {
       isDarkMode: false,
     };
   },
-  mounted() {
+  async mounted() {
     this.isDarkMode = localStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
   },
@@ -59,18 +59,14 @@ export default {
   methods: {
     async handleLogin() {
     try {
-        const response = await axios.post('http://localhost:4500/api/login', {
-            username: this.username,
-            password: this.password,
-        });
+        const authStore = useAuthStore();
+        const session = await authStore.login(
+            this.username,
+            this.password,
+        );
         
-        if (response.data.success) { // Now checks for success
-            const authStore = useAuthStore();
+        if (session) { // Now checks for success
             authStore.isAuthenticated = true;
-            sessionStorage.setItem('username', this.username); // Store the username in sessionStorage
-            sessionStorage.setItem('role', response.data.role); // Store the role in sessionStorage
-            console.log('Logged in as:', this.username); // Log the username
-            console.log('Logged in as:', response.data.role); // Log the username
             this.$router.push('/report'); // Navigate to the report page
         } else {
             this.loginError = true; // Handles unsuccessful logins

@@ -126,16 +126,24 @@ export default {
     }
   },
   methods: {
-    logout() {
-      const authStore = useAuthStore();
-      authStore.logout(); // You would implement this method in AuthModule
-      this.$router.push('/login'); // Redirect to login page on logout
-    },
+    async logout() {
+    const authStore = useAuthStore(); // Access your auth store
+
+    try {
+      await authStore.logout(); // Call the logout method in the AuthModule
+
+      // Redirect to the login page after successful logout
+      await this.$router.push('/login'); // Ensure redirection occurs after logout
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Optionally, you can add user feedback here (e.g., a notification)
+    }
+  },
     toggleTheme() {
       // Toggle the theme and update isDarkMode
       this.isDarkMode = !this.isDarkMode;
       localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light'); // Update local storage
-      document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light'); // Set the document theme
+      document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'light' : 'dark'); // Set the document theme
       window.dispatchEvent(new Event('theme-changed')); // Dispatch a custom event
     }
   }
@@ -350,7 +358,7 @@ export default {
     width: 100%;
     text-align: center;
     padding: 0.75rem 1rem;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
     box-sizing: border-box;
   }
 }
