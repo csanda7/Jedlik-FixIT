@@ -1,49 +1,55 @@
 const express = require('express');
+const session = require('express-session');
+require('dotenv').config();
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+
 const app = express();
 const { jsonParser } = require('./middlewares/bodyParser');
-
-const encoder = bodyParser.urlencoded({ extended: true });
 const authRoutes = require('./routes/authRoutes');
-const bugReportController = require('./controllers/bugReportController'); // Import bug report routes
+const bugReportController = require('./controllers/bugReportController');
 const hibakKiirRoutes = require('./routes/hibaKiirRoutes');
-const hibaFelvetel = require('./routes/hibaFelvetelRoutes');  // Import bug routes
+const hibaFelvetel = require('./routes/hibaFelvetelRoutes');
 const usersWithRolesRoutes = require('./routes/usersWithRolesRoutes');
 
-
-
-
 const corsOptions = {
-  origin: 'http://localhost:5173', // Change this to the correct URL of your Vue.js app
+  origin: 'http://localhost:5173',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 };
 
 app.use(cors(corsOptions));
 app.use(jsonParser);
-
-// Serve static files from the frontend (if necessary)
-const frontendPath = path.join(__dirname, '..', '..', 'frontend');
-app.use(express.static(frontendPath));
-
-// Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json()); // For parsing application/json
-app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// Session configuration
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'mySecret', // Replace with a secure secret
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Set to true in production
+      maxAge: 24 * 60 * 60 * 1000, // 1 day session duration
+    },
+  })
+);
 
 // Routes
-app.use('/api/login',authRoutes);
+app.use('/api/login', authRoutes);
 app.use('/api/bugReport', bugReportController);
 app.use('/api/hibakKiir', hibakKiirRoutes);
 app.use('/api', hibaFelvetel);
-app.use('/uploads', express.static(path.join(__dirname, '../uploads'))); // Adjust to your actual path
-app.use('/api', bugReportController); // Make sure the route prefix is correct
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/api', bugReportController);
 app.use('/api/usersWithRoles', usersWithRolesRoutes);
 
 // Start the server
 const PORT = 4500;
 app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
