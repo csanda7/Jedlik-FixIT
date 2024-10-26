@@ -18,6 +18,8 @@ export const useAuthStore = defineStore('auth', {
         if (response.data.success) {
           this.username = user;
           this.isAuthenticated = true;
+          sessionStorage.setItem('role',response.data.role)
+          sessionStorage.setItem('username',this.username)
           return true;
         } else {
           return false;
@@ -56,13 +58,24 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     
-     logout() {
-        axios.post('http://localhost:4500/api/login/logout', {}, { withCredentials: true });
+    async logout() {
+      try {
+        // Make the API call to log out
+        await axios.post('http://localhost:4500/api/login/logout', {}, { withCredentials: true });
+        
+        // Reset authentication state
         this.isAuthenticated = false;
         this.username = '';
+        this.isAdmin = false;
+
+        // Clear session storage
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('role');
-        this.isAdmin = false;
+      } catch (error) {
+        console.error("Error during logout:", error);
+        // Handle any errors (optional)
+      }
     },
+    
   },
 });

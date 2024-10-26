@@ -50,11 +50,6 @@ export default {
     };
   },
   async mounted() {
-    const authStore = useAuthStore();
-    await authStore.checkSession();
-    if (authStore.isAuthenticated) {
-      this.$router.push('/report');
-    }
     this.isDarkMode = localStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
   },
@@ -65,15 +60,13 @@ export default {
     async handleLogin() {
     try {
         const authStore = useAuthStore();
-        const response = await authStore.login(
+        const session = await authStore.login(
             this.username,
             this.password,
         );
         
-        if (response) { // Now checks for success
+        if (session) { // Now checks for success
             authStore.isAuthenticated = true;
-            sessionStorage.setItem('username', this.username); // Store the username in sessionStorage
-            sessionStorage.setItem('role', this.role); // Store the role in sessionStorage
             this.$router.push('/report'); // Navigate to the report page
         } else {
             this.loginError = true; // Handles unsuccessful logins
