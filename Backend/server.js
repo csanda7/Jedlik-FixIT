@@ -10,6 +10,7 @@ const authRoutes = require('./routes/authRoutes');
 const bugReportController = require('./controllers/bugReportController'); // Import bug report routes
 const hibakKiirRoutes = require('./routes/hibaKiirRoutes');
 const hibaFelvetel = require('./routes/hibaFelvetelRoutes');  // Import bug routes
+const usersWithRolesRoutes = require('./routes/usersWithRolesRoutes');
 
 
 
@@ -40,6 +41,7 @@ app.use('/api/hibakKiir', hibakKiirRoutes);
 app.use('/api', hibaFelvetel);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads'))); // Adjust to your actual path
 app.use('/api', bugReportController); // Make sure the route prefix is correct
+app.use('/api/usersWithRoles', usersWithRolesRoutes);
 
 // Start the server
 const PORT = 4500;

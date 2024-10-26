@@ -18,39 +18,40 @@
       </button>
       <div class="collapse navbar-collapse mx-3 row" id="navbarNav">
         <ul class="navbar-nav col-lg-10 col-md-9">
-          <li class="nav-item" v-if="isAuthenticated">
-            <router-link 
-              class="nav-link" 
-              :class="{'active-link': $route.path === '/report'}" 
-              to="/report">
-              HIBA BEJELENTÉSE
-            </router-link>
-          </li>
-          <li class="nav-item" v-if="isAuthenticated">
-            <router-link 
-              class="nav-link" 
-              :class="{'active-link': $route.path === '/reported'}" 
-              to="/reported">
-              HIBÁK LISTÁJA
-            </router-link>
-          </li>
-          <li class="nav-item" v-if="isAuthenticated">
-            <router-link 
-              class="nav-link" 
-              :class="{'active-link': $route.path === '/mytasks'}" 
-              to="mytasks">
-              FELADATAIM
-            </router-link>
-          </li>
-          <li class="nav-item" v-if="isAuthenticated">
-            <router-link 
-              class="nav-link" 
-              :class="{'active-link': $route.path === '/archive'}" 
-              to="archive">
-              ARCHÍVUM
-            </router-link>
-          </li>
-        </ul>
+  <li class="nav-item" v-if="isAuthenticated && hasAccess">
+    <router-link 
+      class="nav-link" 
+      :class="{'active-link': $route.path === '/report'}" 
+      to="/report">
+      HIBA BEJELENTÉSE
+    </router-link>
+  </li>
+  <li class="nav-item" v-if="isAuthenticated && hasAccess">
+    <router-link 
+      class="nav-link" 
+      :class="{'active-link': $route.path === '/reported'}" 
+      to="/reported">
+      HIBÁK LISTÁJA
+    </router-link>
+  </li>
+  <li class="nav-item" v-if="isAuthenticated && hasAccess">
+    <router-link 
+      class="nav-link" 
+      :class="{'active-link': $route.path === '/mytasks'}" 
+      to="/mytasks">
+      FELADATAIM
+    </router-link>
+  </li>
+  <li class="nav-item" v-if="isAuthenticated && hasAccess">
+    <router-link 
+      class="nav-link" 
+      :class="{'active-link': $route.path === '/archive'}" 
+      to="/archive">
+      ARCHÍVUM
+    </router-link>
+  </li>
+</ul>
+
         <div class="d-lg-flex justify-content-lg-end col-lg-2 mt-lg-0 mt-3" v-if="isAuthenticated">
           <div class="theme-switch mx-2 my-auto">
                 <input type="checkbox" id="theme-checkbox" @click="toggleTheme"/>
@@ -113,6 +114,11 @@ export default {
     isAuthenticated() {
       const authStore = useAuthStore();
       return authStore.isAuthenticated;
+    },
+    hasAccess() {
+      // Check if user role is "mv" or "r"
+      const role = sessionStorage.getItem('role');
+      return role === 'muszakivezeto' || role === 'rendszergazda';
     },
     isAdmin() {
       const authStore = useAuthStore();

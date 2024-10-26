@@ -16,6 +16,7 @@
           id="bugName" 
           v-model="bugName" 
           placeholder="Adja meg a hiba nevét röviden" 
+          maxlength="30"
           required 
           @input="setCookie('bugName', bugName)">
       </div>

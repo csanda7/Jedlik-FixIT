@@ -180,14 +180,51 @@
               </div>
             </div>
           </div>
-
-
-
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary mx-1" v-if="selectedBug.assignedTo == null"
-              @click="takeTask">Elvállalom</button>
-            <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
-          </div>
+  <!-- Show 'Elvállalom' button only if user role is 'rendszergazda' -->
+  <button
+    type="button"
+    class="btn btn-primary mx-1"
+    v-if="role === 'rendszergazda' && !selectedBug.assignedTo"
+    @click="takeTask"
+  >
+    Elvállalom
+  </button>
+
+<!-- Show dropdown if user role is 'muszakivezeto' -->
+<div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown">
+  <!-- Show button to assign task if a user is selected -->
+  <button
+    v-if="selectedUser"
+    type="button"
+    class="btn btn-primary mx-1 my-2"
+    @click="assignTaskTo(selectedUser)"
+  >
+    Feladat kiosztása
+  </button>
+
+  <!-- Dropdown button -->
+  <button
+  ref="dropdownButton"
+    class="btn btn-primary dropdown-toggle fixed-width my-2"
+    type="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+  >
+    {{ selectedUser || 'Feladat kiosztása' }} 
+  </button>
+  
+  <!-- Dropdown items -->
+  <ul class="dropdown-menu fixed-width">
+    <li v-for="user in usersWithRoles" :key="user">
+      <a class="dropdown-item text-center" @click="selectUser(user)">{{ user }}</a>
+    </li>
+  </ul>
+</div>
+
+
+  <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
+</div>
         </div>
       </div>
     </div>
@@ -195,6 +232,8 @@
 </template>
 
 <script>
+import { Dropdown } from 'bootstrap';
+
 export default {
   data() {
     return {
@@ -210,6 +249,9 @@ export default {
       selectedLabels: [],
       selectedStatuses: [],
       selectedRooms: [],
+      usersWithRoles: [],
+      role: sessionStorage.getItem('role') || '',
+      selectedUser: null,
     };
   },
   computed: {
@@ -276,6 +318,7 @@ export default {
   },
   mounted() {
     this.fetchBugs();
+    this.fetchUsersWithRoles();
     this.isDarkMode = localStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
   },
@@ -284,6 +327,7 @@ export default {
   },
   methods: {
     async fetchBugs() {
+      console.log(this.userRole)
       try {
         const response = await fetch('http://localhost:4500/api/hibakKiir');
         if (!response.ok) throw new Error('Network response was not ok');
@@ -353,6 +397,7 @@ export default {
     },
     closeModal() {
       this.showModal = false;
+      this.selectedUser = null; 
     },
     async takeTask() {
       const username = sessionStorage.getItem('username'); // Get logged-in user's username
@@ -384,7 +429,52 @@ export default {
         console.error('Error assigning task:', error);
         alert('Failed to assign the task.');
       }
+    },
+    async fetchUsersWithRoles() {
+      try {
+        const response = await fetch('http://localhost:4500/api/usersWithRoles');
+        if (!response.ok) throw new Error('Failed to fetch users');
+
+        const data = await response.json();
+        console.log(data);
+        this.usersWithRoles = data; // Store the users in the array
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    },
+    selectUser(userName) {
+    this.selectedUser = userName; // Set the selected user
+
+    // Close the dropdown
+    const dropdownElement = this.$refs.dropdownButton; // Reference to the dropdown button
+    const dropdown = Dropdown.getInstance(dropdownElement); // Get the instance of the dropdown
+
+    if (dropdown) {
+      dropdown.hide(); // Close the dropdown
+    } else {
+      // If the dropdown instance does not exist, create it and then hide it
+      const newDropdown = new Dropdown(dropdownElement);
+      newDropdown.hide(); // Now hide the dropdown
     }
+  },
+    async assignTaskTo(selectedUser) {
+      // Function to assign the selected user to the task
+      try {
+        const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ assignedTo: selectedUser }),
+        });
+
+        if (!response.ok) throw new Error('Failed to assign task');
+        this.selectedBug.assignedTo = selectedUser;
+        alert(`Task assigned to ${selectedUser}`);
+        this.fetchBugs(); // Refresh the list to reflect the new assignment
+      } catch (error) {
+        console.error('Error assigning task:', error);
+      }
+      
+    },
 
   }
 };
@@ -521,6 +611,9 @@ export default {
   width: 100%;
   z-index: 1000;
 }
+.drown-kioszt {
+  min-width: 100px !important;
+}
 
 .description {
   max-width: 100%;
@@ -614,7 +707,9 @@ export default {
 .modal-footer {
   text-align: right;
 }
-
+.fixed-width {
+  width: 10rem; /* Set to the desired width for the button */
+}
 .tooltip-custom {
   position: absolute;
   background-color: #fcc913;

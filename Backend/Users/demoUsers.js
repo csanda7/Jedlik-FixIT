@@ -2,16 +2,24 @@
 const demoUsers = [
     {
       username: 'kovacs.bela',
-      password: 'abc', // Use plain text for demo purposes only
+      password: 'abc',
+      role: 'muszakivezeto'
     },
     {
-      username: 'user2',
-      password: 'password2',
+      username: 'kiss.janos',
+      password: 'abc',
+      role: 'rendszergazda'
     },
     {
-      username: 'admin',
-      password: 'adminpassword',
+      username: 'nagy.gabor',
+      password: 'abc',
+      role: 'rendszergazda'
     },
+    {
+      username: 'varga.marton',
+      password: 'abc',
+      role: 'tanar'
+    }
   ];
   
   module.exports = demoUsers;

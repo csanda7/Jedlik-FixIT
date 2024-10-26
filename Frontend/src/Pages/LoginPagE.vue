@@ -61,14 +61,16 @@ export default {
     try {
         const response = await axios.post('http://localhost:4500/api/login', {
             username: this.username,
-            password: this.password
+            password: this.password,
         });
         
         if (response.data.success) { // Now checks for success
             const authStore = useAuthStore();
             authStore.isAuthenticated = true;
             sessionStorage.setItem('username', this.username); // Store the username in sessionStorage
+            sessionStorage.setItem('role', response.data.role); // Store the role in sessionStorage
             console.log('Logged in as:', this.username); // Log the username
+            console.log('Logged in as:', response.data.role); // Log the username
             this.$router.push('/report'); // Navigate to the report page
         } else {
             this.loginError = true; // Handles unsuccessful logins
