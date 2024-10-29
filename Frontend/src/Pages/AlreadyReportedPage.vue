@@ -181,7 +181,7 @@
             </div>
           </div>
           <div class="modal-footer">
-  <!-- Show 'Elvállalom' button only if user role is 'rendszergazda' -->
+  <!-- Feladat elvállalása -->
   <button
     type="button"
     class="btn btn-primary mx-1"
@@ -191,9 +191,8 @@
     Elvállalom
   </button>
 
-<!-- Show dropdown if user role is 'muszakivezeto' -->
+<!-- Feladat kiosztása -->
 <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown">
-  <!-- Show button to assign task if a user is selected -->
   <button
     v-if="selectedUser"
     type="button"
@@ -203,7 +202,6 @@
     Feladat kiosztása
   </button>
 
-  <!-- Dropdown button -->
   <button
   ref="dropdownButton"
     class="btn btn-primary dropdown-toggle fixed-width my-2"
@@ -214,7 +212,6 @@
     {{ selectedUser || 'Feladat kiosztása' }} 
   </button>
   
-  <!-- Dropdown items -->
   <ul class="dropdown-menu fixed-width">
     <li v-for="user in usersWithRoles" :key="user">
       <a class="dropdown-item text-center" @click="selectUser(user)">{{ user }}</a>
@@ -222,6 +219,42 @@
   </ul>
 </div>
 
+<!-- Feladat kész állapotba helyezése -->
+<div v-if=" loggedInUser === assignedTo  && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) ">
+  <button
+    type="button"
+    class="btn btn-primary mx-1"
+    id="done"
+    @click="Done"
+  >
+    Kész
+  </button>
+  </div>
+
+
+  <!-- Feladat meghíusult állapotba helyezése -->
+  <div v-if=" loggedInUser === assignedTo  && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) ">
+  <button
+    type="button"
+    class="btn btn-primary mx-1"
+    id="failed"
+    @click="Failed"
+  >
+    Meghiúsult
+  </button>
+  </div>
+
+  <!-- Feladat Beszerzés szükséges állapotba helyezése -->
+  <div v-if="loggedInUser === assignedTo && !['Kész', 'Meghiúsult', 'Bejelentve', 'Beszerzésre vár'].includes(status)">
+  <button
+    type="button"
+    class="btn btn-primary mx-1"
+    id="supply"
+    @click="Supply"
+  >
+  Beszerzés szükséges
+  </button>
+  </div>
 
   <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
 </div>
@@ -252,6 +285,9 @@ export default {
       usersWithRoles: [],
       role: sessionStorage.getItem('role') || '',
       selectedUser: null,
+      assignedTo: '',
+      status: '',
+      loggedInUser: sessionStorage.getItem('username') || '', // Get the logged-in user's username from sessionStorage
     };
   },
   computed: {
@@ -267,11 +303,13 @@ export default {
     uniqueRooms() {
       return [...new Set(this.bugs.map(bug => bug.room))];
     },
+    
     filteredBugs() {
       let filtered = this.bugs.filter(bug => {
         // Apply text search
         const searchTermLower = this.searchTerm.toLowerCase();
         const matchesSearch = bug.name.toLowerCase().includes(searchTermLower);
+
 
         // Apply filters
         const matchesPriority = !this.selectedPriorities.length || this.selectedPriorities.includes(bug.priority);
@@ -345,8 +383,7 @@ export default {
             bug['Státusz'] === 'Kész' ? 'badge-done' :
               bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
                 bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' :
-                  bug['Státusz'] === 'Beszerzés szükséges' ? 'badge-supply' :
-                    bug['Státusz'] === 'Ellenőrzésre vár' ? 'badge-check' : '',
+                  bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' : '',
 
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
@@ -358,6 +395,7 @@ export default {
       } catch (error) {
         console.error('Error fetching bug data:', error);
       }
+      
     },
     toggleFilterVisibility() {
       this.showFilters = !this.showFilters;
@@ -394,6 +432,8 @@ export default {
     openModal(bug) {
       this.selectedBug = bug;
       this.showModal = true;
+     this.assignedTo = this.selectedBug.assignedTo
+     this.status = this.selectedBug.status
     },
     closeModal() {
       this.showModal = false;
@@ -475,6 +515,81 @@ export default {
       }
       
     },
+    async Done() {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status : 'Kész' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        // Update the frontend after a successful response
+        this.selectedBug.status = 'kész';
+        alert('Status successfully updated to "kész".');
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update the status.');
+      }
+    
+    },
+    async Failed() {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status : 'Meghiúsult' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        // Update the frontend after a successful response
+        this.selectedBug.status = 'Meghiúsult';
+        alert('Status successfully updated to "Meghiúsult".');
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update the status.');
+      }
+    
+    },
+    async Supply() {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status : 'Beszerzésre vár' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        // Update the frontend after a successful response
+        this.selectedBug.status = 'Beszerzésre vár';
+        alert('Status successfully updated to "Beszerzésre vár".');
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update the status.');
+      }
+    
+    }
 
   }
 };
@@ -731,6 +846,21 @@ export default {
   /* Center the text */
 }
 
+#done{
+  background-color: #35b821;
+  border: none;
+}
+
+#failed{
+  background-color: red;
+  border: none;
+}
+
+#supply{
+  background-color: brown;
+  border: none;
+}
+
 
 /* DARK MODE */
 
@@ -878,7 +1008,20 @@ export default {
   color: white;
   /* Make placeholder text white as well */
 }
+.dark-mode #done{
+  background-color: #35b821;
+  border: none;
+}
 
+.dark-mode #failed{
+  background-color: red;
+  border: none;
+}
+
+.dark-mode #supply{
+  background-color: brown;
+  border: none;
+}
 
 .filters-container {
   width: 100%;

@@ -70,54 +70,90 @@
       </div>
     </div>
 
-    <!-- Modal -->
-    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+     <!-- Modal -->
+     <div v-if="showModal" class="modal-overlay" @click="closeModal">
       <div class="bg" @click.stop>
         <div class="modal-content">
           <div class="modal-header">
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
           </div>
           <div class="modal-body">
-  <div class="row">
-    <div class="col-md-4">
-      <div class="d-flex align-items-center mb-2">
-        <strong>Prioritás: </strong>
-        <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
-        <div v-else class="priority-container ms-2 my-1">
-          <span :class="['priority-bar', selectedBug.priorityColor]"></span>
-          <span>{{ selectedBug.priority }}</span>
-        </div>
-      </div>
-      <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-      <div class="d-flex align-items-center mb-2 my-1">
-        <strong>Státusz: </strong>
-        <span :class="['badge', selectedBug.badgeClass, 'ms-2', { 'dark-mode': isDarkMode }]">{{ selectedBug.status }}</span>
-      </div>
-      <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
-      <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-      <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-      <p class="my-3" v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}</p>
-    </div>
-    <div class="col-md-4 description">
-      <p><strong>Hiba leírása:</strong></p>
-      <div class="description-content">{{ selectedBug.description }}</div>
-    </div>
-    <div class="col-md-4 photo_box">
-      <div class="photo-grid">
-        <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
-          <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary mx-1" v-if="selectedBug.assignedTo == null" @click="takeTask">Elvállalom</button>
-            <button type="button" class="btn btn-secondary mx-1" @click="closeModal">Bezárás</button>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="d-flex align-items-center mb-2">
+                  <strong>Prioritás: </strong>
+                  <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
+                  <div v-else class="priority-container ms-2 my-1">
+                    <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+                    <span>{{ selectedBug.priority }}</span>
+                  </div>
+                </div>
+                <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
+                <div class="d-flex align-items-center mb-2 my-1">
+                  <strong>Státusz: </strong>
+                  <span :class="['badge', selectedBug.badgeClass, 'ms-2', { 'dark-mode': isDarkMode }]">{{
+                    selectedBug.status }}</span>
+                </div>
+                <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
+                <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+                <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+                <p class="my-3" v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{
+                  selectedBug.assignedTo }}</p>
+              </div>
+              <div class="col-md-4 description">
+                <p><strong>Hiba leírása:</strong></p>
+                <div class="description-content">{{ selectedBug.description }}</div>
+              </div>
+              <div class="col-md-4 photo_box">
+                <div class="photo-grid">
+                  <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
+                    <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+          <div class="modal-footer">
+
+<!-- Feladat kész állapotba helyezése -->
+<div v-if=" loggedInUser === assignedTo  && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) ">
+  <button
+    type="button"
+    class="btn btn-primary mx-1"
+    id="done"
+    @click="Done"
+  >
+    Kész
+  </button>
+  </div>
+
+
+  <!-- Feladat meghíusult állapotba helyezése -->
+  <div v-if=" loggedInUser === assignedTo  && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) ">
+  <button
+    type="button"
+    class="btn btn-primary mx-1"
+    id="failed"
+    @click="Failed"
+  >
+    Meghiúsult
+  </button>
+  </div>
+
+  <!-- Feladat Beszerzés szükséges állapotba helyezése -->
+  <div v-if="loggedInUser === assignedTo && !['Kész', 'Meghiúsult', 'Bejelentve', 'Beszerzésre vár'].includes(status)">
+  <button
+    type="button"
+    class="btn btn-primary mx-1"
+    id="supply"
+    @click="Supply"
+  >
+  Beszerzés szükséges
+  </button>
+  </div>
+
+  <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
+</div>
         </div>
       </div>
     </div>
@@ -136,7 +172,9 @@ export default {
       sortKey: '',
       sortOrder: 'asc',
       showTooltip: false,
-      loggedInUser: sessionStorage.getItem('username') || '' // Get the logged-in user's username from sessionStorage
+      loggedInUser: sessionStorage.getItem('username') || '', // Get the logged-in user's username from sessionStorage
+      assignedTo: '',
+      status: '',
     };
   },
   computed: {
@@ -148,7 +186,7 @@ export default {
           // Filter bugs based on search term and assignedTo field matching the logged-in user
           return (
             bug.name.toLowerCase().includes(searchTermLower) &&
-            (bug.assignedTo === this.loggedInUser) // Shows bugs only assigned to the user or unassigned
+            (bug.assignedTo === this.loggedInUser && bug.status === 'Folyamatban') // Shows bugs only assigned to the user or unassigned
           );
         });
 
@@ -197,6 +235,7 @@ export default {
         if (!response.ok) throw new Error('Network response was not ok');
 
         const data = await response.json();
+        
 
         this.bugs = data.map(bug => ({
           id: bug.ID,
@@ -205,8 +244,7 @@ export default {
           priorityColor: this.getPriorityColor(bug['Prioritás']),
           label: bug['Címke'],
           status: bug['Státusz'],
-          badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
-                      bug['Státusz'] === 'Kész' ? 'badge-done' :
+          badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' : 
                       bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : '',
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
@@ -218,6 +256,7 @@ export default {
       } catch (error) {
         console.error('Error fetching bug data:', error);
       }
+      
     },
 
     openPhoto(photo) {
@@ -250,10 +289,87 @@ export default {
     openModal(bug) {
       this.selectedBug = bug;
       this.showModal = true;
+      this.assignedTo = this.selectedBug.assignedTo
+     this.status = this.selectedBug.status
     },
     closeModal() {
       this.showModal = false;
     },
+    async Done() {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status : 'Kész' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        // Update the frontend after a successful response
+        this.selectedBug.status = 'kész';
+        alert('Status successfully updated to "kész".');
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update the status.');
+      }
+    
+    },
+    async Failed() {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status : 'Meghiúsult' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        // Update the frontend after a successful response
+        this.selectedBug.status = 'Meghiúsult';
+        alert('Status successfully updated to "Meghiúsult".');
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update the status.');
+      }
+    
+    },
+    async Supply() {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status : 'Beszerzésre vár' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        // Update the frontend after a successful response
+        this.selectedBug.status = 'Beszerzésre vár';
+        alert('Status successfully updated to "Beszerzésre vár".');
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update the status.');
+      }
+    
+    }
   }
 };
 </script>

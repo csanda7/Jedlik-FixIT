@@ -1,40 +1,189 @@
 <template>
-  <div class="reported-bugs-container container mt-5">
-    <div class="card shadow-sm">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h2 class="mb-0 h2">ARCHÍVUM</h2>
+  <div :class="['reported-bugs-container', { 'dark-mode': isDarkMode }, 'container', 'mt-5']">
+    <div :class="[ 'card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
+      <div :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
+        <h2 class="mb-0 me-3 h2">BEJELENTETT HIBÁK</h2>
         <div class="user-actions d-flex">
-          <input type="text" class="form-control search-input me-3" placeholder="Keresés..." />
-          <i class="fas fa-filter filter-icon"></i>
+          <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
+          <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
+            <i class="bi bi-funnel-fill"></i>
+          </button>
         </div>
       </div>
+      <!-- Updated filters section with responsive design -->
+      <div v-if="showFilters" class="filters-container">
+        <div class="filters-wrapper">
+          <!-- Priority Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Prioritás
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="priority in uniquePriorities" :key="priority" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="priority" v-model="selectedPriorities" /> {{ priority }}
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Label Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Címke
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="label in uniqueLabels" :key="label" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="label" v-model="selectedLabels" /> {{ label }}
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Status Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Státusz
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="status in uniqueStatuses" :key="status" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="status" v-model="selectedStatuses" /> {{ status }}
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Room Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Terem
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="room in uniqueRooms" :key="room" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="room" v-model="selectedRooms" /> {{ room }}
+                </label>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
       <div class="card-body p-0">
-        <div class="table-responsive"> <!-- Reszponzív táblázat -->
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Hiba neve</th>
-                <th>Prioritás</th>
-                <th>Bejelentés ideje</th>
-                <th>Határidő</th>
-                <th>Terem</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Törött szék</td>
-                <td>
-                  <div class="priority-container">
-                    <span class="priority-bar lyellow"></span>
-                    <span>2</span>
+        <div class="table-responsive">
+          <table :class="['table', { 'dark-mode': isDarkMode }, 'table-hover', 'p-4']">
+          <thead>
+            <tr>
+              <th @click="sortBy('name')" style="cursor: pointer;">
+                Hiba neve
+                <i v-if="sortKey === 'name'"
+                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+              </th>
+              <th @click="sortBy('priority')" style="cursor: pointer;">
+                Prioritás
+                <i v-if="sortKey === 'priority'"
+                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+              </th>
+              <th class="hide-mobile">Címke</th>
+              <th class="hide-mobile">Státusz</th>
+              <th class="hide-mobile" @click="sortBy('room')" style="cursor: pointer;">
+                Terem
+                <i v-if="sortKey === 'room'"
+                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+              </th>
+              <th class="hide-mobile" @click="sortBy('reportedBy')" style="cursor: pointer;">
+                Bejelentette
+                <i v-if="sortKey === 'reportedBy'"
+                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+              </th>
+              <th class="hide-mobile" @click="sortBy('reportedAt')" style="cursor: pointer;">
+                Bejelentés ideje
+                <i v-if="sortKey === 'reportedAt'"
+                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(bug, index) in filteredBugs" :key="index" @click="openModal(bug)" style="cursor: pointer">
+              <td>{{ bug.name }}</td>
+              <td>
+                <div v-if="bug.priority === 0">Nincs prioritás</div>
+                <div v-else class="priority-container">
+                  <span :class="['priority-bar', bug.priorityColor]"></span>
+                  <span>{{ bug.priority }}</span>
+                </div>
+              </td>
+              <td class="hide-mobile">{{ bug.label }}</td>
+              <td class="hide-mobile status-column">
+                <span :class="['badge', bug.badgeClass, { 'dark-mode': isDarkMode }]">{{ bug.status }}</span>
+              </td>
+              <td class="hide-mobile">{{ bug.room }}</td>
+              <td class="hide-mobile">{{ bug.reportedBy }}</td>
+              <td class="hide-mobile">{{ bug.reportedAt }}</td>
+            </tr>
+            <tr v-if="filteredBugs.length === 0">
+              <td colspan="7" class="text-center">Nincs találat</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+      <div class="bg" @click.stop>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">{{ selectedBug.name }}</h3>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="d-flex align-items-center mb-2">
+                  <strong>Prioritás: </strong>
+                  <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
+                  <div v-else class="priority-container ms-2 my-1">
+                    <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+                    <span>{{ selectedBug.priority }}</span>
                   </div>
-                </td>
-                <td>2024-09-01 16:12</td>
-                <td>2024-09-05</td>
-                <td>303</td>
-              </tr>
-            </tbody>
-          </table>
+                </div>
+                <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
+                <div class="d-flex align-items-center mb-2 my-1">
+                  <strong>Státusz: </strong>
+                  <span :class="['badge', selectedBug.badgeClass, 'ms-2', { 'dark-mode': isDarkMode }]">{{
+                    selectedBug.status }}</span>
+                </div>
+                <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
+                <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+                <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+                <p class="my-3" v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{
+                  selectedBug.assignedTo }}</p>
+              </div>
+              <div class="col-md-4 description">
+                <p><strong>Hiba leírása:</strong></p>
+                <div class="description-content">{{ selectedBug.description }}</div>
+              </div>
+              <div class="col-md-4 photo_box">
+                <div class="photo-grid">
+                  <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
+                    <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+
+  <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
+</div>
         </div>
       </div>
     </div>
@@ -42,79 +191,140 @@
 </template>
 
 <script>
+export default {
+  data() {
+    return {
+      bugs: [],
+      selectedBug: {},
+      showModal: false,
+      isDarkMode: false,
+      searchTerm: '',
+      sortKey: '',
+      sortOrder: 'asc',
+      showTooltip: false,
+      loggedInUser: sessionStorage.getItem('username') || '', // Get the logged-in user's username from sessionStorage
+      assignedTo: '',
+      status: '',
+    };
+  },
+  computed: {
+    filteredBugs() {
+      let filtered = this.bugs
+        .filter(bug => {
+          const searchTermLower = this.searchTerm.toLowerCase();
+
+          // Filter bugs based on search term and assignedTo field matching the logged-in user
+          return (
+            bug.name.toLowerCase().includes(searchTermLower) &&
+            (bug.status === 'Kész' || bug.status === 'Meghiúsult') // Shows bugs only assigned to the user or unassigned
+          );
+        });
+
+      // Sorting logic based on sortKey and sortOrder
+      return filtered.sort((a, b) => {
+        let compareA, compareB;
+
+        switch (this.sortKey) {
+          case 'name':
+          case 'room':
+          case 'reportedBy':
+            compareA = a[this.sortKey].toLowerCase();
+            compareB = b[this.sortKey].toLowerCase();
+            if (compareA < compareB) return this.sortOrder === 'asc' ? -1 : 1;
+            if (compareA > compareB) return this.sortOrder === 'asc' ? 1 : -1;
+            return 0;
+
+          case 'priority':
+            compareA = a.priority;
+            compareB = b.priority;
+            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+          case 'reportedAt':
+            compareA = new Date(a.reportedAt);
+            compareB = new Date(b.reportedAt);
+            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+          default:
+            return 0; // Default sorting if no key is selected
+        }
+      });
+    }
+  },
+  mounted() {
+    this.fetchBugs();
+    this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    window.addEventListener('theme-changed', this.updateTheme);
+  },
+  beforeDestroy() {
+    window.removeEventListener('theme-changed', this.updateTheme);
+  },
+  methods: {
+    async fetchBugs() {
+      try {
+        const response = await fetch('http://localhost:4500/api/hibakKiir');
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const data = await response.json();
+
+        this.bugs = data.map(bug => ({
+          id: bug.ID,
+          name: bug['Hiba neve'],
+          priority: bug['Prioritás'],
+          priorityColor: this.getPriorityColor(bug['Prioritás']),
+          label: bug['Címke'],
+          status: bug['Státusz'],
+          badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
+                      bug['Státusz'] === 'Kész' ? 'badge-done' :
+                      bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' : '',
+          room: bug['Terem'],
+          reportedBy: bug['Bejelentette'],
+          reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
+          assignedTo: bug['assignedTo'],
+          description: bug['Hiba leírása'],
+          photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format
+        }));
+      } catch (error) {
+        console.error('Error fetching bug data:', error);
+      }
+    },
+
+    openPhoto(photo) {
+      const imgWindow = window.open(photo, '_blank');
+      imgWindow.focus(); // Focus on the new window
+    },
+    sortBy(key) {
+      if (this.sortKey === key) {
+        // If the same column is clicked, toggle the sort order
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        // If a new column is clicked, set it as the sorting key and default to ascending
+        this.sortKey = key;
+        this.sortOrder = 'asc';
+      }
+    },
+    getPriorityColor(priority) {
+      switch (priority) {
+        case 1: return 'darkgreen';
+        case 2: return 'lightgreen';
+        case 3: return 'yellow';
+        case 4: return 'orange';
+        case 5: return 'red';
+        default: return '';
+      }
+    },
+    updateTheme() {
+      this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    },
+    openModal(bug) {
+      this.selectedBug = bug;
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+    },
+  }
+};
 </script>
 
-<style>
-.reported-bugs-container {
-  max-width: 900px;
-  margin: 0 auto; /* Center align */
-}
-
-.card-header {
-  background-color: #4285f4;
-  color: white;
-  padding: 1.2rem;
-  border-bottom: none;
-}
-
-.search-input {
-  width: 200px;
-}
-
-.filter-icon {
-  font-size: 1.5rem;
-  color: #4285f4;
-}
-
-.table thead th {
-  background-color: #f8f9fa;
-  font-weight: bold;
-  text-align: left;
-}
-
-.priority-container {
-  display: flex;
-  align-items: center;
-}
-
-.priority-bar {
-  display: inline-block;
-  width: 50px;
-  height: 4px;
-  margin-right: 5px;
-}
-
-.priority-bar.lyellow {
-  background-color: #f5ff64dc;
-}
-
-.priority-bar.red {
-  background-color: #dc3545;
-}
-
-.badge {
-  padding: 0.5rem 1rem;
-  font-size: 0.8rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-}
-
-.badge-hardware {
-  background-color: #9757f8;
-  color: #ffffff;
-}
-
-.badge-software {
-  background-color: #ffa73e;
-  color: #ffffff;
-}
-
-.btn-primary {
-  background-color: #4285f4;
-  border-color: #4285f4;
-}
-
-.btn-primary:hover {
-  background-color: #356cc1;
-}
+<style scoped>
 </style>
