@@ -278,7 +278,7 @@ let filtered = this.bugs.filter(bug => {
   const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
   const matchesRoom = !this.selectedRooms.length || this.selectedRooms.includes(bug.room);
 
-  const statusNotCompletedOrFailed = bug.status === "Folyamatban" || bug.status === "Beszerzésre vár" && bug.assignedTo === this.loggedInUser;
+  const statusNotCompletedOrFailed = (bug.status === "Folyamatban" || bug.status === "Beszerzésre vár") && bug.assignedTo === this.loggedInUser;
 
   return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom && statusNotCompletedOrFailed;
 

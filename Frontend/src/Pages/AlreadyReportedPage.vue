@@ -307,59 +307,59 @@ export default {
     filteredBugs() {
 
       
-      let filtered = this.bugs.filter(bug => {
-        // Apply text search
-        const searchTermLower = this.searchTerm.toLowerCase();
-        const matchesSearch = bug.name.toLowerCase().includes(searchTermLower);
+let filtered = this.bugs.filter(bug => {
+  // Apply text search
+  const searchTermLower = this.searchTerm.toLowerCase();
+  const matchesSearch = bug.name.toLowerCase().includes(searchTermLower);
 
 
-        // Apply filters
-        const matchesPriority = !this.selectedPriorities.length || this.selectedPriorities.includes(bug.priority);
-        const matchesLabel = !this.selectedLabels.length || this.selectedLabels.includes(bug.label);
-        const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
-        const matchesRoom = !this.selectedRooms.length || this.selectedRooms.includes(bug.room);
+  // Apply filters
+  const matchesPriority = !this.selectedPriorities.length || this.selectedPriorities.includes(bug.priority);
+  const matchesLabel = !this.selectedLabels.length || this.selectedLabels.includes(bug.label);
+  const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
+  const matchesRoom = !this.selectedRooms.length || this.selectedRooms.includes(bug.room);
 
-        const statusNotCompletedOrFailed = bug.status !== "Kész" && bug.status !== "Meghiúsult";
+  const statusNotCompletedOrFailed = bug.status !== "Kész" && bug.status !== "Meghiúsult";
 
-        return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom && statusNotCompletedOrFailed;
+  return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom && statusNotCompletedOrFailed;
 
-        
-      });
-      
-      
+  
+});
 
-      
 
-      // Sorting logic based on sortKey and sortOrder
-      return filtered.sort((a, b) => {
-        let compareA, compareB;
 
-        switch (this.sortKey) {
-          case 'name':
-          case 'room':
-          case 'reportedBy':
-            compareA = a[this.sortKey].toLowerCase();
-            compareB = b[this.sortKey].toLowerCase();
-            if (compareA < compareB) return this.sortOrder === 'asc' ? -1 : 1;
-            if (compareA > compareB) return this.sortOrder === 'asc' ? 1 : -1;
-            return 0;
 
-          case 'priority':
-            compareA = a.priority;
-            compareB = b.priority;
-            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
 
-          case 'reportedAt':
-            compareA = new Date(a.reportedAt);
-            compareB = new Date(b.reportedAt);
-            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+// Sorting logic based on sortKey and sortOrder
+return filtered.sort((a, b) => {
+  let compareA, compareB;
 
-          default:
-            return 0; // Default sorting if no key is selected
-        }
-      });
-    }
-  },
+  switch (this.sortKey) {
+    case 'name':
+    case 'room':
+    case 'reportedBy':
+      compareA = a[this.sortKey].toLowerCase();
+      compareB = b[this.sortKey].toLowerCase();
+      if (compareA < compareB) return this.sortOrder === 'asc' ? -1 : 1;
+      if (compareA > compareB) return this.sortOrder === 'asc' ? 1 : -1;
+      return 0;
+
+    case 'priority':
+      compareA = a.priority;
+      compareB = b.priority;
+      return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+    case 'reportedAt':
+      compareA = new Date(a.reportedAt);
+      compareB = new Date(b.reportedAt);
+      return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+    default:
+      return 0; // Default sorting if no key is selected
+  }
+});
+}
+},
   mounted() {
     this.fetchBugs();
     this.fetchUsersWithRoles();
