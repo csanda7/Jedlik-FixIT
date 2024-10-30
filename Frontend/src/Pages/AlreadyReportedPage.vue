@@ -305,6 +305,8 @@ export default {
     },
     
     filteredBugs() {
+
+      
       let filtered = this.bugs.filter(bug => {
         // Apply text search
         const searchTermLower = this.searchTerm.toLowerCase();
@@ -317,10 +319,14 @@ export default {
         const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
         const matchesRoom = !this.selectedRooms.length || this.selectedRooms.includes(bug.room);
 
-        return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom;
+        const statusNotCompletedOrFailed = bug.status !== "Kész" && bug.status !== "Meghiúsult";
+
+        return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom && statusNotCompletedOrFailed;
+
+        
       });
-
-
+      
+      
 
       
 
@@ -380,9 +386,7 @@ export default {
           label: bug['Címke'],
           status: bug['Státusz'],
           badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
-            bug['Státusz'] === 'Kész' ? 'badge-done' :
               bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
-                bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' :
                   bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' : '',
 
           room: bug['Terem'],
@@ -671,18 +675,8 @@ export default {
   color: #ffffff;
 }
 
-.badge-done {
-  background-color: #35b821;
-  color: #ffffff;
-}
-
 .badge-progress {
   background-color: #4169E1;
-  color: #ffffff;
-}
-
-.badge-failed {
-  background-color: red;
   color: #ffffff;
 }
 
@@ -903,18 +897,8 @@ export default {
   color: #ffffff;
 }
 
-.dark-mode .badge-done {
-  background-color: #35b821;
-  color: #ffffff;
-}
-
 .dark-mode .badge-progress {
   background-color: #4169E1;
-  color: #ffffff;
-}
-
-.dark-mode .badge-failed {
-  background-color: red;
   color: #ffffff;
 }
 

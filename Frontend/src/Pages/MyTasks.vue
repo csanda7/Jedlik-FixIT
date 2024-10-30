@@ -1,18 +1,85 @@
 <template>
-  <div :class="['reported-bugs-container', { 'dark-mode': isDarkMode }, 'container', 'mt-5']">
-    <div :class="['card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
-      <div
-        :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
-        <h2 class="mb-0 me-3 h2">FELADATAIM</h2>
+<div :class="['reported-bugs-container', { 'dark-mode': isDarkMode }, 'container', 'mt-5']">
+    <div :class="[ 'card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
+      <div :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
+        <h2 class="mb-0 me-3 h2">BEJELENTETT HIBÁK</h2>
         <div class="user-actions d-flex">
           <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
-          
+          <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
+            <i class="bi bi-funnel-fill"></i>
+          </button>
         </div>
       </div>
+      <!-- Updated filters section with responsive design -->
+      <div v-if="showFilters" class="filters-container">
+        <div class="filters-wrapper">
+          <!-- Priority Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Prioritás
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="priority in uniquePriorities" :key="priority" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="priority" v-model="selectedPriorities" /> {{ priority }}
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Label Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Címke
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="label in uniqueLabels" :key="label" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="label" v-model="selectedLabels" /> {{ label }}
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Status Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Státusz
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="status in uniqueStatuses" :key="status" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="status" v-model="selectedStatuses" /> {{ status }}
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Room Filter -->
+          <div class="filter-dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Terem
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="room in uniqueRooms" :key="room" class="px-3 py-1">
+                <label>
+                  <input class="form-check-input" type="checkbox" :value="room" v-model="selectedRooms" /> {{ room }}
+                </label>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
       <div class="card-body p-0">
         <div class="table-responsive">
           <table :class="['table', { 'dark-mode': isDarkMode }, 'table-hover', 'p-4']">
-            <thead>
+          <thead>
             <tr>
               <th @click="sortBy('name')" style="cursor: pointer;">
                 Hiba neve
@@ -168,6 +235,12 @@ export default {
       selectedBug: {},
       showModal: false,
       isDarkMode: false,
+      showFilters: false,
+      selectedPriorities: [],
+      selectedLabels: [],
+      selectedStatuses: [],
+      selectedRooms: [],
+      usersWithRoles: [],
       searchTerm: '',
       sortKey: '',
       sortOrder: 'asc',
@@ -178,47 +251,73 @@ export default {
     };
   },
   computed: {
+    uniquePriorities() {
+      return [...new Set(this.bugs.map(bug => bug.priority))];
+    },
+    uniqueLabels() {
+      return [...new Set(this.bugs.map(bug => bug.label))];
+    },
+    uniqueStatuses() {
+      return [...new Set(this.bugs.map(bug => bug.status))];
+    },
+    uniqueRooms() {
+      return [...new Set(this.bugs.map(bug => bug.room))];
+    },
     filteredBugs() {
-      let filtered = this.bugs
-        .filter(bug => {
-          const searchTermLower = this.searchTerm.toLowerCase();
 
-          // Filter bugs based on search term and assignedTo field matching the logged-in user
-          return (
-            bug.name.toLowerCase().includes(searchTermLower) &&
-            (bug.assignedTo === this.loggedInUser && bug.status === 'Folyamatban') // Shows bugs only assigned to the user or unassigned
-          );
-        });
+      
+let filtered = this.bugs.filter(bug => {
+  // Apply text search
+  const searchTermLower = this.searchTerm.toLowerCase();
+  const matchesSearch = bug.name.toLowerCase().includes(searchTermLower);
 
-      // Sorting logic based on sortKey and sortOrder
-      return filtered.sort((a, b) => {
-        let compareA, compareB;
 
-        switch (this.sortKey) {
-          case 'name':
-          case 'room':
-          case 'reportedBy':
-            compareA = a[this.sortKey].toLowerCase();
-            compareB = b[this.sortKey].toLowerCase();
-            if (compareA < compareB) return this.sortOrder === 'asc' ? -1 : 1;
-            if (compareA > compareB) return this.sortOrder === 'asc' ? 1 : -1;
-            return 0;
+  // Apply filters
+  const matchesPriority = !this.selectedPriorities.length || this.selectedPriorities.includes(bug.priority);
+  const matchesLabel = !this.selectedLabels.length || this.selectedLabels.includes(bug.label);
+  const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
+  const matchesRoom = !this.selectedRooms.length || this.selectedRooms.includes(bug.room);
 
-          case 'priority':
-            compareA = a.priority;
-            compareB = b.priority;
-            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+  const statusNotCompletedOrFailed = bug.status === "Folyamatban" || bug.status === "Beszerzésre vár" && bug.assignedTo === this.loggedInUser;
 
-          case 'reportedAt':
-            compareA = new Date(a.reportedAt);
-            compareB = new Date(b.reportedAt);
-            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+  return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom && statusNotCompletedOrFailed;
 
-          default:
-            return 0; // Default sorting if no key is selected
-        }
-      });
-    }
+  
+});
+
+
+
+
+
+// Sorting logic based on sortKey and sortOrder
+return filtered.sort((a, b) => {
+  let compareA, compareB;
+
+  switch (this.sortKey) {
+    case 'name':
+    case 'room':
+    case 'reportedBy':
+      compareA = a[this.sortKey].toLowerCase();
+      compareB = b[this.sortKey].toLowerCase();
+      if (compareA < compareB) return this.sortOrder === 'asc' ? -1 : 1;
+      if (compareA > compareB) return this.sortOrder === 'asc' ? 1 : -1;
+      return 0;
+
+    case 'priority':
+      compareA = a.priority;
+      compareB = b.priority;
+      return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+    case 'reportedAt':
+      compareA = new Date(a.reportedAt);
+      compareB = new Date(b.reportedAt);
+      return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+    default:
+      return 0; // Default sorting if no key is selected
+  }
+});
+}
   },
   mounted() {
     this.fetchBugs();
@@ -245,6 +344,7 @@ export default {
           label: bug['Címke'],
           status: bug['Státusz'],
           badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' : 
+                      bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' :
                       bug['Státusz'] === 'Folyamatban' ? 'badge-progress' : '',
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
@@ -257,6 +357,9 @@ export default {
         console.error('Error fetching bug data:', error);
       }
       
+    },
+    toggleFilterVisibility() {
+      this.showFilters = !this.showFilters;
     },
 
     openPhoto(photo) {

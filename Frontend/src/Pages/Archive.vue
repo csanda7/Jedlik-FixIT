@@ -198,8 +198,14 @@ export default {
       selectedBug: {},
       showModal: false,
       isDarkMode: false,
+      showFilters: false,
       searchTerm: '',
       sortKey: '',
+      selectedPriorities: [],
+      selectedLabels: [],
+      selectedStatuses: [],
+      selectedRooms: [],
+      usersWithRoles: [],
       sortOrder: 'asc',
       showTooltip: false,
       loggedInUser: sessionStorage.getItem('username') || '', // Get the logged-in user's username from sessionStorage
@@ -208,17 +214,44 @@ export default {
     };
   },
   computed: {
+    uniquePriorities() {
+      return [...new Set(this.bugs.map(bug => bug.priority))];
+    },
+    uniqueLabels() {
+      return [...new Set(this.bugs.map(bug => bug.label))];
+    },
+    uniqueStatuses() {
+      return [...new Set(this.bugs.map(bug => bug.status))];
+    },
+    uniqueRooms() {
+      return [...new Set(this.bugs.map(bug => bug.room))];
+    },
+    
     filteredBugs() {
-      let filtered = this.bugs
-        .filter(bug => {
-          const searchTermLower = this.searchTerm.toLowerCase();
 
-          // Filter bugs based on search term and assignedTo field matching the logged-in user
-          return (
-            bug.name.toLowerCase().includes(searchTermLower) &&
-            (bug.status === 'Kész' || bug.status === 'Meghiúsult') // Shows bugs only assigned to the user or unassigned
-          );
-        });
+      
+      let filtered = this.bugs.filter(bug => {
+        // Apply text search
+        const searchTermLower = this.searchTerm.toLowerCase();
+        const matchesSearch = bug.name.toLowerCase().includes(searchTermLower);
+
+
+        // Apply filters
+        const matchesPriority = !this.selectedPriorities.length || this.selectedPriorities.includes(bug.priority);
+        const matchesLabel = !this.selectedLabels.length || this.selectedLabels.includes(bug.label);
+        const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
+        const matchesRoom = !this.selectedRooms.length || this.selectedRooms.includes(bug.room);
+
+        const statusNotCompletedOrFailed = bug.status === "Kész" || bug.status === "Meghiúsult";
+
+        return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom && statusNotCompletedOrFailed;
+
+        
+      });
+      
+      
+
+      
 
       // Sorting logic based on sortKey and sortOrder
       return filtered.sort((a, b) => {
@@ -287,6 +320,9 @@ export default {
         console.error('Error fetching bug data:', error);
       }
     },
+    toggleFilterVisibility() {
+      this.showFilters = !this.showFilters;
+    },
 
     openPhoto(photo) {
       const imgWindow = window.open(photo, '_blank');
@@ -327,4 +363,24 @@ export default {
 </script>
 
 <style scoped>
+
+.badge-failed {
+  background-color: red;
+  color: #ffffff;
+}
+
+.badge-done {
+  background-color: #35b821;
+  color: #ffffff;
+}
+
+.dark-mode .badge-failed {
+  background-color: red;
+  color: #ffffff;
+}
+
+.dark-mode .badge-done {
+  background-color: #35b821;
+  color: #ffffff;
+}
 </style>
