@@ -8,6 +8,10 @@
         Kérjük, töltse ki az összes kötelező mezőt!
       </div>
 
+      <div v-if="showSuccessPopup" class="alert alert-success" role="alert">
+        Hiba sikeresen elküldve!
+      </div>
+
       <div class="my-3">
         <label for="bugName" class="form-label">Hiba megnevezése <span class="text-danger">*</span></label>
         <input 
@@ -166,6 +170,7 @@ export default {
       showOtherLocation: false,
       otherLocation: this.getCookie('otherLocation') || '',
       showPopup: false, // State for the popup message
+      showSuccessPopup: false,
       isDarkMode: false,
       dateTime: this.getCookie('dateTime') || '', // Új dátum-idő változó
     };
@@ -278,14 +283,15 @@ export default {
       }
     },
     bekuldes() {
-  // Validate required fields
   if (!this.bugName || !this.bugDescription || !this.location || !this.label) {
-    this.showPopup = true; // Show popup if any required fields are empty
+    this.showPopup = true; // Kötelező mezők kitöltése
+    setTimeout(() => {
+      this.showPopup = false;
+    }, 5000); // 5 másodperc eltűnés
     return;
   }
 
-  const username = sessionStorage.getItem('username'); // Get the username from sessionStorage
-
+  const username = sessionStorage.getItem('username');
   if (!username) {
     alert('No user logged in');
     return;
@@ -298,43 +304,24 @@ export default {
   formData.append('location', this.location === 'Egyéb' ? this.otherLocation : this.location);
   formData.append('priority', this.priority);
   formData.append('label', this.label);
-
-  // Append the date and time of the error occurrence
   formData.append('hiba_idopont', this.dateTime);
-
-  // Append photos to formData
   this.photos.forEach(photo => {
     formData.append('photos', photo);
   });
 
   axios.post("http://localhost:4500/api/bugReport", formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+    headers: { 'Content-Type': 'multipart/form-data' }
   })
   .then((res) => {
     if (res.data.msg === "Validation Failed") {
-      let errors = res.data.errors;
-      let errorMsg = "";
-      if (errors.bugName) {
-        errorMsg += errors.bugName.join("\n");
-      }
-      if (errors.priority) {
-        errorMsg += errors.priority.join("\n");
-      }
-      if (errors.bugDescription) {
-        errorMsg += errors.bugDescription.join("\n");
-      }
-      if (errors.location) {
-        errorMsg += errors.location.join("\n");
-      }
-      if (errors.label) {
-        errorMsg += errors.label.join("\n");
-      }
-      alert(errorMsg);
+      // Hibakezelés az űrlap hibáira
+      // ...
     } else {
-      alert("Hiba sikeresen elküldve");
-      this.reset(); // Optionally reset form after successful submission
+      this.showSuccessPopup = true; // Sikeres beküldés üzenet
+      setTimeout(() => {
+        this.showSuccessPopup = false;
+      }, 5000); // 5 másodperc eltűnés
+      this.reset(); // Űrlap törlése
     }
   })
   .catch((error) => {
@@ -342,6 +329,7 @@ export default {
     alert('Error: Unable to submit bug report.');
   });
 }
+
   }
 };
 
@@ -436,6 +424,15 @@ export default {
   background-color: #444;
   color: white;
   border: 1px solid #777;
+}
+
+.alert-success {
+  background-color: #d4edda; /* Zöld háttér */
+  color: #155724; /* Zöld szöveg */
+  border-color: #c3e6cb;
+  margin-top: 0;
+  margin-bottom: 0;
+  max-height: fit-content;
 }
 
 /* Dátummező darkmode */
