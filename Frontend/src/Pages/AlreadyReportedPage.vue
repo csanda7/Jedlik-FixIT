@@ -188,78 +188,112 @@
     type="button"
     class="btn btn-primary mx-1"
     v-if="role === 'rendszergazda' && !selectedBug.assignedTo"
-    @click="takeTask"
+    @click="openSecondModal(takeTask)"
   >
     Elvállalom
   </button>
 
-<!-- Feladat kiosztása -->
-<div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown" style="cursor: pointer;">
-  <button
-    v-if="selectedUser"
-    type="button"
-    class="btn btn-primary mx-1 my-2"
-    @click="assignTaskTo(selectedUser)"
-  > 
-    Feladat kiosztása
-  </button>
-
-  <button
-  ref="dropdownButton"
-    class="btn btn-primary dropdown-toggle fixed-width my-2"
-    type="button"
-    data-bs-toggle="dropdown"
-    aria-expanded="false"
-  >
-    {{ selectedUser || 'Feladat kiosztása' }} 
-  </button>
-  
-  <ul class="dropdown-menu fixed-width">
-    <li v-for="user in usersWithRoles" :key="user">
-      <a class="dropdown-item text-center" @click="selectUser(user)">{{ user }}</a>
-    </li>
-  </ul>
-</div>
-
-<!-- Dropdown Menu for Task Status Update -->
-<div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-  <div class="dropdown" style="cursor: pointer;">
+  <!-- Feladat kiosztása -->
+  <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown" style="cursor: pointer;">
     <button
-      class="btn btn-primary dropdown-toggle px-4"
+      v-if="selectedUser"
       type="button"
-      id="statusDropdown"
+      class="btn btn-primary mx-1 my-2"
+      @click="openSecondModal(() => assignTaskTo(selectedUser))"
+    >
+      Feladat kiosztása
+    </button>
+
+    <button
+      ref="dropdownButton"
+      class="btn btn-primary dropdown-toggle fixed-width my-2"
+      type="button"
       data-bs-toggle="dropdown"
       aria-expanded="false"
     >
-      Állapot frissítése
+      {{ selectedUser || 'Feladat kiosztása' }}
     </button>
-    <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
-      <!-- Kész option -->
-      <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-        <a class="dropdown-item" @click="Done">Kész</a>
-      </li>
-      
-      <!-- Meghiúsult option -->
-      <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-        <a class="dropdown-item" @click="Failed">Meghiúsult</a>
-      </li>
-      
-      <!-- Beszerzés szükséges option, only when status is 'Folyamatban' -->
-      <li v-if="status === 'Folyamatban'">
-        <a class="dropdown-item" @click="Supply">Beszerzés szükséges</a>
-      </li>
-      
-      <!-- Folyamatban option, only when status is 'Beszerzésre vár' -->
-      <li v-if="status === 'Beszerzésre vár'">
-        <a class="dropdown-item" @click="InProgress">Folyamatban</a>
+
+    <ul class="dropdown-menu fixed-width">
+      <li v-for="user in usersWithRoles" :key="user">
+        <a class="dropdown-item text-center" @click="selectUser(user)">{{ user }}</a>
       </li>
     </ul>
   </div>
-</div>
+
+  <!-- Dropdown Menu for Task Status Update -->
+  <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+    <div class="dropdown" style="cursor: pointer;">
+      <button
+        class="btn btn-primary dropdown-toggle px-4"
+        type="button"
+        id="statusDropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Állapot frissítése
+      </button>
+      <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
+        <!-- Kész option -->
+        <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+          <a class="dropdown-item" @click="openSecondModal(Done, { status: 'Kész' })">Kész</a>
+        </li>
+
+        <!-- Meghiúsult option -->
+        <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+          <a class="dropdown-item" @click="openSecondModal(Failed, { status: 'Meghiúsult' })">Meghiúsult</a>
+        </li>
+
+        <!-- Beszerzés szükséges option, only when status is 'Folyamatban' -->
+        <li v-if="status === 'Folyamatban'">
+          <a class="dropdown-item" @click="openSecondModal(Supply, { status: 'Beszerzés szükséges' })">Beszerzés szükséges</a>
+        </li>
+
+        <!-- Folyamatban option, only when status is 'Beszerzésre vár' -->
+        <li v-if="status === 'Beszerzésre vár'">
+          <a class="dropdown-item" @click="openSecondModal(InProgress, { status: 'Folyamatban' })">Folyamatban</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
 
 
   <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
 </div>
+
+
+
+<!-- Second Modal -->
+<div v-if="showSecondModal" class="secondmodal-overlay" @click="closeSecondModal">
+  <div class="bg" @click.stop>
+    <div class="secondmodal-content wider-modal">
+      <div class="secondmodal-header">
+      </div>
+      <div class="secondmodal-body">
+        <div class="mb-3">
+        <label for="komment" class="form-label">Komment (opcionális)</label>
+        <textarea 
+          :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 
+          id="komment" 
+          v-model="komment" 
+          rows="3" 
+          maxlength="300" 
+          @input="adjustTextareaHeight($event); setCookie('komment', komment);" 
+          required>
+        </textarea>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Megerősítés</button>
+        <button type="button" class="btn btn-secondary mx-1" @click="closeSecondModal">Mégse</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
         </div>
       </div>
     </div>
@@ -290,6 +324,9 @@ export default {
       assignedTo: '',
       status: '',
       loggedInUser: sessionStorage.getItem('username') || '', // Get the logged-in user's username from sessionStorage
+      showSecondModal: false, // State for the second modal
+    actionToConfirm: null,   // Holds the action to confirm
+    actionData: null, // To hold the action-specific data
     };
   },
   computed: {
@@ -449,6 +486,126 @@ return filtered.sort((a, b) => {
     closeModal() {
       this.showModal = false;
       this.selectedUser = null; 
+    },
+    openSecondModal(action, data) {
+      this.showSecondModal = true; // Show the second modal
+      this.actionToConfirm = action; // Store the action to confirm
+      this.actionData = data; // Store any additional data needed for the action
+    },
+    closeSecondModal() {
+      this.showSecondModal = false; // Close the second modal
+      this.actionData = null; // Clear the action data
+    },
+    async confirmAction() {
+      if (this.actionToConfirm) {
+        try {
+          await this.actionToConfirm(this.actionData); // Pass the action data to the async function
+        } catch (error) {
+          console.error('Error executing action:', error);
+          alert('There was an error executing the action.');
+        }
+      }
+      this.closeSecondModal(); // Close the modal
+    },
+
+    async Done(data) {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status : 'Kész' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        // Update the frontend after a successful response
+        this.selectedBug.status = 'kész';
+        alert('Status successfully updated to "kész".');
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update the status.');
+      }
+    },
+
+    async Failed(data) {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status : 'Meghiúsult' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        // Update the frontend after a successful response
+        this.selectedBug.status = 'Meghiúsult';
+        alert('Status successfully updated to "Meghiúsult".');
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update the status.');
+      }
+    },
+
+    async Supply(data) {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status : 'Beszerzésre vár' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        // Update the frontend after a successful response
+        this.selectedBug.status = 'Beszerzésre vár';
+        alert('Status successfully updated to "Beszerzésre vár".');
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update the status.');
+      }
+    },
+
+    async InProgress(data) {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status : 'Folyamatban' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        // Update the frontend after a successful response
+        this.selectedBug.status = 'Folyamatban';
+        alert('Status successfully updated to "Folyamatban".');
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update the status.');
+      }
     },
     async takeTask() {
       const username = sessionStorage.getItem('username'); // Get logged-in user's username
@@ -751,6 +908,40 @@ return filtered.sort((a, b) => {
   min-width: 60vw;
   width: 100%;
   z-index: 1000;
+}
+
+.secondmodal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.secondmodal-content {
+  background: white !important;
+  padding: 2rem;
+  border-radius: 2vh !important;
+  max-width: 40vw;
+  min-width: 30vw;
+  width: 100%;
+  z-index: 1000;
+}
+
+@media (max-width: 767.98px) { /* Adjust breakpoint as needed */
+    .wider-modal {
+        max-width: 100%; /* Make it full width */
+        min-width: 100%  !important;
+        width: 100%; /* Ensure width is set to 100% */
+        margin: 0; /* Remove margin */
+        padding: 2rem;
+    }
 }
 
 .drown-kioszt {
