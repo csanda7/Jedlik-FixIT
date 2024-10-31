@@ -10,7 +10,7 @@ const { jsonParser } = require('./middlewares/bodyParser');
 const authRoutes = require('./routes/authRoutes');
 const bugReportController = require('./controllers/bugReportController');
 const hibakKiirRoutes = require('./routes/hibaKiirRoutes');
-const hibaFelvetel = require('./routes/hibaFelvetelRoutes');
+const hibaModositasRountes = require('./routes/hibaModositasRoutes');
 const usersWithRolesRoutes = require('./routes/usersWithRolesRoutes');
 
 const corsOptions = {
@@ -43,7 +43,7 @@ app.use(
 app.use('/api/login', authRoutes);
 app.use('/api/bugReport', bugReportController);
 app.use('/api/hibakKiir', hibakKiirRoutes);
-app.use('/api', hibaFelvetel);
+app.use('/api', hibaModositasRountes);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api', bugReportController);
 app.use('/api/usersWithRoles', usersWithRolesRoutes);
