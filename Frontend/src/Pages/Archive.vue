@@ -2,7 +2,7 @@
   <div :class="['reported-bugs-container', { 'dark-mode': isDarkMode }, 'container', 'mt-5']">
     <div :class="[ 'card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
       <div :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
-        <h2 class="mb-0 me-3 h2">BEJELENTETT HIBÁK</h2>
+        <h2 class="mb-0 me-3 h2">ARCHÍVUM</h2>
         <div class="user-actions d-flex">
           <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
           <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
