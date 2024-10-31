@@ -25,6 +25,22 @@ const updateAssignedTo = (req, res) => {
       console.error('Error updating assignedTo:', error);
       return res.status(500).json({ message: 'Database update error' });
     }
+  //   res.status(200).json({ message: 'Task successfully assigned', id, assignedTo });
+  // });
+  // if (!id || !assignedTo) {
+  //   return res.status(400).json({ message: 'Missing ID or assignedTo field' });
+  // }
+
+  // bugModel.updateAssignedTo(id, assignedTo, (error, results) => {
+  //   if (error) {
+  //     console.error('Error updating assignedTo:', error);
+  //     return res.status(500).json({ message: 'Database update error' });
+  //   }
+
+  //   // E-mail küldés a rendszergazdának
+  //   const bugName = results.title; // Ha elérhető a bug neve az eredményekből
+  //   notifyAdmin(assignedTo, bugName);
+
     res.status(200).json({ message: 'Task successfully assigned', id, assignedTo });
   });
 };
