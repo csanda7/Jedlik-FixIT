@@ -137,8 +137,8 @@
       </div>
     </div>
 
-    <!-- Modal -->
-    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+     <!-- Modal -->
+     <div v-if="showModal" class="modal-overlay" @click="closeModal">
       <div class="bg" @click.stop>
         <div class="modal-content">
           <div class="modal-header">
@@ -180,6 +180,7 @@
               </div>
             </div>
           </div>
+
           <div class="modal-footer">
   <!-- Feladat elvállalása -->
   <button
@@ -303,7 +304,9 @@ export default {
     uniqueRooms() {
       return [...new Set(this.bugs.map(bug => bug.room))];
     },
-    
+    photoCount() {
+      return this.selectedBug.photos ? this.selectedBug.photos.length : 0;
+    },
     filteredBugs() {
 
       
@@ -740,11 +743,12 @@ return filtered.sort((a, b) => {
   background: white !important;
   padding: 2rem;
   border-radius: 2vh !important;
-  max-width: 70vw;
-  min-width: 80vw;
+  max-width: 80vw;
+  min-width: 50vw;
   width: 100%;
   z-index: 1000;
 }
+
 .drown-kioszt {
   min-width: 100px !important;
 }
@@ -831,6 +835,7 @@ return filtered.sort((a, b) => {
 .modal-title {
   padding-bottom: 1em;
 }
+
 
 .modal-header {
   display: flex;
