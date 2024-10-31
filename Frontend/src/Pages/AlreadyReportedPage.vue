@@ -267,7 +267,7 @@
 <!-- Second Modal -->
 <div v-if="showSecondModal" class="secondmodal-overlay" @click="closeSecondModal">
   <div class="bg" @click.stop>
-    <div class="secondmodal-content wider-modal">
+    <div class="secondmodal-content wider-modal" :class="{'dark-mode': isDarkMode}">
       <div class="secondmodal-header">
       </div>
       <div class="secondmodal-body">
@@ -285,7 +285,7 @@
       </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Megerősítés</button>
+        <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
         <button type="button" class="btn btn-secondary mx-1" @click="closeSecondModal">Mégse</button>
 
       </div>
@@ -337,7 +337,8 @@ export default {
       return [...new Set(this.bugs.map(bug => bug.label))];
     },
     uniqueStatuses() {
-      return [...new Set(this.bugs.map(bug => bug.status).sort())];
+      const exactStatuses = ["Bejelentve", "Folyamatban", "Beszerzésre vár"]
+      return [...new Set(this.bugs.map(bug => bug.status))].filter(status => exactStatuses.includes(status));
     },
     uniqueRooms() {
       return [...new Set(this.bugs.map(bug => bug.room).sort())];
@@ -910,6 +911,7 @@ return filtered.sort((a, b) => {
   z-index: 1000;
 }
 
+/* Modal Overlay */
 .secondmodal-overlay {
   position: fixed;
   top: 0;
@@ -924,14 +926,51 @@ return filtered.sort((a, b) => {
   z-index: 1000;
 }
 
+/* Modal Content Base */
 .secondmodal-content {
-  background: white !important;
   padding: 2rem;
-  border-radius: 2vh !important;
+  background-color: white; /* Set a solid white background for light mode */
+  color: black;
+  border-radius: 2vh;
   max-width: 40vw;
   min-width: 30vw;
   width: 100%;
   z-index: 1000;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+/* Dark Mode */
+.secondmodal-content.dark-mode {
+  background-color: #444;
+  color: white;
+}
+
+/* Dark Mode for Textbox */
+.form-control.dark-textbox {
+  background-color: #333;
+  color: white;
+  border: 1px solid #666;
+}
+
+/* Dark Mode Textbox Focus */
+.form-control.dark-textbox:focus {
+  background-color: #555;
+  color: white;
+  outline: none;
+  border-color: #888;
+}
+
+/* Dark Mode - Footer Styles */
+.dark-mode .modal-footer {
+  background-color: #333;
+  color: white;
+}
+
+/* Dark Mode - Modal Body */
+.dark-mode .secondmodal-body {
+  background-color: #444;
+  color: white;
 }
 
 @media (max-width: 767.98px) { /* Adjust breakpoint as needed */
@@ -1044,26 +1083,7 @@ return filtered.sort((a, b) => {
 .fixed-width {
   width: 10rem; /* Set to the desired width for the button */
 }
-.tooltip-custom {
-  position: absolute;
-  background-color: #fcc913;
-  /* Background color for light mode */
-  color: #000000;
-  /* Text color for light mode */
-  padding: 8px;
-  border-radius: 4px;
-  top: -3.5rem;
-  /* Adjust according to your layout */
-  left: 50%;
-  /* Center the tooltip */
-  transform: translateX(-50%);
-  /* Ensure centering */
-  z-index: 1000;
-  white-space: nowrap;
-  font-size: 14px;
-  text-align: center;
-  /* Center the text */
-}
+
 
 #done{
   background-color: #35b821;
@@ -1170,12 +1190,17 @@ return filtered.sort((a, b) => {
   color: white;
   /* Text color for modal header */
 }
+.dark-mode .secondmodal-header {
+  background-color: #444;
+  /* Header background for modal */
+  color: white;
+  /* Text color for modal header */
+}
 
 .dark-mode .modal-footer {
   background-color: #444;
-  /* Footer background for modal */
   color: white;
-  /* Text color for modal footer */
+
 }
 
 

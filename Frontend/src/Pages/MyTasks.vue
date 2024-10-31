@@ -252,7 +252,7 @@ export default {
   },
   computed: {
     uniquePriorities() {
-      return [...new Set(this.bugs.map(bug => bug.priority))];
+      return [...new Set(this.bugs.map(bug => bug.priority).sort())];
     },
     uniqueLabels() {
       return [...new Set(this.bugs.map(bug => bug.label))];

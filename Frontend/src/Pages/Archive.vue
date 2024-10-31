@@ -215,13 +215,14 @@ export default {
   },
   computed: {
     uniquePriorities() {
-      return [...new Set(this.bugs.map(bug => bug.priority))];
+      return [...new Set(this.bugs.map(bug => bug.priority).sort())];
     },
     uniqueLabels() {
       return [...new Set(this.bugs.map(bug => bug.label))];
     },
     uniqueStatuses() {
-      return [...new Set(this.bugs.map(bug => bug.status))];
+      const exactStatuses = ["Meghiúsult","Kész"]
+      return [...new Set(this.bugs.map(bug => bug.status))].filter(status => exactStatuses.includes(status));
     },
     uniqueRooms() {
       return [...new Set(this.bugs.map(bug => bug.room))];
