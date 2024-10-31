@@ -293,16 +293,16 @@ export default {
   },
   computed: {
     uniquePriorities() {
-      return [...new Set(this.bugs.map(bug => bug.priority))];
+      return [...new Set(this.bugs.map(bug => bug.priority).sort())];
     },
     uniqueLabels() {
       return [...new Set(this.bugs.map(bug => bug.label))];
     },
     uniqueStatuses() {
-      return [...new Set(this.bugs.map(bug => bug.status))];
+      return [...new Set(this.bugs.map(bug => bug.status).sort())];
     },
     uniqueRooms() {
-      return [...new Set(this.bugs.map(bug => bug.room))];
+      return [...new Set(this.bugs.map(bug => bug.room).sort())];
     },
     photoCount() {
       return this.selectedBug.photos ? this.selectedBug.photos.length : 0;
