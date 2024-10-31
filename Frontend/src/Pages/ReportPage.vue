@@ -35,6 +35,19 @@
         </textarea>
       </div>
 
+      <!-- Dátum és idő mező hozzáadása -->
+<div class="my-3">
+  <label for="dateTime" class="form-label">Hiba bekövetkezésének ideje <span class="text-danger">*</span></label>
+  <input 
+  type="datetime-local" 
+  :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 
+  id="dateTime timestamp" 
+  v-model="dateTime" 
+  required 
+  @change="setCookie('dateTime', dateTime)">
+
+</div>
+
      <div class="row">
   <!-- Left Column: Location, Label, and Priority -->
   <div class="col-md-6">
@@ -139,6 +152,7 @@
 <script>
 import axios from 'axios';
 import CryptoJS from 'crypto-js'; // Import the crypto-js library
+import moment from 'moment-timezone';
 
 export default {
   data() {
@@ -154,19 +168,22 @@ export default {
       otherLocation: this.getCookie('otherLocation') || '',
       showPopup: false, // State for the popup message
       isDarkMode: false,
+      dateTime: this.getCookie('dateTime') || '', // Új dátum-idő változó
     };
   },
 
   mounted() {
     this.isDarkMode = localStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
+    // A pillanatnyi idő beállítása a Budapest időzónájának megfelelően
+    const now = moment().tz('Europe/Budapest'); // Budapest időzóna
+    this.dateTime = now.format('YYYY-MM-DDTHH:mm'); // ISO formátumban, levágva a másodperceket
+    window.addEventListener('theme-changed', this.updateTheme);
   },
   beforeDestroy() {
     window.removeEventListener('theme-changed', this.updateTheme);
   },
   methods: {
-
-    
     setCookie(name, value, days = 7) {
       const d = new Date();
       d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -228,6 +245,7 @@ export default {
       this.label = '';
       this.showOtherLocation = false;
       this.otherLocation = '';
+      this.dateTime = moment().tz('Europe/Budapest').format('YYYY-MM-DDTHH:mm'); // Frissítve, hogy a jelenlegi időt mutassa;
       this.showPopup = false; // Reset the popup on reset
 
       // Clear cookies
@@ -327,6 +345,8 @@ export default {
     }
   }
 };
+
+
 </script>
 
 <style scoped>
@@ -419,6 +439,12 @@ export default {
   border: 1px solid #777;
 }
 
+/* Dátummező darkmode */
+input[type="datetime-local"].dark-textbox {
+  background-color: #444;
+  color: #fff;
+  border: 1px solid #777;
+}
 
 
 #bugName::placeholder{
