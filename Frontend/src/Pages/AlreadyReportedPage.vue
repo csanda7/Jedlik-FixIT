@@ -428,7 +428,8 @@ return filtered.sort((a, b) => {
           status: bug['Státusz'],
           badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
               bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
-                  bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' : '',
+                  bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' : 
+                    bug['Státusz'] === 'Újrakiosztva' ? 'badge-resent' : '',
 
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
@@ -879,6 +880,11 @@ return filtered.sort((a, b) => {
   color: #ffffff;
 }
 
+.badge-resent {
+  background-color: rgb(175, 52, 7);
+  color: #ffffff;
+}
+
 
 
 .table tbody td.status-column {
@@ -1134,6 +1140,11 @@ return filtered.sort((a, b) => {
 
 .dark-mode .badge-check {
   background-color: rgb(10, 231, 220);
+  color: #ffffff;
+}
+
+.dark-mode .badge-resent {
+  background-color: rgb(175, 52, 7);
   color: #ffffff;
 }
 
