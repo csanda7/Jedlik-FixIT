@@ -192,13 +192,13 @@
   </button>
 
 <!-- Feladat kiosztása -->
-<div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown">
+<div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown" style="cursor: pointer;">
   <button
     v-if="selectedUser"
     type="button"
     class="btn btn-primary mx-1 my-2"
     @click="assignTaskTo(selectedUser)"
-  >
+  > 
     Feladat kiosztása
   </button>
 
@@ -219,42 +219,42 @@
   </ul>
 </div>
 
-<!-- Feladat kész állapotba helyezése -->
-<div v-if=" loggedInUser === assignedTo  && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) ">
-  <button
-    type="button"
-    class="btn btn-primary mx-1"
-    id="done"
-    @click="Done"
-  >
-    Kész
-  </button>
+<!-- Dropdown Menu for Task Status Update -->
+<div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+  <div class="dropdown" style="cursor: pointer;">
+    <button
+      class="btn btn-primary dropdown-toggle px-4"
+      type="button"
+      id="statusDropdown"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      Állapot frissítése
+    </button>
+    <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
+      <!-- Kész option -->
+      <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+        <a class="dropdown-item" @click="Done">Kész</a>
+      </li>
+      
+      <!-- Meghiúsult option -->
+      <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+        <a class="dropdown-item" @click="Failed">Meghiúsult</a>
+      </li>
+      
+      <!-- Beszerzés szükséges option, only when status is 'Folyamatban' -->
+      <li v-if="status === 'Folyamatban'">
+        <a class="dropdown-item" @click="Supply">Beszerzés szükséges</a>
+      </li>
+      
+      <!-- Folyamatban option, only when status is 'Beszerzésre vár' -->
+      <li v-if="status === 'Beszerzésre vár'">
+        <a class="dropdown-item" @click="InProgress">Folyamatban</a>
+      </li>
+    </ul>
   </div>
+</div>
 
-
-  <!-- Feladat meghíusult állapotba helyezése -->
-  <div v-if=" loggedInUser === assignedTo  && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) ">
-  <button
-    type="button"
-    class="btn btn-primary mx-1"
-    id="failed"
-    @click="Failed"
-  >
-    Meghiúsult
-  </button>
-  </div>
-
-  <!-- Feladat Beszerzés szükséges állapotba helyezése -->
-  <div v-if="loggedInUser === assignedTo && !['Kész', 'Meghiúsult', 'Bejelentve', 'Beszerzésre vár'].includes(status)">
-  <button
-    type="button"
-    class="btn btn-primary mx-1"
-    id="supply"
-    @click="Supply"
-  >
-  Beszerzés szükséges
-  </button>
-  </div>
 
   <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
 </div>
@@ -593,7 +593,32 @@ return filtered.sort((a, b) => {
         alert('Failed to update the status.');
       }
     
-    }
+    },
+    async InProgress() {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status : 'Folyamatban' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        // Update the frontend after a successful response
+        this.selectedBug.status = 'Folyamatban';
+        alert('Status successfully updated to "Folyamatban".');
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update the status.');
+      }
+    
+    },
 
   }
 };
