@@ -164,6 +164,7 @@
                 <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
                 <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
                 <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+                <p v-if="selectedBug.reportedAt !== selectedBug.hibaIdopont" class="my-3"><strong>Hiba időpontja:</strong> {{ selectedBug.hibaIdopont }}</p>
                 <p class="my-3" v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{
                   selectedBug.assignedTo }}</p>
               </div>
@@ -397,7 +398,9 @@ return filtered.sort((a, b) => {
           reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
           assignedTo: bug['assignedTo'],
           description: bug['Hiba leírása'],
+          hibaIdopont: bug['Hiba ideje'] ? new Date(bug['Hiba ideje']).toLocaleString('hu-HU') : "N/A", // Fallback if missing
           photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format
+          
         }));
       } catch (error) {
         console.error('Error fetching bug data:', error);
@@ -441,6 +444,7 @@ return filtered.sort((a, b) => {
       this.showModal = true;
      this.assignedTo = this.selectedBug.assignedTo
      this.status = this.selectedBug.status
+
     },
     closeModal() {
       this.showModal = false;
@@ -744,7 +748,7 @@ return filtered.sort((a, b) => {
   padding: 2rem;
   border-radius: 2vh !important;
   max-width: 80vw;
-  min-width: 50vw;
+  min-width: 60vw;
   width: 100%;
   z-index: 1000;
 }

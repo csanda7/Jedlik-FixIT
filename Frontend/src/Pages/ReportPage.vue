@@ -37,13 +37,12 @@
 
       <!-- Dátum és idő mező hozzáadása -->
 <div class="my-3">
-  <label for="dateTime" class="form-label">Hiba bekövetkezésének ideje <span class="text-danger">*</span></label>
+  <label for="dateTime" class="form-label">Hiba bekövetkezésének ideje</label>
   <input 
   type="datetime-local" 
   :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 
   id="dateTime timestamp" 
   v-model="dateTime" 
-  required 
   @change="setCookie('dateTime', dateTime)">
 
 </div>
@@ -279,70 +278,70 @@ export default {
       }
     },
     bekuldes() {
-      // Validate required fields
-      if (!this.bugName || !this.bugDescription || !this.location || !this.label) {
-        this.showPopup = true; // Show popup if any required fields are empty
-        return;
-      }
+  // Validate required fields
+  if (!this.bugName || !this.bugDescription || !this.location || !this.label) {
+    this.showPopup = true; // Show popup if any required fields are empty
+    return;
+  }
 
-      const username = sessionStorage.getItem('username'); // Get the username from sessionStorage
+  const username = sessionStorage.getItem('username'); // Get the username from sessionStorage
 
-      if (!username) {
-        alert('No user logged in');
-        return;
-      }
+  if (!username) {
+    alert('No user logged in');
+    return;
+  }
 
-      const formData = new FormData();
-      formData.append('bugName', this.bugName);
-      formData.append('bugDescription', this.bugDescription);
-      formData.append('reported_by', username);
-      formData.append('location', this.location === 'Egyéb' ? this.otherLocation : this.location);
-      formData.append('priority', this.priority);
+  const formData = new FormData();
+  formData.append('bugName', this.bugName);
+  formData.append('bugDescription', this.bugDescription);
+  formData.append('reported_by', username);
+  formData.append('location', this.location === 'Egyéb' ? this.otherLocation : this.location);
+  formData.append('priority', this.priority);
+  formData.append('label', this.label);
 
-      // Debugging line for label
-      console.log('Label:', this.label);
-      formData.append('label', this.label);
+  // Append the date and time of the error occurrence
+  formData.append('hiba_idopont', this.dateTime);
 
-      // Append photos to formData
-      this.photos.forEach(photo => {
-        formData.append('photos', photo);
-      });
+  // Append photos to formData
+  this.photos.forEach(photo => {
+    formData.append('photos', photo);
+  });
 
-      axios.post("http://localhost:4500/api/bugReport", formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then((res) => {
-        if (res.data.msg === "Validation Failed") {
-          let errors = res.data.errors;
-          let errorMsg = "";
-          if (errors.bugName) {
-            errorMsg += errors.bugName.join("\n");
-          }
-          if (errors.priority) {
-            errorMsg += errors.priority.join("\n");
-          }
-          if (errors.bugDescription) {
-            errorMsg += errors.bugDescription.join("\n");
-          }
-          if (errors.location) {
-            errorMsg += errors.location.join("\n");
-          }
-          if (errors.label) {
-            errorMsg += errors.label.join("\n");
-          }
-          alert(errorMsg);
-        } else {
-          alert("Hiba sikeresen elküldve");
-          this.reset(); // Optionally reset form after successful submission
-        }
-      })
-      .catch((error) => {
-        console.error('Error submitting bug report:', error);
-        alert('Error: Unable to submit bug report.');
-      });
+  axios.post("http://localhost:4500/api/bugReport", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
     }
+  })
+  .then((res) => {
+    if (res.data.msg === "Validation Failed") {
+      let errors = res.data.errors;
+      let errorMsg = "";
+      if (errors.bugName) {
+        errorMsg += errors.bugName.join("\n");
+      }
+      if (errors.priority) {
+        errorMsg += errors.priority.join("\n");
+      }
+      if (errors.bugDescription) {
+        errorMsg += errors.bugDescription.join("\n");
+      }
+      if (errors.location) {
+        errorMsg += errors.location.join("\n");
+      }
+      if (errors.label) {
+        errorMsg += errors.label.join("\n");
+      }
+      alert(errorMsg);
+    } else {
+      alert("Hiba sikeresen elküldve");
+      this.reset(); // Optionally reset form after successful submission
+    }
+  })
+  .catch((error) => {
+    console.error('Error submitting bug report:', error);
+    alert('Error: Unable to submit bug report.');
+  });
+}
   }
 };
 

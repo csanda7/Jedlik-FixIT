@@ -11,7 +11,8 @@ const getHibakKiir = (req, res) => {
       h.Status AS 'Státusz', 
       h.Location AS 'Terem', 
       h.Reported_By AS 'Bejelentette', 
-      h.Reported_At AS 'Bejelentés ideje', 
+      h.Reported_At AS 'Bejelentés ideje',
+      h.hiba_idopont AS 'Hiba ideje',
       h.Description AS 'Hiba leírása', 
       h.assignedTo,
       GROUP_CONCAT(k.kep) AS photos

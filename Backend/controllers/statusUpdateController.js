@@ -6,9 +6,9 @@ const updateBugStatus = (req, res) => {
   const newStatus = req.body.status;
 
   // SQL query to update the status
-  const query = 'UPDATE hibabejelentesek SET Status = ? WHERE ID = ?';
+  const updateQuery = 'UPDATE hibabejelentesek SET Status = ? WHERE ID = ?';
 
-  connection.query(query, [newStatus, bugId], (error, results) => {
+  connection.query(updateQuery, [newStatus, bugId], (error, results) => {
     if (error) {
       console.error('Error updating status:', error);
       res.status(500).json({ message: 'Error updating status' });
@@ -18,7 +18,16 @@ const updateBugStatus = (req, res) => {
     if (results.affectedRows === 0) {
       res.status(404).json({ message: 'Bug not found' });
     } else {
-      res.status(200).json({ message: 'Status updated successfully' });
+      // Insert a new log entry with the updated status
+      const logQuery = 'INSERT INTO Log (ID, LStatus, Komment) VALUES (?, ?, ?)';
+      connection.query(logQuery, [bugId, newStatus, ''], (logError) => {
+        if (logError) {
+          console.error('Error logging status update:', logError);
+          res.status(500).json({ message: 'Status updated, but log entry failed' });
+          return;
+        }
+        res.status(200).json({ message: 'Status updated and logged successfully' });
+      });
     }
   });
 };
