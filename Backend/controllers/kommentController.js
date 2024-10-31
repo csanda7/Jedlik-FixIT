@@ -1,15 +1,14 @@
 const connection = require('../config/database'); // Import the database connection
 
 // Controller function to update the status of a bug
-const updateBugStatus = (req, res) => {
+const addComment = (req, res) => {
   const bugId = req.params.id;
-  const newStatus = req.body.status;
   const komment = req.body.komment;
   const modosito = req.body.modosito;
 
 
   // SQL query to update the status
-  const updateQuery = 'UPDATE hibabejelentesek SET Status = ? WHERE ID = ?';
+  const updateQuery = 'UPDATE hibabejelentesek SET updated_at = NOW(), WHERE ID = ?';
 
   connection.query(updateQuery, [newStatus, bugId], (error, results) => {
     if (error) {
@@ -23,7 +22,7 @@ const updateBugStatus = (req, res) => {
     } else {
       // Insert a new log entry with the updated status and komment
       const logQuery = 'INSERT INTO Log (ID, LStatus, Komment, modosito) VALUES (?, ?, ?, ?)';
-      connection.query(logQuery, [bugId, newStatus, komment, modosito], (logError) => {
+      connection.query(logQuery, [bugId, '', komment, modosito], (logError) => {
         if (logError) {
           console.error('Error logging status update:', logError);
           res.status(500).json({ message: 'Status updated, but log entry failed' });
@@ -35,4 +34,4 @@ const updateBugStatus = (req, res) => {
   });
 };
 
-module.exports = { updateBugStatus }; // Export the controller function
+module.exports = { addComment }; // Export the controller function

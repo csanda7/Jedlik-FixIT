@@ -7,15 +7,15 @@ const getAllBugs = (callback) => {
 };
 
 // Function to update assignedTo and add a log entry
-const updateAssignedTo = (id, assignedTo, callback) => {
+const updateAssignedTo = (id, assignedTo, komment, modosito, callback) => {
   const updateQuery = 'UPDATE hibabejelentesek SET assignedTo = ?, Updated_at = NOW(), Status = "Folyamatban" WHERE ID = ?';
   
   connection.query(updateQuery, [assignedTo, id], (error, results) => {
     if (error) return callback(error);
 
     // If update is successful, insert a new log entry
-    const logQuery = 'INSERT INTO Log (ID, LStatus, Komment) VALUES (?, ?, ?)';
-    connection.query(logQuery, [id, 'Folyamatban', ''], (logError, logResults) => {
+    const logQuery = 'INSERT INTO Log (ID, LStatus, Komment, modosito) VALUES (?, ?, ?, ?)';
+    connection.query(logQuery, [id, 'Folyamatban', komment, modosito], (logError, logResults) => {
       if (logError) return callback(logError);
       
       callback(null, { results, logResults });

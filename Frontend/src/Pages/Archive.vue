@@ -182,6 +182,7 @@
           </div>
           <div class="modal-footer">
 
+  <button type="button" class="btn btn-reassign mx-1 my-2" @click="reassignTask">Újrakiosztás</button>
   <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
 </div>
         </div>
@@ -359,6 +360,35 @@ export default {
     closeModal() {
       this.showModal = false;
     },
+    reassignTask() {
+    // Itt adhatsz hozzá logikát az újrakiosztáshoz
+    console.log("Feladat újrakiosztása", this.selectedBug);
+  },
+  
+  async reassignBug() {
+    try {
+      const response = await fetch(`http://localhost:4500/api/hibak/frissites`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: this.selectedBug.id,
+          status: 'Újrakiosztva'
+        }),
+      });
+
+      if (response.ok) {
+        this.selectedBug.status = 'Újrakiosztva';
+        this.showModal = false; // Pop-up bezárása
+        await this.fetchBugs(); // Frissítjük a hibák listáját
+      } else {
+        console.error('Nem sikerült frissíteni a hibát');
+      }
+    } catch (error) {
+      console.error('Hiba történt az újrakiosztás során:', error);
+    }
+  },
   }
 };
 </script>
@@ -383,5 +413,10 @@ export default {
 .dark-mode .badge-done {
   background-color: #35b821;
   color: #ffffff;
+}
+
+.btn-reassign {
+  background-color: #007bff; /* kék háttérszín */
+  color: #ffffff; /* fehér szöveg */
 }
 </style>

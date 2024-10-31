@@ -183,6 +183,17 @@
           </div>
 
           <div class="modal-footer">
+
+      <!-- Komment írása -->
+  <!--   <button
+    type="button"
+    class="btn btn-primary mx-1"
+    @click="openSecondModal(komment)"
+  >
+    Komment írása
+  </button>  -->
+
+
   <!-- Feladat elvállalása -->
   <button
     type="button"
@@ -429,7 +440,8 @@ return filtered.sort((a, b) => {
           status: bug['Státusz'],
           badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
               bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
-                  bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' : '',
+                  bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' : 
+                    bug['Státusz'] === 'Újrakiosztva' ? 'badge-resent' : '',
 
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
@@ -496,6 +508,7 @@ return filtered.sort((a, b) => {
     closeSecondModal() {
       this.showSecondModal = false; // Close the second modal
       this.actionData = null; // Clear the action data
+      this.komment ='';
     },
     async confirmAction() {
       if (this.actionToConfirm) {
@@ -508,7 +521,27 @@ return filtered.sort((a, b) => {
       }
       this.closeSecondModal(); // Close the modal
     },
+    async Komment() {
+      try {
+        // Send a PUT request to update the status of the selected bug to "kész"
+        const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({komment: this.komment, modosito: this.loggedInUser }),
+        });
 
+        if (!response.ok) {
+          throw new Error('Failed to update log');
+        }
+        console.log(this.loggedInUser);
+        this.fetchBugs(); // Refresh the list to reflect the updated status
+      } catch (error) {
+        console.error('Error updating log:', error);
+        alert('Failed to update the log.');
+      }
+    },
     async Done(data) {
       try {
         // Send a PUT request to update the status of the selected bug to "kész"
@@ -517,7 +550,7 @@ return filtered.sort((a, b) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ status : 'Kész' }),
+          body: JSON.stringify({ status : 'Kész', komment: this.komment, modosito: this.loggedInUser }),
         });
 
         if (!response.ok) {
@@ -542,7 +575,7 @@ return filtered.sort((a, b) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ status : 'Meghiúsult' }),
+          body: JSON.stringify({ status : 'Meghiúsult', komment: this.komment, modosito: this.loggedInUser  }),
         });
 
         if (!response.ok) {
@@ -567,7 +600,7 @@ return filtered.sort((a, b) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ status : 'Beszerzésre vár' }),
+          body: JSON.stringify({ status : 'Beszerzésre vár', komment: this.komment, modosito: this.loggedInUser  }),
         });
 
         if (!response.ok) {
@@ -586,13 +619,14 @@ return filtered.sort((a, b) => {
 
     async InProgress(data) {
       try {
+
         // Send a PUT request to update the status of the selected bug to "kész"
         const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ status : 'Folyamatban' }),
+          body: JSON.stringify({ status : 'Folyamatban', komment: this.komment, modosito: this.loggedInUser  }),
         });
 
         if (!response.ok) {
@@ -607,6 +641,7 @@ return filtered.sort((a, b) => {
         console.error('Error updating status:', error);
         alert('Failed to update the status.');
       }
+      
     },
     async takeTask() {
       const username = sessionStorage.getItem('username'); // Get logged-in user's username
@@ -623,7 +658,7 @@ return filtered.sort((a, b) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ assignedTo: username }), // Send the assigned user to backend
+          body: JSON.stringify({ assignedTo: username, komment: this.komment, modosito: this.loggedInUser  }), // Send the assigned user to backend
         });
 
         if (!response.ok) {
@@ -633,6 +668,7 @@ return filtered.sort((a, b) => {
         // Update the frontend after successful response
         this.selectedBug.assignedTo = username;
         alert('Task successfully assigned to you.');
+        this.komment = ''; // Clear komment after assignment
         this.fetchBugs();
       } catch (error) {
         console.error('Error assigning task:', error);
@@ -672,11 +708,12 @@ return filtered.sort((a, b) => {
         const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ assignedTo: selectedUser }),
+          body: JSON.stringify({ assignedTo: selectedUser, komment: this.komment, modosito: this.loggedInUser }),
         });
 
         if (!response.ok) throw new Error('Failed to assign task');
         this.selectedBug.assignedTo = selectedUser;
+        his.komment = ''; // Clear komment after assignment
         alert(`Task assigned to ${selectedUser}`);
         this.fetchBugs(); // Refresh the list to reflect the new assignment
       } catch (error) {
@@ -684,106 +721,7 @@ return filtered.sort((a, b) => {
       }
       
     },
-    async Done() {
-      try {
-        // Send a PUT request to update the status of the selected bug to "kész"
-        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status : 'Kész' }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to update status');
-        }
-
-        // Update the frontend after a successful response
-        this.selectedBug.status = 'kész';
-        alert('Status successfully updated to "kész".');
-        this.fetchBugs(); // Refresh the list to reflect the updated status
-      } catch (error) {
-        console.error('Error updating status:', error);
-        alert('Failed to update the status.');
-      }
     
-    },
-    async Failed() {
-      try {
-        // Send a PUT request to update the status of the selected bug to "kész"
-        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status : 'Meghiúsult' }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to update status');
-        }
-
-        // Update the frontend after a successful response
-        this.selectedBug.status = 'Meghiúsult';
-        alert('Status successfully updated to "Meghiúsult".');
-        this.fetchBugs(); // Refresh the list to reflect the updated status
-      } catch (error) {
-        console.error('Error updating status:', error);
-        alert('Failed to update the status.');
-      }
-    
-    },
-    async Supply() {
-      try {
-        // Send a PUT request to update the status of the selected bug to "kész"
-        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status : 'Beszerzésre vár' }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to update status');
-        }
-
-        // Update the frontend after a successful response
-        this.selectedBug.status = 'Beszerzésre vár';
-        alert('Status successfully updated to "Beszerzésre vár".');
-        this.fetchBugs(); // Refresh the list to reflect the updated status
-      } catch (error) {
-        console.error('Error updating status:', error);
-        alert('Failed to update the status.');
-      }
-    
-    },
-    async InProgress() {
-      try {
-        // Send a PUT request to update the status of the selected bug to "kész"
-        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status : 'Folyamatban' }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to update status');
-        }
-
-        // Update the frontend after a successful response
-        this.selectedBug.status = 'Folyamatban';
-        alert('Status successfully updated to "Folyamatban".');
-        this.fetchBugs(); // Refresh the list to reflect the updated status
-      } catch (error) {
-        console.error('Error updating status:', error);
-        alert('Failed to update the status.');
-      }
-    
-    },
 
   }
 };
@@ -877,6 +815,11 @@ return filtered.sort((a, b) => {
 
 .badge-check {
   background-color: rgb(10, 231, 220);
+  color: #ffffff;
+}
+
+.badge-resent {
+  background-color: rgb(175, 52, 7);
   color: #ffffff;
 }
 
@@ -1154,6 +1097,11 @@ return filtered.sort((a, b) => {
 
 .dark-mode .badge-check {
   background-color: rgb(10, 231, 220);
+  color: #ffffff;
+}
+
+.dark-mode .badge-resent {
+  background-color: rgb(175, 52, 7);
   color: #ffffff;
 }
 
