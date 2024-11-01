@@ -12,7 +12,7 @@ router.put('/updateAssignedTo/:id', bugController.updateAssignedTo);
 
 router.put('/updateStatus/:id', statusUpdateController.updateBugStatus);
 
-router.post('/addComment/:id', kommentController.addComment);
+router.put('/addComment/:id', kommentController.addComment);
 
 
 

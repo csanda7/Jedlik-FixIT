@@ -184,14 +184,15 @@
 
           <div class="modal-footer">
 
+
       <!-- Komment írása -->
-  <!--   <button
-    type="button"
-    class="btn btn-primary mx-1"
-    @click="openSecondModal(komment)"
-  >
-    Komment írása
-  </button>  -->
+      <button
+          type="button"
+          class="btn btn-secondary me-auto"
+          @click="openLogModal(selectedBugId)"
+        >
+          Eseménynapló
+        </button>
 
 
   <!-- Feladat elvállalása -->
@@ -199,38 +200,30 @@
     type="button"
     class="btn btn-primary mx-1"
     v-if="role === 'rendszergazda' && !selectedBug.assignedTo"
-    @click="openSecondModal(takeTask)"
+    @click="openCommentModal(takeTask)"
   >
     Elvállalom
   </button>
 
   <!-- Feladat kiosztása -->
-  <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown" style="cursor: pointer;">
-    <button
-      v-if="selectedUser"
-      type="button"
-      class="btn btn-primary mx-1 my-2"
-      @click="openSecondModal(() => assignTaskTo(selectedUser))"
-    >
-      Feladat kiosztása
-    </button>
+<div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown" style="cursor: pointer;">
 
-    <button
-      ref="dropdownButton"
-      class="btn btn-primary dropdown-toggle fixed-width my-2"
-      type="button"
-      data-bs-toggle="dropdown"
-      aria-expanded="false"
-    >
-      {{ selectedUser || 'Feladat kiosztása' }}
-    </button>
+<button
+  ref="dropdownButton"
+  class="btn btn-primary dropdown-toggle fixed-width my-2"
+  type="button"
+  data-bs-toggle="dropdown"
+  aria-expanded="false"
+>
+  {{ selectedUser || 'Feladat kiosztása' }}
+</button>
 
-    <ul class="dropdown-menu fixed-width">
-      <li v-for="user in usersWithRoles" :key="user">
-        <a class="dropdown-item text-center" @click="selectUser(user)">{{ user }}</a>
-      </li>
-    </ul>
-  </div>
+<ul class="dropdown-menu fixed-width">
+  <li v-for="user in usersWithRoles" :key="user">
+    <a class="dropdown-item text-center" @click="openCommentModal(assignTaskTo,user)">{{ user }}</a>
+  </li>
+</ul>
+</div>
 
   <!-- Dropdown Menu for Task Status Update -->
   <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
@@ -247,22 +240,22 @@
       <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
         <!-- Kész option -->
         <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-          <a class="dropdown-item" @click="openSecondModal(Done, { status: 'Kész' })">Kész</a>
+          <a class="dropdown-item" @click="openCommentModal(Done, { status: 'Kész' })">Kész</a>
         </li>
 
         <!-- Meghiúsult option -->
         <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-          <a class="dropdown-item" @click="openSecondModal(Failed, { status: 'Meghiúsult' })">Meghiúsult</a>
+          <a class="dropdown-item" @click="openCommentModal(Failed, { status: 'Meghiúsult' })">Meghiúsult</a>
         </li>
 
         <!-- Beszerzés szükséges option, only when status is 'Folyamatban' -->
         <li v-if="status === 'Folyamatban'">
-          <a class="dropdown-item" @click="openSecondModal(Supply, { status: 'Beszerzés szükséges' })">Beszerzés szükséges</a>
+          <a class="dropdown-item" @click="openCommentModal(Supply, { status: 'Beszerzés szükséges' })">Beszerzés szükséges</a>
         </li>
 
         <!-- Folyamatban option, only when status is 'Beszerzésre vár' -->
         <li v-if="status === 'Beszerzésre vár'">
-          <a class="dropdown-item" @click="openSecondModal(InProgress, { status: 'Folyamatban' })">Folyamatban</a>
+          <a class="dropdown-item" @click="openCommentModal(InProgress, { status: 'Folyamatban' })">Folyamatban</a>
         </li>
       </ul>
     </div>
@@ -275,34 +268,71 @@
 
 
 
-<!-- Second Modal -->
-<div v-if="showSecondModal" class="secondmodal-overlay" @click="closeSecondModal">
+
+
+<!-- Comment Modal -->
+<div v-if="showCommentModal" class="Commentmodal-overlay" @click="closeCommentModal">
   <div class="bg" @click.stop>
-    <div class="secondmodal-content wider-modal" :class="{'dark-mode': isDarkMode}">
-      <div class="secondmodal-header">
+    <div class="Commentmodal-content wider-modal" :class="{'dark-mode': isDarkMode}">
+      <div class="Commentmodal-header">
       </div>
-      <div class="secondmodal-body">
+      <div class="Commentmodal-body">
         <div class="mb-3">
-        <label for="komment" class="form-label">Komment (opcionális)</label>
+        <label for="komment" class="form-label">Komment</label>
         <textarea 
           :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 
           id="komment" 
           v-model="komment" 
           rows="3" 
           maxlength="300" 
-          @input="adjustTextareaHeight($event); setCookie('komment', komment);" 
-          required>
+          >
         </textarea>
       </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
-        <button type="button" class="btn btn-secondary mx-1" @click="closeSecondModal">Mégse</button>
+        <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
 
       </div>
     </div>
   </div>
 </div>
+
+<!-- Log Modal -->
+<div v-if="showLogModal" class="modal-overlay" @click="closeLogModal">
+    <div class="bg" @click.stop>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Eseménynapló</h3>
+        </div>
+        <div class="modal-body">
+          <!-- Displaying log entries in a table -->
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Státusz</th>
+                <th>Komment</th>
+                <th>Frissítve</th>
+                <th>Módosító</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="log in logEntries" :key="log.ID">
+                <td>{{ log.LStatus }}</td>
+                <td>{{ log.Komment }}</td>
+                <td>{{ new Date(log.Updated_at).toLocaleString() }}</td>
+                <td>{{ log.modosito }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p v-if="logEntries.length === 0">Nincsenek elérhető események.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="closeLogModal">Bezárás</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
         </div>
@@ -312,7 +342,6 @@
 </template>
 
 <script>
-import { Dropdown } from 'bootstrap';
 
 export default {
   data() {
@@ -320,6 +349,8 @@ export default {
       bugs: [],
       selectedBug: {},
       showModal: false,
+      showCommentModal: false, 
+      showLogModal: false,
       isDarkMode: false,
       showFilters: false,
       searchTerm: '',
@@ -331,13 +362,14 @@ export default {
       selectedRooms: [],
       usersWithRoles: [],
       role: sessionStorage.getItem('role') || '',
-      selectedUser: null,
+      selectedUser: '',
       assignedTo: '',
       status: '',
       loggedInUser: sessionStorage.getItem('username') || '', // Get the logged-in user's username from sessionStorage
-      showSecondModal: false, // State for the second modal
-    actionToConfirm: null,   // Holds the action to confirm
-    actionData: null, // To hold the action-specific data
+      actionToConfirm: null,   // Holds the action to confirm
+      actionData: null, // To hold the action-specific data
+      komment: '',
+      logEntries: [], // Property to hold log entries
     };
   },
   computed: {
@@ -457,6 +489,25 @@ return filtered.sort((a, b) => {
       }
       
     },
+    async fetchUsersWithRoles() {
+      try {
+        const response = await fetch('http://localhost:4500/api/usersWithRoles');
+        if (!response.ok) throw new Error('Failed to fetch users');
+
+        this.usersWithRoles = await response.json();
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    },
+    selectUser(userName) {
+      this.selectedUser = userName;
+
+      const dropdownElement = this.$refs.dropdownButton;
+      const dropdown = bootstrap.Dropdown.getInstance(dropdownElement) || new bootstrap.Dropdown(dropdownElement);
+
+      dropdown.hide();
+    },
+
     toggleFilterVisibility() {
       this.showFilters = !this.showFilters;
     },
@@ -500,230 +551,155 @@ return filtered.sort((a, b) => {
       this.showModal = false;
       this.selectedUser = null; 
     },
-    openSecondModal(action, data) {
-      this.showSecondModal = true; // Show the second modal
+    openCommentModal(action, data) {
+      this.showCommentModal = true; // Show the Comment modal
       this.actionToConfirm = action; // Store the action to confirm
       this.actionData = data; // Store any additional data needed for the action
     },
-    closeSecondModal() {
-      this.showSecondModal = false; // Close the second modal
+    closeCommentModal() {
+      this.showCommentModal = false; // Close the Comment modal
       this.actionData = null; // Clear the action data
       this.komment ='';
+    },
+    async openLogModal() {
+      this.showLogModal = true;
+      await this.fetchLogEntries(); // Fetch log entries from the backend
+    },
+    closeLogModal() {
+      this.showLogModal = false;
     },
     async confirmAction() {
       if (this.actionToConfirm) {
         try {
-          await this.actionToConfirm(this.actionData); // Pass the action data to the async function
+          await this.actionToConfirm(this.actionData);
         } catch (error) {
           console.error('Error executing action:', error);
           alert('There was an error executing the action.');
         }
       }
-      this.closeSecondModal(); // Close the modal
+      this.closeCommentModal();
     },
     async Komment() {
-      try {
-        // Send a PUT request to update the status of the selected bug to "kész"
-        const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({komment: this.komment, modosito: this.loggedInUser }),
-        });
+  // Check if the komment textbox is empty
+  if (!this.komment || this.komment.trim() === '') {
+    alert('Please enter a comment before submitting.');
+    return; // Exit the method if the comment is empty
+  }
 
-        if (!response.ok) {
-          throw new Error('Failed to update log');
-        }
-        console.log(this.loggedInUser);
-        this.fetchBugs(); // Refresh the list to reflect the updated status
-      } catch (error) {
-        console.error('Error updating log:', error);
-        alert('Failed to update the log.');
-      }
-    },
-    async Done(data) {
-      try {
-        // Send a PUT request to update the status of the selected bug to "kész"
-        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status : 'Kész', komment: this.komment, modosito: this.loggedInUser }),
-        });
+  try {
+    const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ komment: this.komment, modosito: this.loggedInUser }),
+    });
 
-        if (!response.ok) {
-          throw new Error('Failed to update status');
-        }
+    if (!response.ok) throw new Error('Failed to update log');
 
-        // Update the frontend after a successful response
-        this.selectedBug.status = 'kész';
-        alert('Status successfully updated to "kész".');
-        this.fetchBugs(); // Refresh the list to reflect the updated status
-      } catch (error) {
-        console.error('Error updating status:', error);
-        alert('Failed to update the status.');
-      }
-    },
+    console.log('Comment added:', this.komment);
+    this.fetchBugs(); // Refresh the list to reflect the updated comment
+  } catch (error) {
+    console.error('Error updating log:', error);
+    alert('Failed to update the log.');
+  }
+},
 
-    async Failed(data) {
-      try {
-        // Send a PUT request to update the status of the selected bug to "kész"
-        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status : 'Meghiúsult', komment: this.komment, modosito: this.loggedInUser  }),
-        });
+async Done() {
+  await this.updateStatus('Kész');
+},
 
-        if (!response.ok) {
-          throw new Error('Failed to update status');
-        }
+async Failed() {
+  await this.updateStatus('Meghiúsult');
+},
 
-        // Update the frontend after a successful response
-        this.selectedBug.status = 'Meghiúsult';
-        alert('Status successfully updated to "Meghiúsult".');
-        this.fetchBugs(); // Refresh the list to reflect the updated status
-      } catch (error) {
-        console.error('Error updating status:', error);
-        alert('Failed to update the status.');
-      }
-    },
+async Supply() {
+  await this.updateStatus('Beszerzésre vár');
+},
 
-    async Supply(data) {
-      try {
-        // Send a PUT request to update the status of the selected bug to "kész"
-        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status : 'Beszerzésre vár', komment: this.komment, modosito: this.loggedInUser  }),
-        });
+async InProgress() {
+  await this.updateStatus('Folyamatban');
+},
 
-        if (!response.ok) {
-          throw new Error('Failed to update status');
-        }
+async updateStatus(status) {
+  try {
+    const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status, komment: this.komment, modosito: this.loggedInUser }),
+    });
 
-        // Update the frontend after a successful response
-        this.selectedBug.status = 'Beszerzésre vár';
-        alert('Status successfully updated to "Beszerzésre vár".');
-        this.fetchBugs(); // Refresh the list to reflect the updated status
-      } catch (error) {
-        console.error('Error updating status:', error);
-        alert('Failed to update the status.');
-      }
-    },
+    if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
 
-    async InProgress(data) {
-      try {
+    this.selectedBug.status = status;
+    alert(`Status successfully updated to "${status}".`);
+    this.fetchBugs();
+  } catch (error) {
+    console.error(`Error updating status to "${status}":`, error);
+    alert(`Failed to update the status to "${status}".`);
+  }
+},
 
-        // Send a PUT request to update the status of the selected bug to "kész"
-        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status : 'Folyamatban', komment: this.komment, modosito: this.loggedInUser  }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to update status');
-        }
-
-        // Update the frontend after a successful response
-        this.selectedBug.status = 'Folyamatban';
-        alert('Status successfully updated to "Folyamatban".');
-        this.fetchBugs(); // Refresh the list to reflect the updated status
-      } catch (error) {
-        console.error('Error updating status:', error);
-        alert('Failed to update the status.');
-      }
-      
-    },
     async takeTask() {
-      const username = sessionStorage.getItem('username'); // Get logged-in user's username
+      const username = sessionStorage.getItem('username');
 
       if (!username) {
-        alert('No user logged in'); // Error handling if username is not available
+        alert('No user logged in');
         return;
       }
 
-      // Update the selected bug with the assigned user
       try {
         const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ assignedTo: username, komment: this.komment, modosito: this.loggedInUser  }), // Send the assigned user to backend
+          body: JSON.stringify({ assignedTo: username, komment: this.komment, modosito: this.loggedInUser }),
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to assign the task');
-        }
+        if (!response.ok) throw new Error('Failed to assign the task');
 
-        // Update the frontend after successful response
         this.selectedBug.assignedTo = username;
         alert('Task successfully assigned to you.');
-        this.komment = ''; // Clear komment after assignment
+        this.komment = '';
         this.fetchBugs();
       } catch (error) {
         console.error('Error assigning task:', error);
         alert('Failed to assign the task.');
       }
     },
-    async fetchUsersWithRoles() {
-      try {
-        const response = await fetch('http://localhost:4500/api/usersWithRoles');
-        if (!response.ok) throw new Error('Failed to fetch users');
-
-        const data = await response.json();
-        console.log(data);
-        this.usersWithRoles = data; // Store the users in the array
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    },
-    selectUser(userName) {
-    this.selectedUser = userName; // Set the selected user
-
-    // Close the dropdown
-    const dropdownElement = this.$refs.dropdownButton; // Reference to the dropdown button
-    const dropdown = Dropdown.getInstance(dropdownElement); // Get the instance of the dropdown
-
-    if (dropdown) {
-      dropdown.hide(); // Close the dropdown
-    } else {
-      // If the dropdown instance does not exist, create it and then hide it
-      const newDropdown = new Dropdown(dropdownElement);
-      newDropdown.hide(); // Now hide the dropdown
-    }
-  },
-    async assignTaskTo(selectedUser) {
-      // Function to assign the selected user to the task
+    async assignTaskTo(user) {
       try {
         const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ assignedTo: selectedUser, komment: this.komment, modosito: this.loggedInUser }),
+          body: JSON.stringify({ assignedTo: user, komment: this.komment, modosito: this.loggedInUser }),
         });
 
         if (!response.ok) throw new Error('Failed to assign task');
-        this.selectedBug.assignedTo = selectedUser;
-        his.komment = ''; // Clear komment after assignment
-        alert(`Task assigned to ${selectedUser}`);
-        this.fetchBugs(); // Refresh the list to reflect the new assignment
+
+        this.selectedBug.assignedTo = user;
+        this.komment = '';
+        alert(`Task assigned to ${user}`);
+        this.fetchBugs();
       } catch (error) {
         console.error('Error assigning task:', error);
+        alert('Failed to assign the task.');
       }
-      
     },
-    
-
-  }
+    async fetchLogEntries() {
+      try {
+        const response = await fetch(`http://localhost:4500/api/logs/${this.selectedBug.id}`);
+        if (!response.ok) throw new Error('Failed to fetch log entries');
+        this.logEntries = await response.json(); // Store fetched log entries
+      } catch (error) {
+        console.error('Error fetching log entries:', error);
+      }
+    },
+  },
+  
 };
 </script>
 
@@ -855,7 +831,7 @@ return filtered.sort((a, b) => {
 }
 
 /* Modal Overlay */
-.secondmodal-overlay {
+.Commentmodal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -870,7 +846,7 @@ return filtered.sort((a, b) => {
 }
 
 /* Modal Content Base */
-.secondmodal-content {
+.Commentmodal-content {
   padding: 2rem;
   background-color: white; /* Set a solid white background for light mode */
   color: black;
@@ -884,7 +860,7 @@ return filtered.sort((a, b) => {
 
 
 /* Dark Mode */
-.secondmodal-content.dark-mode {
+.Commentmodal-content.dark-mode {
   background-color: #444;
   color: white;
 }
@@ -911,7 +887,7 @@ return filtered.sort((a, b) => {
 }
 
 /* Dark Mode - Modal Body */
-.dark-mode .secondmodal-body {
+.dark-mode .Commentmodal-body {
   background-color: #444;
   color: white;
 }
@@ -1138,7 +1114,7 @@ return filtered.sort((a, b) => {
   color: white;
   /* Text color for modal header */
 }
-.dark-mode .secondmodal-header {
+.dark-mode .Commentmodal-header {
   background-color: #444;
   /* Header background for modal */
   color: white;

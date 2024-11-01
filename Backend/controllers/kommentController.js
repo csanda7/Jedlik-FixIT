@@ -8,9 +8,9 @@ const addComment = (req, res) => {
 
 
   // SQL query to update the status
-  const updateQuery = 'UPDATE hibabejelentesek SET updated_at = NOW(), WHERE ID = ?';
+  const updateQuery = 'UPDATE hibabejelentesek SET Updated_at = NOW() WHERE ID = ?';
 
-  connection.query(updateQuery, [newStatus, bugId], (error, results) => {
+  connection.query(updateQuery, [bugId], (error, results) => {
     if (error) {
       console.error('Error updating status:', error);
       res.status(500).json({ message: 'Error updating status' });
