@@ -21,27 +21,36 @@ export default {
     };
   },
   mounted() {
-    this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
   },
   beforeDestroy() {
     window.removeEventListener('theme-changed', this.updateTheme);
   },
   methods: {
-    updateTheme() {
-      this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    toggleDarkMode() {
+      // Toggle the dark mode state
+      this.isDarkMode = !this.isDarkMode;
+      // Update the session storage and the document attribute
+      sessionStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light');
+      // Dispatch the event for theme changes
+      window.dispatchEvent(new Event('theme-changed'));
     },
-  }
+    updateTheme() {
+      this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+    },
+  },
 };  
 </script>
 
 <style scoped>
-
 html,
 body {
   height: 100%;
   margin: 0;
 }
+
 .h2 {
   color: rgb(59, 59, 59);
   padding: 0.5em;
@@ -52,10 +61,12 @@ body {
   z-index: 500;
   border-radius: 5vh;
 }
+
 .form-control {
   height: 45px;
   font-size: 1rem;
 }
+
 .form-range {
   width: 100%;
 }
@@ -66,12 +77,13 @@ body {
   min-height: 100vh; /* Ensure content takes up full height */
   overflow: auto; /* Allow scrolling within content if needed */
   margin-top: 4rem;
-  
 }
+
 .card {
   max-width: 600px;
   margin: 0 auto;
 }
+
 .card-header {
   background-color: #f93943;
   color: white;
@@ -82,6 +94,7 @@ body {
 .card-header h1 {
   margin-left: -10px;
 }
+
 .btn {
   padding: 10px;
   font-size: 1.1rem;
@@ -93,6 +106,7 @@ body {
   background-color: #ffffff;
   color: rgb(0, 0, 86);
 }
+
 .btn-primary {
   background-color: #4285f4;
   border-color: #4285f4;
@@ -112,7 +126,6 @@ body {
   color: white;
 }
 
-
 .btn-close {
   background: none;
   border: none;
@@ -120,17 +133,10 @@ body {
   cursor: pointer;
 }
 
-
-
-
-
 /* DARK MODE */
-
 .dark-mode {
   background-color: #222222; /* Dark mode background color */
   color: white; /* Text color for dark mode */
   min-height: 100vh; /* Ensure it takes full height */
- 
 }
-
 </style>

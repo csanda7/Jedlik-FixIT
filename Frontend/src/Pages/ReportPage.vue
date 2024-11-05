@@ -177,7 +177,7 @@ export default {
   },
 
   mounted() {
-    this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
     // A pillanatnyi idő beállítása a Budapest időzónájának megfelelően
     const now = moment().tz('Europe/Budapest'); // Budapest időzóna
@@ -261,7 +261,7 @@ export default {
       this.setCookie('otherLocation', '');
     },
     updateTheme() {
-      this.isDarkMode = localStorage.getItem('theme') === 'dark';
+      this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
     },
     adjustTextareaHeight(event) {
       const textarea = event.target;

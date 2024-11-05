@@ -76,6 +76,14 @@ export const useAuthStore = defineStore('auth', {
         // Handle any errors (optional)
       }
     },
-    
+    // setTheme(theme) {
+    //   this.theme = theme;
+    //   sessionStorage.setItem('theme', theme); // Save to session storage
+    // },
+    // loadTheme() {
+    //   // Load the theme from the store or fallback to light
+    //   const savedTheme = sessionStorage.getItem('theme');
+    //   this.theme = savedTheme || 'light'; // Default to light if no saved theme
+    // },
   },
 });

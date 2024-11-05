@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'bg': true, 'dark-mode': isDarkMode}">
+  <div :class="{ 'bg': true, 'dark-mode': isDarkMode }">
     <div class="bg">
       <div class="login-container container d-flex justify-content-center align-items-center vh-100">
         <div class="login-box card p-4 shadow-sm" style="max-width: 400px; width: 100%;">
@@ -8,24 +8,12 @@
           </div>
           <form @submit.prevent="handleLogin">
             <div class="form-group mb-3">
-              <input
-                type="text"
-                :class="['form-control', isDarkMode ? 'dark-textbox' : '']"
-                v-model="username"
-                placeholder="Felhasználónév"
-                required
-                id="username"
-              />
+              <input type="text" :class="['form-control', isDarkMode ? 'dark-textbox' : '']" v-model="username"
+                placeholder="Felhasználónév" required id="username" />
             </div>
             <div class="form-group mb-3">
-              <input
-                type="password"
-                :class="['form-control', isDarkMode ? 'dark-textbox' : '']"
-                v-model="password"
-                placeholder="Jelszó"
-                required
-                id="password"
-              />
+              <input type="password" :class="['form-control', isDarkMode ? 'dark-textbox' : '']" v-model="password"
+                placeholder="Jelszó" required id="password" />
             </div>
             <button type="submit" class="btn btn-primary w-100">Bejelentkezés</button>
             <p v-if="loginError" class="text-danger mt-3">Hibás felhasználónév vagy jelszó!</p>
@@ -50,7 +38,7 @@ export default {
     };
   },
   async mounted() {
-    this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
   },
   beforeDestroy() {
@@ -58,35 +46,34 @@ export default {
   },
   methods: {
     async handleLogin() {
-    try {
+      try {
         const authStore = useAuthStore();
         const session = await authStore.login(
-            this.username,
-            this.password,
+          this.username,
+          this.password,
         );
-        
+
         if (session) { // Now checks for success
-            authStore.isAuthenticated = true;
-            this.$router.push('/report'); // Navigate to the report page
+          authStore.isAuthenticated = true;
+          this.$router.push('/report'); // Navigate to the report page
         } else {
-            this.loginError = true; // Handles unsuccessful logins
+          this.loginError = true; // Handles unsuccessful logins
         }
-    } catch (error) {
+      } catch (error) {
         console.error("Login failed", error);
         this.loginError = true; // Sets login error for any other errors
-    }
-},
+      }
+    },
 
 
     updateTheme() {
-      this.isDarkMode = localStorage.getItem('theme') === 'dark'; // Update theme based on local storage
+      this.isDarkMode = sessionStorage.getItem('theme') === 'dark'; // Update theme based on session storage
     },
   },
 };
 </script>
 
 <style scoped>
-
 .login-container {
   position: absolute;
   top: 50%;
@@ -111,19 +98,24 @@ export default {
 
 .login-box {
   border-radius: 10px;
-  background-color: #ffffff; /* Original light mode background color */
-  color: #343a40; /* Original text color */
+  background-color: #ffffff;
+  /* Original light mode background color */
+  color: #343a40;
+  /* Original text color */
 }
 
 .title-bar h1 {
   font-size: 1.8rem;
   font-weight: 600;
-  color: #343a40; /* Original text color */
+  color: #343a40;
+  /* Original text color */
 }
 
 .dark-mode .login-box {
-  background-color: #3a3a3a; /* Dark grey for dark mode */
-  color: #ffffff; /* Text color for better contrast in dark mode */
+  background-color: #3a3a3a;
+  /* Dark grey for dark mode */
+  color: #ffffff;
+  /* Text color for better contrast in dark mode */
 }
 
 .dark-mode .title-bar h1 {
@@ -136,16 +128,11 @@ export default {
   color: white;
 }
 
-#username::placeholder{
+#username::placeholder {
   color: rgb(168, 168, 168);
 }
 
-#password::placeholder{
+#password::placeholder {
   color: rgb(168, 168, 168);
 }
-
-
-
-
 </style>
-

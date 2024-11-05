@@ -321,7 +321,7 @@ return filtered.sort((a, b) => {
   },
   mounted() {
     this.fetchBugs();
-    this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
   },
   beforeDestroy() {
@@ -387,7 +387,7 @@ return filtered.sort((a, b) => {
       }
     },
     updateTheme() {
-      this.isDarkMode = localStorage.getItem('theme') === 'dark';
+      this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
     },
     openModal(bug) {
       this.selectedBug = bug;
