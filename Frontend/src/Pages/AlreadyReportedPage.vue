@@ -1,7 +1,8 @@
 <template>
   <div :class="['reported-bugs-container', { 'dark-mode': isDarkMode }, 'container', 'mt-5']">
-    <div :class="[ 'card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
-      <div :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
+    <div :class="['card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
+      <div
+        :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
         <h2 class="mb-0 me-3 h2">BEJELENTETT HIBÁK</h2>
         <div class="user-actions d-flex">
           <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
@@ -15,14 +16,15 @@
         <div class="filters-wrapper">
           <!-- Priority Filter -->
           <div class="filter-dropdown">
-            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
               Prioritás
             </button>
             <ul class="dropdown-menu">
               <li v-for="priority in uniquePriorities" :key="priority" class="px-3 py-1">
                 <label>
-                  <input class="form-check-input" type="checkbox" :value="priority" v-model="selectedPriorities" /> {{ priority }}
+                  <input class="form-check-input" type="checkbox" :value="priority" v-model="selectedPriorities" /> {{
+                    priority }}
                 </label>
               </li>
             </ul>
@@ -30,8 +32,8 @@
 
           <!-- Label Filter -->
           <div class="filter-dropdown">
-            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
               Címke
             </button>
             <ul class="dropdown-menu">
@@ -45,14 +47,15 @@
 
           <!-- Status Filter -->
           <div class="filter-dropdown">
-            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
               Státusz
             </button>
             <ul class="dropdown-menu">
               <li v-for="status in uniqueStatuses" :key="status" class="px-3 py-1">
                 <label>
-                  <input class="form-check-input" type="checkbox" :value="status" v-model="selectedStatuses" /> {{ status }}
+                  <input class="form-check-input" type="checkbox" :value="status" v-model="selectedStatuses" /> {{
+                    status }}
                 </label>
               </li>
             </ul>
@@ -60,8 +63,8 @@
 
           <!-- Room Filter -->
           <div class="filter-dropdown">
-            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
               Terem
             </button>
             <ul class="dropdown-menu">
@@ -79,66 +82,66 @@
       <div class="card-body p-0">
         <div class="table-responsive">
           <table :class="['table', { 'dark-mode': isDarkMode }, 'table-hover', 'p-4']">
-          <thead>
-            <tr>
-              <th @click="sortBy('name')" style="cursor: pointer;">
-                Hiba neve
-                <i v-if="sortKey === 'name'"
-                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
-              </th>
-              <th @click="sortBy('priority')" style="cursor: pointer;">
-                Prioritás
-                <i v-if="sortKey === 'priority'"
-                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
-              </th>
-              <th class="hide-mobile">Címke</th>
-              <th class="hide-mobile">Státusz</th>
-              <th class="hide-mobile" @click="sortBy('room')" style="cursor: pointer;">
-                Terem
-                <i v-if="sortKey === 'room'"
-                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
-              </th>
-              <th class="hide-mobile" @click="sortBy('reportedBy')" style="cursor: pointer;">
-                Bejelentette
-                <i v-if="sortKey === 'reportedBy'"
-                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
-              </th>
-              <th class="hide-mobile" @click="sortBy('reportedAt')" style="cursor: pointer;">
-                Bejelentés ideje
-                <i v-if="sortKey === 'reportedAt'"
-                  :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(bug, index) in filteredBugs" :key="index" @click="openModal(bug)" style="cursor: pointer">
-              <td>{{ bug.name }}</td>
-              <td>
-                <div v-if="bug.priority === 0">Nincs prioritás</div>
-                <div v-else class="priority-container">
-                  <span :class="['priority-bar', bug.priorityColor]"></span>
-                  <span>{{ bug.priority }}</span>
-                </div>
-              </td>
-              <td class="hide-mobile">{{ bug.label }}</td>
-              <td class="hide-mobile status-column">
-                <span :class="['badge', bug.badgeClass, { 'dark-mode': isDarkMode }]">{{ bug.status }}</span>
-              </td>
-              <td class="hide-mobile">{{ bug.room }}</td>
-              <td class="hide-mobile">{{ bug.reportedBy }}</td>
-              <td class="hide-mobile">{{ bug.reportedAt }}</td>
-            </tr>
-            <tr v-if="filteredBugs.length === 0">
-              <td colspan="7" class="text-center">Nincs találat</td>
-            </tr>
-          </tbody>
-        </table>
+            <thead>
+              <tr>
+                <th @click="sortBy('name')" style="cursor: pointer;">
+                  Hiba neve
+                  <i v-if="sortKey === 'name'"
+                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
+                <th @click="sortBy('priority')" style="cursor: pointer;">
+                  Prioritás
+                  <i v-if="sortKey === 'priority'"
+                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
+                <th class="hide-mobile">Címke</th>
+                <th class="hide-mobile">Státusz</th>
+                <th class="hide-mobile" @click="sortBy('room')" style="cursor: pointer;">
+                  Terem
+                  <i v-if="sortKey === 'room'"
+                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
+                <th class="hide-mobile" @click="sortBy('reportedBy')" style="cursor: pointer;">
+                  Bejelentette
+                  <i v-if="sortKey === 'reportedBy'"
+                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
+                <th class="hide-mobile" @click="sortBy('reportedAt')" style="cursor: pointer;">
+                  Bejelentés ideje
+                  <i v-if="sortKey === 'reportedAt'"
+                    :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(bug, index) in filteredBugs" :key="index" @click="openModal(bug)" style="cursor: pointer">
+                <td>{{ bug.name }}</td>
+                <td>
+                  <div v-if="bug.priority === 0">Nincs prioritás</div>
+                  <div v-else class="priority-container">
+                    <span :class="['priority-bar', bug.priorityColor]"></span>
+                    <span>{{ bug.priority }}</span>
+                  </div>
+                </td>
+                <td class="hide-mobile">{{ bug.label }}</td>
+                <td class="hide-mobile status-column">
+                  <span :class="['badge', bug.badgeClass, { 'dark-mode': isDarkMode }]">{{ bug.status }}</span>
+                </td>
+                <td class="hide-mobile">{{ bug.room }}</td>
+                <td class="hide-mobile">{{ bug.reportedBy }}</td>
+                <td class="hide-mobile">{{ bug.reportedAt }}</td>
+              </tr>
+              <tr v-if="filteredBugs.length === 0">
+                <td colspan="7" class="text-center">Nincs találat</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
-     <!-- Modal -->
-     <div v-if="showModal" class="modal-overlay" @click="closeModal">
+    <!-- Modal -->
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
       <div class="bg" @click.stop>
         <div class="modal-content">
           <div class="modal-header">
@@ -164,7 +167,8 @@
                 <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
                 <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
                 <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-                <p v-if="selectedBug.reportedAt !== selectedBug.hibaIdopont" class="my-3"><strong>Hiba időpontja:</strong> {{ selectedBug.hibaIdopont }}</p>
+                <p v-if="selectedBug.reportedAt !== selectedBug.hibaIdopont" class="my-3"><strong>Hiba
+                    időpontja:</strong> {{ selectedBug.hibaIdopont }}</p>
                 <p class="my-3" v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{
                   selectedBug.assignedTo }}</p>
               </div>
@@ -181,168 +185,152 @@
               </div>
             </div>
           </div>
+          <div v-if="showPhotoModal" class="carousel-modal-overlay" @click="closePhotoModal">
+            <div class="carousel-modal-content" @click.stop>
+              <span class=" btn btn-dark carousel-close" @click="closePhotoModal">&times;</span>
+              <button type="button" class="btn btn-dark carousel-prev py-4" @click="prevPhoto">&lt;</button>
+              <img :src="selectedPhoto" alt="Selected Bug Photo" class="carousel-photo" />
+              <button type="button" class="btn btn-dark carousel-next py-4" @click="nextPhoto">&gt;</button>
+            </div>
+          </div>
 
           <div class="modal-footer">
 
-        
-
-          <!-- Eseménynapló megnyitása -->
-      <button
-          type="button"
-          class="btn btn-secondary me-auto"
-          @click="openLogModal(selectedBugId)"
-        >
-          Eseménynapló
-        </button>
 
 
-  <!-- Komment írása -->
-  <button
-    type="button"
-    class="btn btn-primary mx-1"
-    @click="openCommentModal(komment)"
-  >
-    Komment írása
-  </button> 
+            <!-- Eseménynapló megnyitása -->
+            <button type="button" class="btn btn-secondary me-auto" @click="openLogModal(selectedBugId)">
+              Eseménynapló
+            </button>
 
-  <!-- Feladat elvállalása -->
-  <button
-    type="button"
-    class="btn btn-primary mx-1"
-    v-if="role === 'rendszergazda' && !selectedBug.assignedTo"
-    @click="openCommentModal(takeTask)"
-  >
-    Elvállalom
-  </button>
 
-  <!-- Feladat kiosztása -->
-<div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown" style="cursor: pointer;">
+            <!-- Komment írása -->
+            <button type="button" class="btn btn-primary mx-1" @click="openCommentModal(komment)">
+              Komment írása
+            </button>
 
-<button
-  ref="dropdownButton"
-  class="btn btn-primary dropdown-toggle fixed-width my-2"
-  type="button"
-  data-bs-toggle="dropdown"
-  aria-expanded="false"
->
-  {{ selectedUser || 'Feladat kiosztása' }}
-</button>
+            <!-- Feladat elvállalása -->
+            <button type="button" class="btn btn-primary mx-1"
+              v-if="role === 'rendszergazda' && !selectedBug.assignedTo" @click="openCommentModal(takeTask)">
+              Elvállalom
+            </button>
 
-<ul class="dropdown-menu fixed-width">
-  <li v-for="user in usersWithRoles" :key="user">
-    <a class="dropdown-item text-center" @click="openCommentModal(assignTaskTo,user)">{{ user }}</a>
-  </li>
-</ul>
-</div>
+            <!-- Feladat kiosztása -->
+            <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown"
+              style="cursor: pointer;">
 
-  <!-- Dropdown Menu for Task Status Update -->
-  <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-    <div class="dropdown" style="cursor: pointer;">
-      <button
-        class="btn btn-primary dropdown-toggle px-4"
-        type="button"
-        id="statusDropdown"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        Állapot frissítése
-      </button>
-      <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
-        <!-- Kész option -->
-        <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-          <a class="dropdown-item" @click="openCommentModal(Done, { status: 'Kész' })">Kész</a>
-        </li>
+              <button ref="dropdownButton" class="btn btn-primary dropdown-toggle fixed-width my-2" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                {{ selectedUser || 'Feladat kiosztása' }}
+              </button>
 
-        <!-- Meghiúsult option -->
-        <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-          <a class="dropdown-item" @click="openCommentModal(Failed, { status: 'Meghiúsult' })">Meghiúsult</a>
-        </li>
+              <ul class="dropdown-menu fixed-width">
+                <li v-for="user in usersWithRoles" :key="user">
+                  <a class="dropdown-item text-center" @click="openCommentModal(assignTaskTo, user)">{{ user }}</a>
+                </li>
+              </ul>
+            </div>
 
-        <!-- Beszerzés szükséges option, only when status is 'Folyamatban' -->
-        <li v-if="status === 'Folyamatban'">
-          <a class="dropdown-item" @click="openCommentModal(Supply, { status: 'Beszerzés szükséges' })">Beszerzés szükséges</a>
-        </li>
+            <!-- Dropdown Menu for Task Status Update -->
+            <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+              <div class="dropdown" style="cursor: pointer;">
+                <button class="btn btn-primary dropdown-toggle px-4" type="button" id="statusDropdown"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+                  Állapot frissítése
+                </button>
+                <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
+                  <!-- Kész option -->
+                  <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+                    <a class="dropdown-item" @click="openCommentModal(Done, { status: 'Kész' })">Kész</a>
+                  </li>
 
-        <!-- Folyamatban option, only when status is 'Beszerzésre vár' -->
-        <li v-if="status === 'Beszerzésre vár'">
-          <a class="dropdown-item" @click="openCommentModal(InProgress, { status: 'Folyamatban' })">Folyamatban</a>
-        </li>
-      </ul>
-    </div>
-  </div>
+                  <!-- Meghiúsult option -->
+                  <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+                    <a class="dropdown-item" @click="openCommentModal(Failed, { status: 'Meghiúsult' })">Meghiúsult</a>
+                  </li>
+
+                  <!-- Beszerzés szükséges option, only when status is 'Folyamatban' -->
+                  <li v-if="status === 'Folyamatban'">
+                    <a class="dropdown-item"
+                      @click="openCommentModal(Supply, { status: 'Beszerzés szükséges' })">Beszerzés szükséges</a>
+                  </li>
+
+                  <!-- Folyamatban option, only when status is 'Beszerzésre vár' -->
+                  <li v-if="status === 'Beszerzésre vár'">
+                    <a class="dropdown-item"
+                      @click="openCommentModal(InProgress, { status: 'Folyamatban' })">Folyamatban</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
 
 
 
-  <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
-</div>
+            <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
+          </div>
 
 
 
 
 
-<!-- Comment Modal -->
-<div v-if="showCommentModal" class="Commentmodal-overlay" @click="closeCommentModal">
-  <div class="bg" @click.stop>
-    <div class="Commentmodal-content wider-modal" :class="{'dark-mode': isDarkMode}">
-      <div class="Commentmodal-header">
-      </div>
-      <div class="Commentmodal-body">
-        <div class="mb-3">
-        <label for="komment" class="form-label">Komment</label>
-        <textarea 
-          :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 
-          id="komment" 
-          v-model="komment" 
-          rows="3" 
-          maxlength="300" 
-          >
+          <!-- Comment Modal -->
+          <div v-if="showCommentModal" class="Commentmodal-overlay" @click="closeCommentModal">
+            <div class="bg" @click.stop>
+              <div class="Commentmodal-content wider-modal" :class="{ 'dark-mode': isDarkMode }">
+                <div class="Commentmodal-header">
+                </div>
+                <div class="Commentmodal-body">
+                  <div class="mb-3">
+                    <label for="komment" class="form-label">Komment</label>
+                    <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="komment" v-model="komment"
+                      rows="3" maxlength="300">
         </textarea>
-      </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
-        <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
+                  <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
 
-      </div>
-    </div>
-  </div>
-</div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-<!-- Log Modal -->
-<div v-if="showLogModal" class="modal-overlay" @click="closeLogModal">
-    <div class="bg" @click.stop>
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title">Eseménynapló</h3>
-        </div>
-        <div class="modal-body">
-          <!-- Displaying log entries in a table -->
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Státusz</th>
-                <th>Komment</th>
-                <th>Frissítve</th>
-                <th>Módosító</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="log in logEntries" :key="log.ID">
-                <td>{{ log.LStatus }}</td>
-                <td>{{ log.Komment }}</td>
-                <td>{{ new Date(log.Updated_at).toLocaleString() }}</td>
-                <td>{{ log.modosito }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <p v-if="logEntries.length === 0">Nincsenek elérhető események.</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="closeLogModal">Bezárás</button>
-        </div>
-      </div>
-    </div>
-  </div>
+          <!-- Log Modal -->
+          <div v-if="showLogModal" class="modal-overlay" @click="closeLogModal">
+            <div class="bg" @click.stop>
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3 class="modal-title">Eseménynapló</h3>
+                </div>
+                <div class="modal-body">
+                  <!-- Displaying log entries in a table -->
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Státusz</th>
+                        <th>Komment</th>
+                        <th>Frissítve</th>
+                        <th>Módosító</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="log in logEntries" :key="log.ID">
+                        <td>{{ log.LStatus }}</td>
+                        <td>{{ log.Komment }}</td>
+                        <td>{{ new Date(log.Updated_at).toLocaleString() }}</td>
+                        <td>{{ log.modosito }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p v-if="logEntries.length === 0">Nincsenek elérhető események.</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" @click="closeLogModal">Bezárás</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
 
         </div>
@@ -359,7 +347,10 @@ export default {
       bugs: [],
       selectedBug: {},
       showModal: false,
-      showCommentModal: false, 
+      showPhotoModal: false,
+      selectedPhoto: null,
+      selectedPhotoIndex: 0,
+      showCommentModal: false,
       showLogModal: false,
       isDarkMode: false,
       showFilters: false,
@@ -390,7 +381,7 @@ export default {
       return [...new Set(this.bugs.map(bug => bug.label))];
     },
     uniqueStatuses() {
-      const exactStatuses = ["Bejelentve", "Folyamatban", "Beszerzésre vár"]
+      const exactStatuses = ["Bejelentve", "Folyamatban", "Beszerzésre vár", "Újból kiosztva"]
       return [...new Set(this.bugs.map(bug => bug.status))].filter(status => exactStatuses.includes(status));
     },
     uniqueRooms() {
@@ -401,60 +392,60 @@ export default {
     },
     filteredBugs() {
 
-      
-let filtered = this.bugs.filter(bug => {
-  // Apply text search
-  const searchTermLower = this.searchTerm.toLowerCase();
-  const matchesSearch = bug.name.toLowerCase().includes(searchTermLower);
+
+      let filtered = this.bugs.filter(bug => {
+        // Apply text search
+        const searchTermLower = this.searchTerm.toLowerCase();
+        const matchesSearch = bug.name.toLowerCase().includes(searchTermLower);
 
 
-  // Apply filters
-  const matchesPriority = !this.selectedPriorities.length || this.selectedPriorities.includes(bug.priority);
-  const matchesLabel = !this.selectedLabels.length || this.selectedLabels.includes(bug.label);
-  const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
-  const matchesRoom = !this.selectedRooms.length || this.selectedRooms.includes(bug.room);
+        // Apply filters
+        const matchesPriority = !this.selectedPriorities.length || this.selectedPriorities.includes(bug.priority);
+        const matchesLabel = !this.selectedLabels.length || this.selectedLabels.includes(bug.label);
+        const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
+        const matchesRoom = !this.selectedRooms.length || this.selectedRooms.includes(bug.room);
 
-  const statusNotCompletedOrFailed = bug.status !== "Kész" && bug.status !== "Meghiúsult";
+        const statusNotCompletedOrFailed = bug.status !== "Kész" && bug.status !== "Meghiúsult";
 
-  return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom && statusNotCompletedOrFailed;
-
-  
-});
+        return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom && statusNotCompletedOrFailed;
 
 
+      });
 
 
 
-// Sorting logic based on sortKey and sortOrder
-return filtered.sort((a, b) => {
-  let compareA, compareB;
 
-  switch (this.sortKey) {
-    case 'name':
-    case 'room':
-    case 'reportedBy':
-      compareA = a[this.sortKey].toLowerCase();
-      compareB = b[this.sortKey].toLowerCase();
-      if (compareA < compareB) return this.sortOrder === 'asc' ? -1 : 1;
-      if (compareA > compareB) return this.sortOrder === 'asc' ? 1 : -1;
-      return 0;
 
-    case 'priority':
-      compareA = a.priority;
-      compareB = b.priority;
-      return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+      // Sorting logic based on sortKey and sortOrder
+      return filtered.sort((a, b) => {
+        let compareA, compareB;
 
-    case 'reportedAt':
-      compareA = new Date(a.reportedAt);
-      compareB = new Date(b.reportedAt);
-      return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+        switch (this.sortKey) {
+          case 'name':
+          case 'room':
+          case 'reportedBy':
+            compareA = a[this.sortKey].toLowerCase();
+            compareB = b[this.sortKey].toLowerCase();
+            if (compareA < compareB) return this.sortOrder === 'asc' ? -1 : 1;
+            if (compareA > compareB) return this.sortOrder === 'asc' ? 1 : -1;
+            return 0;
 
-    default:
-      return 0; // Default sorting if no key is selected
-  }
-});
-}
-},
+          case 'priority':
+            compareA = a.priority;
+            compareB = b.priority;
+            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+          case 'reportedAt':
+            compareA = new Date(a.reportedAt);
+            compareB = new Date(b.reportedAt);
+            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+          default:
+            return 0; // Default sorting if no key is selected
+        }
+      });
+    }
+  },
   mounted() {
     this.fetchBugs();
     this.fetchUsersWithRoles();
@@ -481,9 +472,9 @@ return filtered.sort((a, b) => {
           label: bug['Címke'],
           status: bug['Státusz'],
           badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
-              bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
-                  bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' : 
-                    bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' : '',
+            bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
+              bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' :
+                bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' : '',
 
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
@@ -492,12 +483,42 @@ return filtered.sort((a, b) => {
           description: bug['Hiba leírása'],
           hibaIdopont: bug['Hiba ideje'] ? new Date(bug['Hiba ideje']).toLocaleString('hu-HU') : "N/A", // Fallback if missing
           photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format
-          
+
         }));
       } catch (error) {
         console.error('Error fetching bug data:', error);
       }
-      
+
+    },
+
+    // Method to open photo modal and set selected photo
+    openPhoto(photo, index) {
+      this.showPhotoModal = true;
+      this.selectedPhoto = photo;
+      this.selectedPhotoIndex = index;
+    },
+    // Close the photo modal
+    closePhotoModal() {
+      this.showPhotoModal = false;
+      this.selectedPhoto = null;
+    },
+    // Navigate to the previous photo
+    prevPhoto() {
+      if (this.selectedPhotoIndex > 0) {
+        this.selectedPhotoIndex--;
+      } else {
+        this.selectedPhotoIndex = this.selectedBug.photos.length - 1; // Loop to the last photo
+      }
+      this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
+    },
+    // Navigate to the next photo
+    nextPhoto() {
+      if (this.selectedPhotoIndex < this.selectedBug.photos.length - 1) {
+        this.selectedPhotoIndex++;
+      } else {
+        this.selectedPhotoIndex = 0; // Loop to the first photo
+      }
+      this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
     },
     async fetchUsersWithRoles() {
       try {
@@ -522,11 +543,11 @@ return filtered.sort((a, b) => {
       this.showFilters = !this.showFilters;
     },
 
-    openPhoto(photo) {
-      // Logic to open a larger view of the image
-      const imgWindow = window.open(photo, '_blank');
-      imgWindow.focus(); // Focus on the new window
-    },
+    // openPhoto(photo) {
+    //   // Logic to open a larger view of the image
+    //   const imgWindow = window.open(photo, '_blank');
+    //   imgWindow.focus(); // Focus on the new window
+    // },
     sortBy(key) {
       if (this.sortKey === key) {
         // If the same column is clicked, toggle the sort order
@@ -553,13 +574,13 @@ return filtered.sort((a, b) => {
     openModal(bug) {
       this.selectedBug = bug;
       this.showModal = true;
-     this.assignedTo = this.selectedBug.assignedTo
-     this.status = this.selectedBug.status
+      this.assignedTo = this.selectedBug.assignedTo
+      this.status = this.selectedBug.status
 
     },
     closeModal() {
       this.showModal = false;
-      this.selectedUser = null; 
+      this.selectedUser = null;
     },
     openCommentModal(action, data) {
       this.showCommentModal = true; // Show the Comment modal
@@ -569,7 +590,7 @@ return filtered.sort((a, b) => {
     closeCommentModal() {
       this.showCommentModal = false; // Close the Comment modal
       this.actionData = null; // Clear the action data
-      this.komment ='';
+      this.komment = '';
     },
     async openLogModal() {
       this.showLogModal = true;
@@ -590,67 +611,67 @@ return filtered.sort((a, b) => {
       this.closeCommentModal();
     },
     async Komment() {
-  // Check if the komment textbox is empty
-  if (!this.komment || this.komment.trim() === '') {
-    alert('Please enter a comment before submitting.');
-    return; // Exit the method if the comment is empty
-  }
+      // Check if the komment textbox is empty
+      if (!this.komment || this.komment.trim() === '') {
+        alert('Please enter a comment before submitting.');
+        return; // Exit the method if the comment is empty
+      }
 
-  try {
-    const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ komment: this.komment, modosito: this.loggedInUser }),
-    });
+      try {
+        const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ komment: this.komment, modosito: this.loggedInUser }),
+        });
 
-    if (!response.ok) throw new Error('Failed to update log');
+        if (!response.ok) throw new Error('Failed to update log');
 
-    console.log('Comment added:', this.komment);
-    this.fetchBugs(); // Refresh the list to reflect the updated comment
-  } catch (error) {
-    console.error('Error updating log:', error);
-    alert('Failed to update the log.');
-  }
-},
+        console.log('Comment added:', this.komment);
+        this.fetchBugs(); // Refresh the list to reflect the updated comment
+      } catch (error) {
+        console.error('Error updating log:', error);
+        alert('Failed to update the log.');
+      }
+    },
 
-async Done() {
-  await this.updateStatus('Kész');
-},
+    async Done() {
+      await this.updateStatus('Kész');
+    },
 
-async Failed() {
-  await this.updateStatus('Meghiúsult');
-},
+    async Failed() {
+      await this.updateStatus('Meghiúsult');
+    },
 
-async Supply() {
-  await this.updateStatus('Beszerzésre vár');
-},
+    async Supply() {
+      await this.updateStatus('Beszerzésre vár');
+    },
 
-async InProgress() {
-  await this.updateStatus('Folyamatban');
-},
+    async InProgress() {
+      await this.updateStatus('Folyamatban');
+    },
 
-async updateStatus(status) {
-  try {
-    const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status, komment: this.komment, modosito: this.loggedInUser }),
-    });
+    async updateStatus(status) {
+      try {
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status, komment: this.komment, modosito: this.loggedInUser }),
+        });
 
-    if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
+        if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
 
-    this.selectedBug.status = status;
-    alert(`Status successfully updated to "${status}".`);
-    this.fetchBugs();
-  } catch (error) {
-    console.error(`Error updating status to "${status}":`, error);
-    alert(`Failed to update the status to "${status}".`);
-  }
-},
+        this.selectedBug.status = status;
+        alert(`Status successfully updated to "${status}".`);
+        this.fetchBugs();
+      } catch (error) {
+        console.error(`Error updating status to "${status}":`, error);
+        alert(`Failed to update the status to "${status}".`);
+      }
+    },
 
     async takeTask() {
       const username = sessionStorage.getItem('username');
@@ -709,7 +730,7 @@ async updateStatus(status) {
       }
     },
   },
-  
+
 };
 </script>
 
@@ -858,7 +879,8 @@ async updateStatus(status) {
 /* Modal Content Base */
 .Commentmodal-content {
   padding: 2rem;
-  background-color: white; /* Set a solid white background for light mode */
+  background-color: white;
+  /* Set a solid white background for light mode */
   color: black;
   border-radius: 2vh;
   max-width: 40vw;
@@ -902,14 +924,19 @@ async updateStatus(status) {
   color: white;
 }
 
-@media (max-width: 767.98px) { /* Adjust breakpoint as needed */
-    .wider-modal {
-        max-width: 100%; /* Make it full width */
-        min-width: 100%  !important;
-        width: 100%; /* Ensure width is set to 100% */
-        margin: 0; /* Remove margin */
-        padding: 2rem;
-    }
+@media (max-width: 767.98px) {
+
+  /* Adjust breakpoint as needed */
+  .wider-modal {
+    max-width: 100%;
+    /* Make it full width */
+    min-width: 100% !important;
+    width: 100%;
+    /* Ensure width is set to 100% */
+    margin: 0;
+    /* Remove margin */
+    padding: 2rem;
+  }
 }
 
 .drown-kioszt {
@@ -1009,22 +1036,24 @@ async updateStatus(status) {
 .modal-footer {
   text-align: right;
 }
+
 .fixed-width {
-  width: 10rem; /* Set to the desired width for the button */
+  width: 10rem;
+  /* Set to the desired width for the button */
 }
 
 
-#done{
+#done {
   background-color: #35b821;
   border: none;
 }
 
-#failed{
+#failed {
   background-color: red;
   border: none;
 }
 
-#supply{
+#supply {
   background-color: brown;
   border: none;
 }
@@ -1124,6 +1153,7 @@ async updateStatus(status) {
   color: white;
   /* Text color for modal header */
 }
+
 .dark-mode .Commentmodal-header {
   background-color: #444;
   /* Header background for modal */
@@ -1176,17 +1206,18 @@ async updateStatus(status) {
   color: white;
   /* Make placeholder text white as well */
 }
-.dark-mode #done{
+
+.dark-mode #done {
   background-color: #35b821;
   border: none;
 }
 
-.dark-mode #failed{
+.dark-mode #failed {
   background-color: red;
   border: none;
 }
 
-.dark-mode #supply{
+.dark-mode #supply {
   background-color: brown;
   border: none;
 }
@@ -1259,7 +1290,8 @@ async updateStatus(status) {
   }
 
   .priority-bar {
-    width: 30px; /* Slightly smaller on mobile */
+    width: 30px;
+    /* Slightly smaller on mobile */
   }
 
   /* Ensure the table takes full width on mobile */
@@ -1276,6 +1308,75 @@ async updateStatus(status) {
   /* Ensure the "No results" message spans correct number of columns */
   tr:last-child td[colspan="7"] {
     column-span: 2;
+  }
+}
+
+
+/* Styles for photo carousel */
+.carousel-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.carousel-modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.carousel-photo {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.carousel-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  border-radius: 100%;
+}
+
+.carousel-prev,
+.carousel-next {
+  position: absolute;
+  top: 50%;
+  font-size: 32px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  padding: 12px;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.carousel-prev {
+  left: 10px;
+  border-radius: 50% 0 0 50%;
+}
+
+.carousel-next {
+  right: 10px;
+  border-radius: 50% 50% 50% 50%;
+}
+
+@media (max-width: 768px) {
+  .carousel-photo {
+    width: 100%;
+    height: auto;
   }
 }
 </style>
