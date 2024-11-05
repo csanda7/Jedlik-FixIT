@@ -184,8 +184,9 @@
 
           <div class="modal-footer">
 
+        
 
-      <!-- Komment írása -->
+          <!-- Eseménynapló megnyitása -->
       <button
           type="button"
           class="btn btn-secondary me-auto"
@@ -194,6 +195,15 @@
           Eseménynapló
         </button>
 
+
+  <!-- Komment írása -->
+  <button
+    type="button"
+    class="btn btn-primary mx-1"
+    @click="openCommentModal(komment)"
+  >
+    Komment írása
+  </button> 
 
   <!-- Feladat elvállalása -->
   <button
@@ -473,7 +483,7 @@ return filtered.sort((a, b) => {
           badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
               bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
                   bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' : 
-                    bug['Státusz'] === 'Újrakiosztva' ? 'badge-resent' : '',
+                    bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' : '',
 
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
@@ -795,7 +805,7 @@ async updateStatus(status) {
 }
 
 .badge-resent {
-  background-color: rgb(175, 52, 7);
+  background-color: rgb(157, 0, 255);
   color: #ffffff;
 }
 
@@ -1077,7 +1087,7 @@ async updateStatus(status) {
 }
 
 .dark-mode .badge-resent {
-  background-color: rgb(175, 52, 7);
+  background-color: rgb(157, 0, 255);
   color: #ffffff;
 }
 

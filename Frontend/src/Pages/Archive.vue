@@ -164,6 +164,7 @@
                 <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
                 <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
                 <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+                <p v-if="selectedBug.reportedAt !== selectedBug.hibaIdopont" class="my-3"><strong>Hiba időpontja:</strong> {{ selectedBug.hibaIdopont }}</p>
                 <p class="my-3" v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{
                   selectedBug.assignedTo }}</p>
               </div>
@@ -182,9 +183,98 @@
           </div>
           <div class="modal-footer">
 
-  <button type="button" class="btn btn-reassign mx-1 my-2" @click="reassignTask">Újrakiosztás</button>
+
+
+   <!-- Eseménynapló megnyitása -->
+   <button
+          type="button"
+          class="btn btn-secondary me-auto"
+          @click="openLogModal(selectedBugId)"
+        >
+          Eseménynapló
+        </button>  
+            
+            <!-- Komment írása -->
+  <button
+    type="button"
+    class="btn btn-primary mx-1"
+    @click="openCommentModal(komment)"
+  >
+    Komment írása
+  </button> 
+
+  <button v-if="role === 'muszakivezeto'" type="button" class="btn btn-reassign mx-1 my-2" @click="openCommentModal(reAssign)">Újrakiosztás</button>
   <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
 </div>
+
+
+
+
+<!-- Comment Modal -->
+<div v-if="showCommentModal" class="Commentmodal-overlay" @click="closeCommentModal">
+  <div class="bg" @click.stop>
+    <div class="Commentmodal-content wider-modal" :class="{'dark-mode': isDarkMode}">
+      <div class="Commentmodal-header">
+      </div>
+      <div class="Commentmodal-body">
+        <div class="mb-3">
+        <label for="komment" class="form-label">Komment</label>
+        <textarea 
+          :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 
+          id="komment" 
+          v-model="komment" 
+          rows="3" 
+          maxlength="300" 
+          >
+        </textarea>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button  type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
+        <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Log Modal -->
+<div v-if="showLogModal" class="modal-overlay" @click="closeLogModal">
+    <div class="bg" @click.stop>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Eseménynapló</h3>
+        </div>
+        <div class="modal-body">
+          <!-- Displaying log entries in a table -->
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Státusz</th>
+                <th>Komment</th>
+                <th>Frissítve</th>
+                <th>Módosító</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="log in logEntries" :key="log.ID">
+                <td>{{ log.LStatus }}</td>
+                <td>{{ log.Komment }}</td>
+                <td>{{ new Date(log.Updated_at).toLocaleString() }}</td>
+                <td>{{ log.modosito }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p v-if="logEntries.length === 0">Nincsenek elérhető események.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="closeLogModal">Bezárás</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
         </div>
       </div>
     </div>
@@ -198,6 +288,8 @@ export default {
       bugs: [],
       selectedBug: {},
       showModal: false,
+      showCommentModal: false, 
+      showLogModal: false,
       isDarkMode: false,
       showFilters: false,
       searchTerm: '',
@@ -210,8 +302,14 @@ export default {
       sortOrder: 'asc',
       showTooltip: false,
       loggedInUser: sessionStorage.getItem('username') || '', // Get the logged-in user's username from sessionStorage
+      role: sessionStorage.getItem('role') || '',
       assignedTo: '',
       status: '',
+      actionToConfirm: null,   // Holds the action to confirm
+      actionData: null, // To hold the action-specific data
+      komment: '',
+      logEntries: [], // Property to hold log entries
+      komment: '',
     };
   },
   computed: {
@@ -360,35 +458,89 @@ export default {
     closeModal() {
       this.showModal = false;
     },
-    reassignTask() {
-    // Itt adhatsz hozzá logikát az újrakiosztáshoz
-    console.log("Feladat újrakiosztása", this.selectedBug);
-  },
+    openCommentModal(action, data) {
+      this.showCommentModal = true; // Show the Comment modal
+      this.actionToConfirm = action; // Store the action to confirm
+      this.actionData = data; // Store any additional data needed for the action
+    },
+    closeCommentModal() {
+      this.showCommentModal = false; // Close the Comment modal
+      this.actionData = null; // Clear the action data
+      this.komment ='';
+    },
+    async openLogModal() {
+      this.showLogModal = true;
+      await this.fetchLogEntries(); // Fetch log entries from the backend
+    },
+    closeLogModal() {
+      this.showLogModal = false;
+    },
   
-  async reassignBug() {
-    try {
-      const response = await fetch(`http://localhost:4500/api/hibak/frissites`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: this.selectedBug.id,
-          status: 'Újrakiosztva'
-        }),
-      });
-
-      if (response.ok) {
-        this.selectedBug.status = 'Újrakiosztva';
-        this.showModal = false; // Pop-up bezárása
-        await this.fetchBugs(); // Frissítjük a hibák listáját
-      } else {
-        console.error('Nem sikerült frissíteni a hibát');
+    async confirmAction() {
+      if (this.actionToConfirm) {
+        try {
+          await this.actionToConfirm(this.actionData); // Execute the action with its data
+        } catch (error) {
+          console.error('Error executing action:', error);
+          alert('There was an error executing the action.');
+        }
       }
-    } catch (error) {
-      console.error('Hiba történt az újrakiosztás során:', error);
-    }
-  },
+      this.closeCommentModal();
+    },
+
+    // Method to add a comment to the selected bug
+    async Komment() {
+      // Check if the comment text box is empty
+      if (!this.komment || this.komment.trim() === '') {
+        alert('Please enter a comment before submitting.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ komment: this.komment, modosito: this.loggedInUser }),
+        });
+
+        if (!response.ok) throw new Error('Failed to update log');
+
+        console.log('Comment added:', this.komment);
+        this.fetchBugs(); // Refresh the list to reflect the updated comment
+      } catch (error) {
+        console.error('Error updating log:', error);
+        alert('Failed to update the log.');
+      }
+    },
+
+    // Method to reassign the bug
+    async reAssign() {
+      await this.updateStatus('Újból kiosztva');
+    },
+
+    // Method to update the bug's status
+    async updateStatus(status) {
+      try {
+        const response = await fetch(`http://localhost:4500/api/updateStatusandAssigndTo/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status, komment: this.komment, modosito: this.loggedInUser }),
+        });
+
+        if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
+
+        this.selectedBug.status = status;
+        alert(`Status successfully updated to "${status}".`);
+        this.fetchBugs();
+      } catch (error) {
+        console.error(`Error updating status to "${status}":`, error);
+        alert(`Failed to update the status to "${status}".`);
+      }
+    },
   }
 };
 </script>
