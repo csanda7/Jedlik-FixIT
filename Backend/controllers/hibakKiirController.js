@@ -15,6 +15,7 @@ const getHibakKiir = (req, res) => {
       h.hiba_idopont AS 'Hiba ideje',
       h.Description AS 'Hiba leírása', 
       h.assignedTo,
+      h.deadLine AS 'Határidő',
       GROUP_CONCAT(k.kep) AS photos
     FROM 
       hibabejelentesek h

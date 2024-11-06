@@ -41,7 +41,7 @@
 
       <!-- Dátum és idő mező hozzáadása -->
 <div class="my-3">
-  <label for="dateTime" class="form-label">Hiba bekövetkezésének ideje</label>
+  <label for="dateTime" class="form-label">Hiba bekövetkezésének ideje (opcionális)</label>
   <input 
   type="datetime-local" 
   :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 

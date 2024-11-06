@@ -146,18 +146,32 @@
         <div class="modal-content">
           <div class="modal-header">
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
+            <button v-if="!isEditing" type="button" class="btn btn-outline-secondary" @click="toggleEditMode">
+              <i :class="['bi', 'bi-pencil', { 'text-white': isDarkMode }]"></i>
+      </button>
+      <div v-else>
+    <button type="button" class="btn btn-success me-2" @click="saveEdit">Megerősít</button>
+    <button type="button" class="btn btn-secondary" @click="toggleEditMode">Mégse</button>
+  </div>
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-md-4">
-                <div class="d-flex align-items-center mb-2">
-                  <strong>Prioritás: </strong>
-                  <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
-                  <div v-else class="priority-container ms-2 my-1">
-                    <span :class="['priority-bar', selectedBug.priorityColor]"></span>
-                    <span>{{ selectedBug.priority }}</span>
-                  </div>
-                </div>
+    <div class="col-md-4">
+      <div class="d-flex align-items-center mb-2">
+        <strong>Prioritás: </strong>
+        <div v-if="!isEditing">
+          <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
+          <div v-else class="priority-container ms-2 my-1">
+            <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+            <span>{{ selectedBug.priority }}</span>
+          </div>
+        </div>
+        <div v-if="isEditing">
+          <select v-model="selectedBug.priority" class="form-select ms-2 my-1">
+            <option v-for="n in 6" :key="n - 1" :value="n - 1">{{ n - 1 }}</option>
+          </select>
+        </div>
+      </div>
                 <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
                 <div class="d-flex align-items-center mb-2 my-1">
                   <strong>Státusz: </strong>
@@ -169,8 +183,22 @@
                 <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
                 <p v-if="selectedBug.reportedAt !== selectedBug.hibaIdopont" class="my-3"><strong>Hiba
                     időpontja:</strong> {{ selectedBug.hibaIdopont }}</p>
-                <p class="my-3" v-if="selectedBug.assignedTo"><strong>Feladatot elvállalta:</strong> {{
-                  selectedBug.assignedTo }}</p>
+                    <p class="my-3" v-if="!isEditing && selectedBug.assignedTo">
+        <strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}
+      </p>
+      <div v-if="isEditing && selectedBug.assignedTo != null">
+        <label><strong>Feladatot elvállalta:</strong></label>
+        <select v-model="selectedBug.assignedTo" class="form-select my-1">
+          <option v-for="user in usersWithRoles" :key="user" :value="user">{{ user }}</option>
+        </select>
+      </div>
+      <p v-if="selectedBug.deadline != null && !isEditing" class="my-3">
+    <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString() }}
+  </p>
+  <div v-if="isEditing" class="my-3">
+    <label><strong>Határidő:</strong></label>
+    <input type="datetime-local" v-model="selectedBug.deadline" class="form-control" />
+  </div>
               </div>
               <div class="col-md-4 description">
                 <p><strong>Hiba leírása:</strong></p>
@@ -365,12 +393,14 @@ export default {
       role: sessionStorage.getItem('role') || '',
       selectedUser: '',
       assignedTo: '',
+      deadline: '',
       status: '',
       loggedInUser: sessionStorage.getItem('username') || '', // Get the logged-in user's username from sessionStorage
       actionToConfirm: null,   // Holds the action to confirm
       actionData: null, // To hold the action-specific data
       komment: '',
       logEntries: [], // Property to hold log entries
+      isEditing: false,
     };
   },
   computed: {
@@ -390,6 +420,7 @@ export default {
     photoCount() {
       return this.selectedBug.photos ? this.selectedBug.photos.length : 0;
     },
+    
     filteredBugs() {
 
 
@@ -446,6 +477,19 @@ export default {
       });
     }
   },
+  watch: {
+  'selectedBug.priority': function(newPriority) {
+    this.$nextTick(() => {
+      this.selectedBug.priorityColor = this.getPriorityColor(newPriority);
+    });
+  },
+  'selectedBug.status': function(newStatus) {
+    this.$nextTick(() => {
+      this.selectedBug.badgeClass = this.getBadgeClass(newStatus);
+    });
+  },
+},
+
   mounted() {
     this.fetchBugs();
     this.fetchUsersWithRoles();
@@ -463,6 +507,7 @@ export default {
         if (!response.ok) throw new Error('Network response was not ok');
 
         const data = await response.json();
+        
 
         this.bugs = data.map(bug => ({
           id: bug.ID,
@@ -481,8 +526,9 @@ export default {
           reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
           assignedTo: bug['assignedTo'],
           description: bug['Hiba leírása'],
+          deadline: bug['Határidő'],
           hibaIdopont: bug['Hiba ideje'] ? new Date(bug['Hiba ideje']).toLocaleString('hu-HU') : "N/A", // Fallback if missing
-          photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format
+          photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format,
 
         }));
       } catch (error) {
@@ -568,6 +614,18 @@ export default {
         default: return '';
       }
     },
+    getBadgeClass(status) {
+    switch (status) {
+      case 'Bejelentve':
+        return 'badge-reported';  // You can customize the class to suit your needs
+      case 'Folyamatban':
+        return 'badge-progress';
+      case 'Beszerzésre vár':
+        return 'badge-supply';
+        case 'Újból kiosztva':
+          return 'badge-resent'  // Default class for undefined status
+    }
+  },
     updateTheme() {
       this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
     },
@@ -581,6 +639,7 @@ export default {
     closeModal() {
       this.showModal = false;
       this.selectedUser = null;
+      this.isEditing = false;
     },
     openCommentModal(action, data) {
       this.showCommentModal = true; // Show the Comment modal
@@ -666,6 +725,8 @@ export default {
 
         this.selectedBug.status = status;
         alert(`Status successfully updated to "${status}".`);
+      this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
+
         this.fetchBugs();
       } catch (error) {
         console.error(`Error updating status to "${status}":`, error);
@@ -695,6 +756,7 @@ export default {
         this.selectedBug.assignedTo = username;
         alert('Task successfully assigned to you.');
         this.komment = '';
+       this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
       } catch (error) {
         console.error('Error assigning task:', error);
@@ -715,6 +777,8 @@ export default {
         this.komment = '';
         alert(`Task assigned to ${user}`);
         this.fetchBugs();
+      this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
+
       } catch (error) {
         console.error('Error assigning task:', error);
         alert('Failed to assign the task.');
@@ -729,6 +793,37 @@ export default {
         console.error('Error fetching log entries:', error);
       }
     },
+    toggleEditMode() {
+      this.isEditing = !this.isEditing;
+    },
+    async saveEdit() {
+    // Prepare the data to be sent
+    const updatedData = {
+      priority: this.selectedBug.priority,
+      assignedTo: this.selectedBug.assignedTo,
+      deadline: this.selectedBug.deadline,
+      modosito: this.loggedInUser,
+    };
+
+    try {
+      // Send the PUT request to the backend
+      const response = await fetch(`http://localhost:4500/api/editBug/${this.selectedBug.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      });
+      
+      this.isEditing = !this.isEditing;
+      this.fetchBugs(); // Refresh the list to reflect the updated bug
+      this.selectedBug.priorityColor = this.getPriorityColor(this.selectedBug.priority);
+
+
+    } catch (error) {
+      console.error('Error updating bug:', error);
+    }
+  },
   },
 
 };

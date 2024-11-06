@@ -14,7 +14,7 @@
         aria-expanded="false"
         aria-label="Toggle navigation"
       >
-        <span class="navbar-toggler-icon"></span>
+        <span v-if="isAuthenticated" class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse mx-3 row" id="navbarNav">
         <ul class="navbar-nav col-lg-10 col-md-9">
@@ -52,9 +52,10 @@
           </li>
         </ul>
 
-        <div class="d-lg-flex justify-content-lg-end col-lg-2 mt-lg-0 mt-3" v-if="isAuthenticated">
+        <!-- Only show the following part if the user is authenticated -->
+        <div v-if="isAuthenticated" class="d-lg-flex justify-content-lg-end col-lg-2 mt-lg-0 mt-3">
           <div class="theme-switch mx-2 my-auto">
-            <input type="checkbox" id="theme-checkbox" :checked="isDarkMode" @change="toggleDarkMode" />
+            <input type="checkbox" id="theme-checkbox"  :checked="isDarkMode" @change="toggleDarkMode" />
             <label for="theme-checkbox">
               <div></div>
               <span>
@@ -78,6 +79,8 @@
     </div>
   </nav>
 </template>
+
+
 
 <script>
 import { useAuthStore } from '../modules/AuthModule';
