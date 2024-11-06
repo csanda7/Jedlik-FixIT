@@ -775,9 +775,10 @@ export default {
 
         this.selectedBug.assignedTo = user;
         this.komment = '';
+        this.selectedBug.status = 'Folyamatban'
         alert(`Task assigned to ${user}`);
+        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
-      this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
 
       } catch (error) {
         console.error('Error assigning task:', error);
