@@ -517,7 +517,9 @@ export default {
           badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
             bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
               bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' :
-                bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' : '',
+                bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' :
+                bug['Státusz'] === 'Kész' ? 'badge-done' :
+                      bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' : '',
 
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
@@ -620,7 +622,11 @@ export default {
       case 'Beszerzésre vár':
         return 'badge-supply';
         case 'Újból kiosztva':
-          return 'badge-resent'  // Default class for undefined status
+          return 'badge-resent';
+          case 'Kész':
+            return 'badge-done';
+            case 'Meghiúsult':
+              return 'badge-failed' // Default class for undefined status
     }
   },
     updateTheme() {
@@ -920,6 +926,15 @@ export default {
 
 .badge-resent {
   background-color: rgb(157, 0, 255);
+  color: #ffffff;
+}
+.badge-failed {
+  background-color: red;
+  color: #ffffff;
+}
+
+.badge-done {
+  background-color: #35b821;
   color: #ffffff;
 }
 
@@ -1300,12 +1315,12 @@ export default {
   /* Make placeholder text white as well */
 }
 
-.dark-mode #done {
+.dark-mode .badge-done{
   background-color: #35b821;
   border: none;
 }
 
-.dark-mode #failed {
+.dark-mode .badge-failed {
   background-color: red;
   border: none;
 }
