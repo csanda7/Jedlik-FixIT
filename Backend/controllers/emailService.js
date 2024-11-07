@@ -1,4 +1,3 @@
-
 // const nodemailer = require('nodemailer');
 
 // // SMTP beállítások
@@ -12,9 +11,7 @@
 //     },
 //     debug: true, // Többlet debug információk
 //     logger: true // Logolás a konzolba
-//   });
-  
-  
+// });
 
 // // E-mail küldő funkció
 // const sendEmail = (to, subject, message) => {
@@ -34,7 +31,7 @@
 //   });
 // };
 
-// // Exportálás a műszakvezetőknek szánt értesítéshez
+// // Értesítés műszakvezetőknek hibarögzítés esetén
 // const notifySupervisors = (bugName) => {
 //   const supervisors = ['supervisor1@example.com', 'supervisor2@example.com'];
 //   const subject = 'Új hiba lett rögzítve';
@@ -42,13 +39,24 @@
 //   sendEmail(supervisors.join(','), subject, message);
 // };
 
-// // Exportálás a rendszergazdának szánt értesítéshez
-// const notifyAdmin = (adminEmail, bugName) => {
-//   const subject = 'Hozzád lett rendelve egy hiba';
-//   const message = `A következő hiba hozzád lett rendelve: ${bugName}. Ellenőrizd a részleteket a portálon.`;
+// // Értesítés adminisztrátornak/rendszergazdának
+// const notifyAdmin = (adminEmail, bugName, isTaskAssignment = false) => {
+//   let subject, message;
+
+//   if (isTaskAssignment) {
+//     // Feladat kiosztás esetén
+//     subject = 'Hozzád lett rendelve egy hiba';
+//     message = `A következő hiba hozzád lett rendelve: ${bugName}. Ellenőrizd a részleteket a portálon.`;
+//   } else {
+//     // Hibarögzítés esetén
+//     subject = 'Új hiba rögzítve';
+//     message = `Új hiba lett rögzítve: ${bugName}. Ellenőrizd a részleteket a portálon.`;
+//   }
+
 //   sendEmail(adminEmail, subject, message);
 // };
 
+// // Exportálás
 // module.exports = {
 //   notifySupervisors,
 //   notifyAdmin
