@@ -5,7 +5,7 @@ const connection = require('../config/database');
 
 router.post('/bugReport', upload, (req, res) => {
 
-  const { bugName, bugDescription, reported_by, location, priority, label, assignedTo, hiba_idopont } = req.body;
+  const { bugName, bugDescription, reported_by, location, priority, label, assignedTo, hiba_idopont} = req.body;
   const photos = req.files; // Use req.files to access uploaded files
 
   // SQL to insert the bug report
@@ -16,14 +16,6 @@ router.post('/bugReport', upload, (req, res) => {
           console.error('Error inserting bug report:', err);
           return res.status(500).json({ msg: 'Something Went Wrong', error: err.message });
       }
-
-      // Insert a new record into the Log table for this bug report
-      const logQuery = 'INSERT INTO Log (ID, Status, Komment) VALUES (?, ?, ?)';
-      connection.query(logQuery, [result.insertId, 'Bejelentve', ''], (logErr) => {
-          if (logErr) {
-              console.error('Error inserting into Log:', logErr);
-              return res.status(500).json({ msg: 'Error saving log entry', error: logErr.message });
-          }
 
           // Handle photo uploads
           if (photos && photos.length > 0) {
@@ -59,8 +51,6 @@ router.post('/bugReport', upload, (req, res) => {
           } else {
               res.json({ msg: 'Successfully Saved without photos but with log entry' });
           }
-      });
   });
 });
-
 module.exports = router;

@@ -160,6 +160,7 @@ export default {
       showPopup: false, // State for the popup message
       showSuccessPopup: false,
       isDarkMode: false,
+
     };
   },
 

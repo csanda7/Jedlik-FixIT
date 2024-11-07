@@ -9,7 +9,7 @@ const updateStatusandAssigndTo = (req, res) => {
 
 
   // SQL query to update the status
-  const updateQuery = 'UPDATE hibabejelentesek SET Status = ?, AssignedTo = "" WHERE ID = ?';
+  const updateQuery = 'UPDATE hibabejelentesek SET Status = ?, AssignedTo = "", updatert_at = NOW() WHERE ID = ?';
 
   connection.query(updateQuery, [newStatus, bugId], (error, results) => {
     if (error) {
@@ -22,7 +22,7 @@ const updateStatusandAssigndTo = (req, res) => {
       res.status(404).json({ message: 'Bug not found' });
     } else {
       // Insert a new log entry with the updated status and komment
-      const logQuery = 'INSERT INTO Log (ID, Status, Komment, modosito) VALUES (?, ?, ?, ?)';
+      const logQuery = 'INSERT INTO Log (ID, Status, Komment, modosito, updated_at) VALUES (?, ?, ?, ?, NOW())';
       connection.query(logQuery, [bugId, newStatus, komment, modosito], (logError) => {
         if (logError) {
           console.error('Error logging status update:', logError);

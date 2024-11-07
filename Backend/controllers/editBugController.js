@@ -8,7 +8,7 @@ const editBug = (req, res) => {
   // SQL query to update the bug details
   const updateQuery = `
     UPDATE hibabejelentesek 
-    SET priority = ?, assignedTo = ?, deadline = ?, updated_at = NOW()
+    SET priority = ?, assignedTo = ?, deadline = ?, updated_at = NOW(), updated_at = NOW()
     WHERE ID = ?
   `;
 
@@ -23,7 +23,14 @@ const editBug = (req, res) => {
     if (results.affectedRows === 0) {
       res.status(404).json({ message: 'Bug not found' });
     } else {
-      res.status(200).json({ message: 'Bug updated successfully' });
+      const logQuery = 'INSERT INTO Log (ID, modosito, updated_at, priority, assignedTo, deadline) VALUES (?, ?, NOW(), ?, ?, ?)';
+      connection.query(logQuery, [id, modosito, priority, assignedTo, deadline], (logError) => {
+        if (logError) {
+          console.error('Error logging status update:', logError);
+          res.status(500).json({ message: 'Status updated, but log entry failed' });
+          return;
+        }
+        res.status(200).json({ message: 'Status updated and logged successfully' });});
     }
   });
 };

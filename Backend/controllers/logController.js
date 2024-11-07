@@ -4,7 +4,7 @@ const connection = require('../config/database');
 // Function to fetch log entries based on a specific bug ID
 const fetchLogEntries = (req, res) => {
     const { id } = req.params; // Extracting the ID from request parameters
-    const query = 'SELECT ID,LStatus, Komment, Updated_at, modosito FROM Log WHERE ID = ?'; // Use your actual foreign key
+    const query = 'SELECT ID,Status, Komment, Updated_at, modosito, assignedTo, deadLine, priority FROM Log WHERE ID = ?'; // Use your actual foreign key
     connection.query(query, [id], (error, results) => {
       if (error) {
         console.error('Error fetching log entries:', error);

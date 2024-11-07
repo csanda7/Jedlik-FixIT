@@ -231,7 +231,7 @@
 
 
             <!-- Komment írása -->
-            <button type="button" class="btn btn-primary mx-1" @click="openCommentModal(komment)">
+            <button type="button" class="btn btn-primary mx-1" @click="openCommentModal(Komment)">
               Megjegyzés
             </button>
 
@@ -338,6 +338,10 @@
                         <th>Megjegyzés</th>
                         <th>Frissítve</th>
                         <th>Módosító</th>
+                        <th>Feladatot elvállalta</th>
+                        <th>Határidő</th>
+                        <th>Prioritás</th>
+
                       </tr>
                     </thead>
                     <tbody>
@@ -346,6 +350,10 @@
                         <td>{{ log.Komment }}</td>
                         <td>{{ new Date(log.Updated_at).toLocaleString() }}</td>
                         <td>{{ log.modosito }}</td>
+                        <td>{{ log.assignedTo }}</td>
+                        <td>{{ log.deadline }}</td>
+                        <td>{{ log.priority }}</td>
+
                       </tr>
                     </tbody>
                   </table>
