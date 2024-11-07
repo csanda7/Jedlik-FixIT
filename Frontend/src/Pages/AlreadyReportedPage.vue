@@ -306,10 +306,10 @@
                 <div class="Commentmodal-header">
                 </div>
                 <div class="Commentmodal-body">
-                  <div class="mb-3">
+                  <div class="mb-2">
                     <label for="komment" class="form-label">Megjegyzés</label>
                     <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="komment" v-model="komment"
-                      rows="3" maxlength="300">
+                      rows="6" maxlength="300">
         </textarea>
                   </div>
                 </div>
@@ -971,17 +971,31 @@ export default {
 
 /* Modal Content Base */
 .Commentmodal-content {
-  padding: 2rem;
+  padding: 1.5rem;
   background-color: white;
-  /* Set a solid white background for light mode */
   color: black;
   border-radius: 2vh;
-  max-width: 40vw;
-  min-width: 30vw;
+  max-width: 50vw; /* Increase max-width for a wider modal */
+  min-width: 40vw; /* Increase min-width for consistency */
+  max-height: 70vh; /* Set a max-height for a taller modal */
+  min-height: 40vh; /* Ensure a taller minimum height */
   width: 100%;
+  overflow-y: auto; /* Add scrolling if content overflows */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   z-index: 1000;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Modal Body */
+.Commentmodal-body {
+  flex-grow: 1;
+  margin-top: 0.5rem; /* Brings the label closer to the top */
+  margin-bottom: 1rem;
+}
+
+
 
 
 /* Dark Mode */
@@ -1015,6 +1029,15 @@ export default {
 .dark-mode .Commentmodal-body {
   background-color: #444;
   color: white;
+}
+
+@media (max-height: 400px) and (orientation: landscape) {
+  .Commentmodal-content {
+    max-width: 120vw !important; /* Set nearly full width */
+    min-width: 90vw; /* Ensure it stays wide */
+    max-height: 80vh; /* Use more of the screen height */
+    min-height: 60vh;
+  }
 }
 
 @media (max-width: 767.98px) {
