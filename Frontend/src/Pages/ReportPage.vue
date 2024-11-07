@@ -39,18 +39,6 @@
         </textarea>
       </div>
 
-      <!-- Dátum és idő mező hozzáadása -->
-<div class="my-3">
-  <label for="dateTime" class="form-label">Hiba bekövetkezésének ideje (opcionális)</label>
-  <input 
-  type="datetime-local" 
-  :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 
-  id="dateTime timestamp" 
-  v-model="dateTime" 
-  @change="setCookie('dateTime', dateTime)">
-
-</div>
-
      <div class="row">
   <!-- Left Column: Location, Label, and Priority -->
   <div class="col-md-6">
@@ -172,16 +160,11 @@ export default {
       showPopup: false, // State for the popup message
       showSuccessPopup: false,
       isDarkMode: false,
-      dateTime: this.getCookie('dateTime') || '', // Új dátum-idő változó
     };
   },
 
   mounted() {
     this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
-    window.addEventListener('theme-changed', this.updateTheme);
-    // A pillanatnyi idő beállítása a Budapest időzónájának megfelelően
-    const now = moment().tz('Europe/Budapest'); // Budapest időzóna
-    this.dateTime = now.format('YYYY-MM-DDTHH:mm'); // ISO formátumban, levágva a másodperceket
     window.addEventListener('theme-changed', this.updateTheme);
   },
   beforeDestroy() {
@@ -249,7 +232,6 @@ export default {
       this.label = '';
       this.showOtherLocation = false;
       this.otherLocation = '';
-      this.dateTime = moment().tz('Europe/Budapest').format('YYYY-MM-DDTHH:mm'); // Frissítve, hogy a jelenlegi időt mutassa;
       this.showPopup = false; // Reset the popup on reset
 
       // Clear cookies
@@ -304,7 +286,6 @@ export default {
   formData.append('location', this.location === 'Egyéb' ? this.otherLocation : this.location);
   formData.append('priority', this.priority);
   formData.append('label', this.label);
-  formData.append('hiba_idopont', this.dateTime);
   this.photos.forEach(photo => {
     formData.append('photos', photo);
   });
@@ -434,14 +415,6 @@ export default {
   margin-bottom: 0;
   max-height: fit-content;
 }
-
-/* Dátummező darkmode */
-input[type="datetime-local"].dark-textbox {
-  background-color: #444;
-  color: #fff;
-  border: 1px solid #777;
-}
-
 
 #bugName::placeholder{
   color: rgb(168, 168, 168);
