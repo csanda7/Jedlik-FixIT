@@ -1,7 +1,7 @@
 <template>
   <div :class="['container', 'mt-5', isDarkMode ? 'dark-mode' : 'light-mode']">
     <div class="card p-4 shadow mx-auto" style="max-width: 600px;">
-      <h1 class="text-center my-2">HIBA BEJELENTÉSE</h1>
+      <h1 class="text-center my-2">Hiba bejelentése</h1>
 
       <!-- Pop-Up Message -->
       <div v-if="showPopup" class="alert alert-danger" role="alert">

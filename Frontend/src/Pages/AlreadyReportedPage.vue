@@ -3,7 +3,7 @@
     <div :class="['card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
       <div
         :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
-        <h2 class="mb-0 me-3 h2">BEJELENTETT HIBÁK</h2>
+        <h2 class="my-2 h2">Bejelentett hibák</h2>
         <div class="user-actions d-flex">
           <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
           <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
@@ -306,10 +306,10 @@
                 <div class="Commentmodal-header">
                 </div>
                 <div class="Commentmodal-body">
-                  <div class="mb-3">
+                  <div class="mb-2">
                     <label for="komment" class="form-label">Megjegyzés</label>
                     <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="komment" v-model="komment"
-                      rows="3" maxlength="300">
+                      rows="6" maxlength="300">
         </textarea>
                   </div>
                 </div>
@@ -517,7 +517,9 @@ export default {
           badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
             bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
               bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' :
-                bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' : '',
+                bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' :
+                bug['Státusz'] === 'Kész' ? 'badge-done' :
+                      bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' : '',
 
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
@@ -620,7 +622,11 @@ export default {
       case 'Beszerzésre vár':
         return 'badge-supply';
         case 'Újból kiosztva':
-          return 'badge-resent'  // Default class for undefined status
+          return 'badge-resent';
+          case 'Kész':
+            return 'badge-done';
+            case 'Meghiúsult':
+              return 'badge-failed' // Default class for undefined status
     }
   },
     updateTheme() {
@@ -721,7 +727,7 @@ export default {
         if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
 
         this.selectedBug.status = status;
-        alert(`Status successfully updated to "${status}".`);
+        //alert(`Status successfully updated to "${status}".`);
       this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
 
         this.fetchBugs();
@@ -751,7 +757,7 @@ export default {
         if (!response.ok) throw new Error('Failed to assign the task');
 
         this.selectedBug.assignedTo = username;
-        alert('Task successfully assigned to you.');
+        //alert('Task successfully assigned to you.');
         this.komment = '';
        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
@@ -773,7 +779,7 @@ export default {
         this.selectedBug.assignedTo = user;
         this.komment = '';
         this.selectedBug.status = 'Folyamatban'
-        alert(`Task assigned to ${user}`);
+        //alert(`Task assigned to ${user}`);
         this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
 
@@ -922,6 +928,15 @@ export default {
   background-color: rgb(157, 0, 255);
   color: #ffffff;
 }
+.badge-failed {
+  background-color: red;
+  color: #ffffff;
+}
+
+.badge-done {
+  background-color: #35b821;
+  color: #ffffff;
+}
 
 
 
@@ -971,17 +986,31 @@ export default {
 
 /* Modal Content Base */
 .Commentmodal-content {
-  padding: 2rem;
+  padding: 1.5rem;
   background-color: white;
-  /* Set a solid white background for light mode */
   color: black;
   border-radius: 2vh;
-  max-width: 40vw;
-  min-width: 30vw;
+  max-width: 50vw; /* Increase max-width for a wider modal */
+  min-width: 40vw; /* Increase min-width for consistency */
+  max-height: 70vh; /* Set a max-height for a taller modal */
+  min-height: 40vh; /* Ensure a taller minimum height */
   width: 100%;
+  overflow-y: auto; /* Add scrolling if content overflows */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   z-index: 1000;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Modal Body */
+.Commentmodal-body {
+  flex-grow: 1;
+  margin-top: 0.5rem; /* Brings the label closer to the top */
+  margin-bottom: 1rem;
+}
+
+
 
 
 /* Dark Mode */
@@ -1015,6 +1044,15 @@ export default {
 .dark-mode .Commentmodal-body {
   background-color: #444;
   color: white;
+}
+
+@media (max-height: 400px) and (orientation: landscape) {
+  .Commentmodal-content {
+    max-width: 120vw !important; /* Set nearly full width */
+    min-width: 90vw; /* Ensure it stays wide */
+    max-height: 80vh; /* Use more of the screen height */
+    min-height: 60vh;
+  }
 }
 
 @media (max-width: 767.98px) {
@@ -1300,12 +1338,12 @@ export default {
   /* Make placeholder text white as well */
 }
 
-.dark-mode #done {
+.dark-mode .badge-done{
   background-color: #35b821;
   border: none;
 }
 
-.dark-mode #failed {
+.dark-mode .badge-failed {
   background-color: red;
   border: none;
 }

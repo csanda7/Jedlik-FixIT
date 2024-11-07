@@ -14,7 +14,7 @@ const updateAssignedTo = (id, assignedTo, komment, modosito, callback) => {
     if (error) return callback(error);
 
     // If update is successful, insert a new log entry
-    const logQuery = 'INSERT INTO Log (ID, LStatus, Komment, modosito) VALUES (?, ?, ?, ?)';
+    const logQuery = 'INSERT INTO Log (ID, Status, Komment, modosito) VALUES (?, ?, ?, ?)';
     connection.query(logQuery, [id, 'Folyamatban', komment, modosito], (logError, logResults) => {
       if (logError) return callback(logError);
       
