@@ -181,8 +181,6 @@
                 <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
                 <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
                 <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-                <p v-if="selectedBug.reportedAt !== selectedBug.hibaIdopont" class="my-3"><strong>Hiba
-                    időpontja:</strong> {{ selectedBug.hibaIdopont }}</p>
                     <p class="my-3" v-if="!isEditing && selectedBug.assignedTo">
         <strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}
       </p>
@@ -527,7 +525,6 @@ export default {
           assignedTo: bug['assignedTo'],
           description: bug['Hiba leírása'],
           deadline: bug['Határidő'],
-          hibaIdopont: bug['Hiba ideje'] ? new Date(bug['Hiba ideje']).toLocaleString('hu-HU') : "N/A", // Fallback if missing
           photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format,
 
         }));

@@ -12,7 +12,6 @@ const getHibakKiir = (req, res) => {
       h.Location AS 'Terem', 
       h.Reported_By AS 'Bejelentette', 
       h.Reported_At AS 'Bejelentés ideje',
-      h.hiba_idopont AS 'Hiba ideje',
       h.Description AS 'Hiba leírása', 
       h.assignedTo,
       h.deadLine AS 'Határidő',
