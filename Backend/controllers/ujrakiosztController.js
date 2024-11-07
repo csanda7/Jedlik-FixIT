@@ -22,7 +22,7 @@ const updateStatusandAssigndTo = (req, res) => {
       res.status(404).json({ message: 'Bug not found' });
     } else {
       // Insert a new log entry with the updated status and komment
-      const logQuery = 'INSERT INTO Log (ID, LStatus, Komment, modosito) VALUES (?, ?, ?, ?)';
+      const logQuery = 'INSERT INTO Log (ID, Status, Komment, modosito) VALUES (?, ?, ?, ?)';
       connection.query(logQuery, [bugId, newStatus, komment, modosito], (logError) => {
         if (logError) {
           console.error('Error logging status update:', logError);
