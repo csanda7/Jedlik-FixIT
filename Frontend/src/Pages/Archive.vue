@@ -2,7 +2,7 @@
   <div :class="['reported-bugs-container', { 'dark-mode': isDarkMode }, 'container', 'mt-5']">
     <div :class="[ 'card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
       <div :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
-        <h2 class="mb-0 me-3 h2">ARCHÍVUM</h2>
+        <h2 class="my-2 h2">Archívum</h2>
         <div class="user-actions d-flex">
           <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
           <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
@@ -200,7 +200,7 @@
     class="btn btn-primary mx-1"
     @click="openCommentModal(komment)"
   >
-    Komment írása
+    Megjegyzés
   </button> 
 
   <button v-if="role === 'muszakivezeto'" type="button" class="btn btn-reassign mx-1 my-2" @click="openCommentModal(reAssign)">Újrakiosztás</button>
@@ -218,7 +218,7 @@
       </div>
       <div class="Commentmodal-body">
         <div class="mb-3">
-        <label for="komment" class="form-label">Komment</label>
+        <label for="komment" class="form-label">Megjegyzés</label>
         <textarea 
           :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 
           id="komment" 
@@ -252,7 +252,7 @@
             <thead>
               <tr>
                 <th>Státusz</th>
-                <th>Komment</th>
+                <th>Megjegyzés</th>
                 <th>Frissítve</th>
                 <th>Módosító</th>
               </tr>

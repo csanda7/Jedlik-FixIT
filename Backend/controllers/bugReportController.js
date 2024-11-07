@@ -9,7 +9,7 @@ router.post('/bugReport', upload, (req, res) => {
   const photos = req.files; // Use req.files to access uploaded files
 
   // SQL to insert the bug report
-  const sql = 'INSERT INTO hibabejelentesek (Title, Description, Location, Priority, Reported_By, Reported_At, Updated_At, Status, label, assignedTo) VALUES (?, ?, ?, ?, ?, NOW(), NOW(), "Bejelentve", ?, ?, ?)';
+  const sql = 'INSERT INTO hibabejelentesek (Title, Description, Location, Priority, Reported_By, Reported_At, Updated_At, Status, label, assignedTo) VALUES (?, ?, ?, ?, ?, NOW(), NOW(), "Bejelentve", ?, ?)';
 
   connection.query(sql, [bugName, bugDescription, location, priority, reported_by, label, assignedTo, hiba_idopont], (err, result) => {
       if (err) {
@@ -18,7 +18,7 @@ router.post('/bugReport', upload, (req, res) => {
       }
 
       // Insert a new record into the Log table for this bug report
-      const logQuery = 'INSERT INTO Log (ID, LStatus, Komment) VALUES (?, ?, ?)';
+      const logQuery = 'INSERT INTO Log (ID, Status, Komment) VALUES (?, ?, ?)';
       connection.query(logQuery, [result.insertId, 'Bejelentve', ''], (logErr) => {
           if (logErr) {
               console.error('Error inserting into Log:', logErr);

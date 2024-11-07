@@ -3,7 +3,7 @@
     <div :class="['card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
       <div
         :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
-        <h2 class="mb-0 me-3 h2">BEJELENTETT HIBÁK</h2>
+        <h2 class="my-2 h2">Bejelentett hibák</h2>
         <div class="user-actions d-flex">
           <input type="text" class="form-control search-input me-3" placeholder="Keresés..." v-model="searchTerm" />
           <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
@@ -517,7 +517,9 @@ export default {
           badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
             bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
               bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' :
-                bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' : '',
+                bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' :
+                bug['Státusz'] === 'Kész' ? 'badge-done' :
+                      bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' : '',
 
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
@@ -620,7 +622,11 @@ export default {
       case 'Beszerzésre vár':
         return 'badge-supply';
         case 'Újból kiosztva':
-          return 'badge-resent'  // Default class for undefined status
+          return 'badge-resent';
+          case 'Kész':
+            return 'badge-done';
+            case 'Meghiúsult':
+              return 'badge-failed' // Default class for undefined status
     }
   },
     updateTheme() {
@@ -721,7 +727,7 @@ export default {
         if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
 
         this.selectedBug.status = status;
-        alert(`Status successfully updated to "${status}".`);
+        //alert(`Status successfully updated to "${status}".`);
       this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
 
         this.fetchBugs();
@@ -751,7 +757,7 @@ export default {
         if (!response.ok) throw new Error('Failed to assign the task');
 
         this.selectedBug.assignedTo = username;
-        alert('Task successfully assigned to you.');
+        //alert('Task successfully assigned to you.');
         this.komment = '';
        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
@@ -773,7 +779,7 @@ export default {
         this.selectedBug.assignedTo = user;
         this.komment = '';
         this.selectedBug.status = 'Folyamatban'
-        alert(`Task assigned to ${user}`);
+        //alert(`Task assigned to ${user}`);
         this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
 
@@ -920,6 +926,15 @@ export default {
 
 .badge-resent {
   background-color: rgb(157, 0, 255);
+  color: #ffffff;
+}
+.badge-failed {
+  background-color: red;
+  color: #ffffff;
+}
+
+.badge-done {
+  background-color: #35b821;
   color: #ffffff;
 }
 
@@ -1323,12 +1338,12 @@ export default {
   /* Make placeholder text white as well */
 }
 
-.dark-mode #done {
+.dark-mode .badge-done{
   background-color: #35b821;
   border: none;
 }
 
-.dark-mode #failed {
+.dark-mode .badge-failed {
   background-color: red;
   border: none;
 }
