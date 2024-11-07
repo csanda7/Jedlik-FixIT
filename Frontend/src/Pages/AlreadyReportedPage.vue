@@ -141,146 +141,159 @@
     </div>
 
     <!-- Modal -->
-<div v-if="showModal" class="modal-overlay" @click="closeModal">
-  <div class="bg" @click.stop>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">{{ selectedBug.name }}</h3>
-        <button v-if="!isEditing" type="button" class="btn btn-outline-secondary" @click="toggleEditMode">
-          <i :class="['bi', 'bi-pencil', { 'text-white': isDarkMode }]"></i>
-        </button>
-        <div v-else>
-          <button type="button" class="btn btn-success me-2" @click="saveEdit">Megerősít</button>
-          <button type="button" class="btn btn-secondary" @click="toggleEditMode">Mégse</button>
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+      <div class="bg" @click.stop>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">{{ selectedBug.name }}</h3>
+            <button v-if="!isEditing" type="button" class="btn btn-outline-secondary" @click="toggleEditMode">
+              <i :class="['bi', 'bi-pencil', { 'text-white': isDarkMode }]"></i>
+      </button>
+      <div v-else>
+    <button type="button" class="btn btn-success me-2" @click="saveEdit">Megerősít</button>
+    <button type="button" class="btn btn-secondary" @click="toggleEditMode">Mégse</button>
+  </div>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+    <div class="col-md-4">
+      <div class="d-flex align-items-center mb-2">
+        <strong>Prioritás: </strong>
+        <div v-if="!isEditing">
+          <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
+          <div v-else class="priority-container ms-2 my-1">
+            <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+            <span>{{ selectedBug.priority }}</span>
+          </div>
+        </div>
+        <div v-if="isEditing">
+          <select v-model="selectedBug.priority" class="form-select ms-2 my-1">
+            <option v-for="n in 6" :key="n - 1" :value="n - 1">{{ n - 1 }}</option>
+          </select>
         </div>
       </div>
-      
-      <div class="modal-body">
-        <div class="row">
-          <div :class="{'col-md-4': selectedBug.photos.length, 'col-md-8': !selectedBug.photos.length}">
-            <div class="d-flex align-items-center mb-2">
-              <strong>Prioritás: </strong>
-              <div v-if="!isEditing">
-                <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
-                <div v-else class="priority-container ms-2 my-1">
-                  <span :class="['priority-bar', selectedBug.priorityColor]"></span>
-                  <span>{{ selectedBug.priority }}</span>
+                <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
+                <div class="d-flex align-items-center mb-2 my-1">
+                  <strong>Státusz: </strong>
+                  <span :class="['badge', selectedBug.badgeClass, 'ms-2', { 'dark-mode': isDarkMode }]">{{
+                    selectedBug.status }}</span>
                 </div>
+                <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
+                <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+                <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
+                    <p class="my-3" v-if="!isEditing && selectedBug.assignedTo">
+        <strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}
+      </p>
+      <div v-if="isEditing && selectedBug.assignedTo != null">
+        <label><strong>Feladatot elvállalta:</strong></label>
+        <select v-model="selectedBug.assignedTo" class="form-select my-1">
+          <option v-for="user in usersWithRoles" :key="user" :value="user">{{ user }}</option>
+        </select>
+      </div>
+      <p v-if="selectedBug.deadline != null && !isEditing" class="my-3">
+    <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString() }}
+  </p>
+  <div v-if="isEditing" class="my-3">
+    <label><strong>Határidő:</strong></label>
+    <input type="datetime-local" v-model="selectedBug.deadline" class="form-control" />
+  </div>
               </div>
-              <div v-if="isEditing">
-                <select v-model="selectedBug.priority" class="form-select ms-2 my-1">
-                  <option v-for="n in 6" :key="n - 1" :value="n - 1">{{ n - 1 }}</option>
-                </select>
+              <div class="col-md-4 description">
+                <p><strong>Hiba leírása:</strong></p>
+                <div class="description-content">{{ selectedBug.description }}</div>
               </div>
-            </div>
-            <p><strong>Címke:</strong> {{ selectedBug.label }}</p>
-            <div class="d-flex align-items-center mb-2 my-1">
-              <strong>Státusz: </strong>
-              <span :class="['badge', selectedBug.badgeClass, 'ms-2', { 'dark-mode': isDarkMode }]">{{ selectedBug.status }}</span>
-            </div>
-            <p class="my-3"><strong>Terem:</strong> {{ selectedBug.room }}</p>
-            <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-            <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-            <p class="my-3" v-if="!isEditing && selectedBug.assignedTo">
-              <strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}
-            </p>
-            <div v-if="isEditing && selectedBug.assignedTo != null">
-              <label><strong>Feladatot elvállalta:</strong></label>
-              <select v-model="selectedBug.assignedTo" class="form-select my-1">
-                <option v-for="user in usersWithRoles" :key="user" :value="user">{{ user }}</option>
-              </select>
-            </div>
-            <p v-if="selectedBug.deadline != null && !isEditing" class="my-3">
-              <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString() }}
-            </p>
-            <div v-if="isEditing" class="my-3">
-              <label><strong>Határidő:</strong></label>
-              <input type="datetime-local" v-model="selectedBug.deadline" class="form-control" />
-            </div>
-          </div>
-
-          <!-- Description Column -->
-            <div :class="{'col-md-4': selectedBug.photos.length, 'col-md-8': !selectedBug.photos.length, 'description': true}">
-            <p><strong>Hiba leírása:</strong></p>
-            <div class="description-content">{{ selectedBug.description }}</div>
-            </div>
-
-            <!-- Photo Column -->
-            <div v-if="selectedBug.photos.length" class="col-md-4 photo_box">
-              <div class="photo-grid">
-                <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
-                  <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
+              <div class="col-md-4 photo_box">
+                <div class="photo-grid">
+                  <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
+                    <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+          <div v-if="showPhotoModal" class="carousel-modal-overlay" @click="closePhotoModal">
+            <div class="carousel-modal-content" @click.stop>
+              <span class=" btn btn-dark carousel-close" @click="closePhotoModal">&times;</span>
+              <button type="button" class="btn btn-dark carousel-prev py-4" @click="prevPhoto">&lt;</button>
+              <img :src="selectedPhoto" alt="Selected Bug Photo" class="carousel-photo" />
+              <button type="button" class="btn btn-dark carousel-next py-4" @click="nextPhoto">&gt;</button>
+            </div>
+          </div>
 
-      <!-- Photo Carousel Modal -->
-      <div v-if="showPhotoModal" class="carousel-modal-overlay" @click="closePhotoModal">
-        <div class="carousel-modal-content" @click.stop>
-          <span class="btn btn-dark carousel-close" @click="closePhotoModal">&times;</span>
-          <button type="button" class="btn btn-dark carousel-prev py-4" @click="prevPhoto">&lt;</button>
-          <img :src="selectedPhoto" alt="Selected Bug Photo" class="carousel-photo" />
-          <button type="button" class="btn btn-dark carousel-next py-4" @click="nextPhoto">&gt;</button>
-        </div>
-      </div>
+          <div class="modal-footer">
 
-      <div class="modal-footer">
-        <!-- Open Log Modal -->
-        <button type="button" class="btn btn-secondary me-auto" @click="openLogModal(selectedBugId)">
-          Eseménynapló
-        </button>
 
-        <!-- Add Comment -->
-        <button type="button" class="btn btn-primary mx-1" @click="openCommentModal(Komment)">
-          Megjegyzés
-        </button>
 
-        <!-- Accept Task -->
-        <button type="button" class="btn btn-primary mx-1"
-          v-if="role === 'rendszergazda' && !selectedBug.assignedTo" @click="openCommentModal(takeTask)">
-          Elvállalom
-        </button>
-
-        <!-- Assign Task Dropdown -->
-        <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown" style="cursor: pointer;">
-          <button ref="dropdownButton" class="btn btn-primary dropdown-toggle fixed-width my-2" type="button"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            {{ selectedUser || 'Feladat kiosztása' }}
-          </button>
-          <ul class="dropdown-menu fixed-width">
-            <li v-for="user in usersWithRoles" :key="user">
-              <a class="dropdown-item text-center" @click="openCommentModal(assignTaskTo, user)">{{ user }}</a>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Task Status Update Dropdown -->
-        <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-          <div class="dropdown" style="cursor: pointer;">
-            <button class="btn btn-primary dropdown-toggle px-4" type="button" id="statusDropdown"
-              data-bs-toggle="dropdown" aria-expanded="false">
-              Állapot frissítése
+            <!-- Eseménynapló megnyitása -->
+            <button type="button" class="btn btn-secondary me-auto" @click="openLogModal(selectedBugId)">
+              Eseménynapló
             </button>
-            <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
-              <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-                <a class="dropdown-item" @click="openCommentModal(Done, { status: 'Kész' })">Kész</a>
-              </li>
-              <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-                <a class="dropdown-item" @click="openCommentModal(Failed, { status: 'Meghiúsult' })">Meghiúsult</a>
-              </li>
-              <li v-if="status === 'Folyamatban'">
-                <a class="dropdown-item" @click="openCommentModal(Supply, { status: 'Beszerzés szükséges' })">Beszerzés szükséges</a>
-              </li>
-              <li v-if="status === 'Beszerzésre vár'">
-                <a class="dropdown-item" @click="openCommentModal(InProgress, { status: 'Folyamatban' })">Folyamatban</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
 
+
+            <!-- Komment írása -->
+            <button type="button" class="btn btn-primary mx-1" @click="openCommentModal(Komment)">
+              Megjegyzés
+            </button>
+
+            <!-- Feladat elvállalása -->
+            <button type="button" class="btn btn-primary mx-1"
+              v-if="role === 'rendszergazda' && !selectedBug.assignedTo" @click="openCommentModal(takeTask)">
+              Elvállalom
+            </button>
+
+            <!-- Feladat kiosztása -->
+            <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown"
+              style="cursor: pointer;">
+
+              <button ref="dropdownButton" class="btn btn-primary dropdown-toggle fixed-width my-2" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                {{ selectedUser || 'Feladat kiosztása' }}
+              </button>
+
+              <ul class="dropdown-menu fixed-width">
+                <li v-for="user in usersWithRoles" :key="user">
+                  <a class="dropdown-item text-center" @click="openCommentModal(assignTaskTo, user)">{{ user }}</a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Dropdown Menu for Task Status Update -->
+            <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+              <div class="dropdown" style="cursor: pointer;">
+                <button class="btn btn-primary dropdown-toggle px-4" type="button" id="statusDropdown"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+                  Állapot frissítése
+                </button>
+                <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
+                  <!-- Kész option -->
+                  <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+                    <a class="dropdown-item" @click="openCommentModal(Done, { status: 'Kész' })">Kész</a>
+                  </li>
+
+                  <!-- Meghiúsult option -->
+                  <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+                    <a class="dropdown-item" @click="openCommentModal(Failed, { status: 'Meghiúsult' })">Meghiúsult</a>
+                  </li>
+
+                  <!-- Beszerzés szükséges option, only when status is 'Folyamatban' -->
+                  <li v-if="status === 'Folyamatban'">
+                    <a class="dropdown-item"
+                      @click="openCommentModal(Supply, { status: 'Beszerzés szükséges' })">Beszerzés szükséges</a>
+                  </li>
+
+                  <!-- Folyamatban option, only when status is 'Beszerzésre vár' -->
+                  <li v-if="status === 'Beszerzésre vár'">
+                    <a class="dropdown-item"
+                      @click="openCommentModal(InProgress, { status: 'Folyamatban' })">Folyamatban</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+
+
+            <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
+          </div>
 
 
 
@@ -338,7 +351,7 @@
               <td>{{ log.logUpdated_at ? new Date(log.logUpdated_at).toLocaleString() : '' }}</td>
               <td>{{ log.logmodosito || '' }}</td>
               <td>{{ log.logassignedTo || '' }}</td>
-              <td>{{ log.logdeadline ? new Date(log.logdeadline).toLocaleString() : '' }}</td>
+              <td>{{ log.logdeadLine ? new Date(log.logdeadLine).toLocaleString() : '' }}</td>
               <td>{{ log.logpriority || '' }}</td>
             </tr>
           </tbody>
@@ -798,7 +811,7 @@ export default {
       logUpdated_at: log.Updated_at,
       logmodosito: log.modosito,
       logassignedTo: log.assignedTo,
-      logdeadline: log.deadline,
+      logdeadLine: log.deadLine,
       logpriority: log.priority
     }));
 
@@ -810,35 +823,41 @@ export default {
 
     toggleEditMode() {
       this.isEditing = !this.isEditing;
+      this.originalBug = JSON.parse(JSON.stringify(this.selectedBug)); // Deep copy
     },
     async saveEdit() {
-    // Prepare the data to be sent
-    const updatedData = {
-      priority: this.selectedBug.priority,
-      assignedTo: this.selectedBug.assignedTo,
-      deadline: this.selectedBug.deadline,
-      modosito: this.loggedInUser,
-    };
+  // Check if each field has changed; if not, set it to null
+  const updatedData = {
+    priority: this.selectedBug.priority !== this.originalBug.priority ? this.selectedBug.priority : null,
+    assignedTo: this.selectedBug.assignedTo !== this.originalBug.assignedTo ? this.selectedBug.assignedTo : null,
+    deadline: this.selectedBug.deadline !== this.originalBug.deadline ? this.selectedBug.deadline : null,
+    modosito: this.loggedInUser // Always send the modifying user
+  };
 
-    try {
-      // Send the PUT request to the backend
-      const response = await fetch(`http://localhost:4500/api/editBug/${this.selectedBug.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedData),
-      });
-      
-      this.isEditing = !this.isEditing;
-      this.fetchBugs(); // Refresh the list to reflect the updated bug
-      this.selectedBug.priorityColor = this.getPriorityColor(this.selectedBug.priority);
+  // Remove any fields that are null to avoid sending unnecessary data
+  Object.keys(updatedData).forEach(key => {
+    if (updatedData[key] === null) delete updatedData[key];
+  });
 
+  try {
+    // Send the PUT request to the backend
+    const response = await fetch(`http://localhost:4500/api/editBug/${this.selectedBug.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedData),
+    });
 
-    } catch (error) {
-      console.error('Error updating bug:', error);
-    }
-  },
+    this.isEditing = !this.isEditing;
+    this.fetchBugs(); // Refresh the list to reflect the updated bug
+    this.selectedBug.priorityColor = this.getPriorityColor(this.selectedBug.priority);
+
+  } catch (error) {
+    console.error('Error updating bug:', error);
+  }
+}
+
   },
 
 };
