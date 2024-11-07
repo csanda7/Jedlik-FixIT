@@ -234,7 +234,7 @@
 
             <!-- Komment írása -->
             <button type="button" class="btn btn-primary mx-1" @click="openCommentModal(komment)">
-              Komment írása
+              Megjegyzés
             </button>
 
             <!-- Feladat elvállalása -->
@@ -309,7 +309,7 @@
                 </div>
                 <div class="Commentmodal-body">
                   <div class="mb-3">
-                    <label for="komment" class="form-label">Komment</label>
+                    <label for="komment" class="form-label">Megjegyzés</label>
                     <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="komment" v-model="komment"
                       rows="3" maxlength="300">
         </textarea>
@@ -337,7 +337,7 @@
                     <thead>
                       <tr>
                         <th>Státusz</th>
-                        <th>Komment</th>
+                        <th>Megjegyzés</th>
                         <th>Frissítve</th>
                         <th>Módosító</th>
                       </tr>
