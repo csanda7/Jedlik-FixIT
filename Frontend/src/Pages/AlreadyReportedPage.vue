@@ -727,7 +727,7 @@ export default {
         if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
 
         this.selectedBug.status = status;
-        alert(`Status successfully updated to "${status}".`);
+        //alert(`Status successfully updated to "${status}".`);
       this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
 
         this.fetchBugs();
@@ -757,7 +757,7 @@ export default {
         if (!response.ok) throw new Error('Failed to assign the task');
 
         this.selectedBug.assignedTo = username;
-        alert('Task successfully assigned to you.');
+        //alert('Task successfully assigned to you.');
         this.komment = '';
        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
@@ -779,7 +779,7 @@ export default {
         this.selectedBug.assignedTo = user;
         this.komment = '';
         this.selectedBug.status = 'Folyamatban'
-        alert(`Task assigned to ${user}`);
+        //alert(`Task assigned to ${user}`);
         this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
 
