@@ -266,7 +266,7 @@ export default {
       }
     },
     bekuldes() {
-  if (!this.bugName || !this.bugDescription || !this.location || !this.label) {
+  if (!this.bugName || !this.bugDescription || !this.location || !this.label || this.location === 'Egyéb' && !this.otherLocation) {
     this.showPopup = true; // Kötelező mezők kitöltése
     setTimeout(() => {
       this.showPopup = false;

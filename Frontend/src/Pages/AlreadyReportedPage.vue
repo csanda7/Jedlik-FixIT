@@ -156,18 +156,18 @@
           </div>
           <div class="modal-body">
     <div class="row">
-    <div class="col-md-6">
+      <div :class="{'col-md-6': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0}">
       <div class="info-row">
         <strong>Prioritás: </strong>
         <div v-if="!isEditing">
           <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
-          <div v-else class="priority-container ms-2 my-1">
+          <div v-else class="priority-container my-1">
             <span :class="['priority-bar', selectedBug.priorityColor]"></span>
             <span>{{ selectedBug.priority }}</span>
           </div>
         </div>
         <div v-if="isEditing">
-          <select v-model="selectedBug.priority" class="form-select ms-2 my-1">
+          <select v-model="selectedBug.priority" class="form-select  my-1">
             <option v-for="n in 6" :key="n - 1" :value="n - 1">{{ n - 1 }}</option>
           </select>
         </div>
@@ -175,23 +175,21 @@
                 <div class="info-row"><strong>Címke:</strong> {{ selectedBug.label }}</div>
                 <div class="info-row">
                   <strong>Státusz: </strong>
-                  <span :class="['badge', selectedBug.badgeClass, 'ms-2', { 'dark-mode': isDarkMode }]">{{
+                  <span :class="['badge', selectedBug.badgeClass,{ 'dark-mode': isDarkMode }]">{{
                     selectedBug.status }}</span>
                 </div>
                 <p class="info-row"><strong>Terem:</strong> {{ selectedBug.room }}</p>
                 <p class="info-row"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
                 <p class="info-row"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-                <p v-if="selectedBug.reportedAt !== selectedBug.hibaIdopont" class="info-row"><strong>Hiba
-                    időpontja:</strong> {{ selectedBug.hibaIdopont }}</p>
-                    <p class="info-row" v-if="!isEditing && selectedBug.assignedTo">
-        <strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}
-      </p>
+                <div class="info-row" v-if="selectedBug.assignedTo">
+      <strong>Feladatot elvállalta:</strong>
+      <p v-if="!isEditing && selectedBug.assignedTo" class= "my-1">{{ selectedBug.assignedTo }}</p>
       <div v-if="isEditing && selectedBug.assignedTo != null">
-        <label><strong>Feladatot elvállalta:</strong></label>
         <select v-model="selectedBug.assignedTo" class="form-select my-1">
           <option v-for="user in usersWithRoles" :key="user" :value="user">{{ user }}</option>
         </select>
       </div>
+    </div>
       <p v-if="selectedBug.deadline != null && !isEditing" class="info-row">
     <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString() }}
   </p>
@@ -200,7 +198,7 @@
       <input type="datetime-local" v-model="selectedBug.deadline" class="form-control" />
     </div>
   </div>
-              <div class="col-md-3 description">
+              <div :class="{'description': true,'col-md-4': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0, }">
                 <p><strong>Hiba leírása:</strong></p>
                 <div class="description-content">{{ selectedBug.description }}</div>
               </div>
