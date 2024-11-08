@@ -9,7 +9,7 @@ const updateBugStatus = (req, res) => {
 
 
   // SQL query to update the status
-  const updateQuery = 'UPDATE hibabejelentesek SET Status = ?, udpdated_at = NOW() WHERE ID = ?';
+  const updateQuery = 'UPDATE hibabejelentesek SET Status = ?, updated_at = NOW() WHERE ID = ?';
 
   connection.query(updateQuery, [newStatus, bugId], (error, results) => {
     if (error) {

@@ -182,10 +182,10 @@
                 <p class="my-3"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
                 <p class="my-3"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
                     <p class="my-3" v-if="!isEditing && selectedBug.assignedTo">
-        <strong>Feladatot elvállalta:</strong> {{ selectedBug.assignedTo }}
+        <strong>Feladatfelelős:</strong> {{ selectedBug.assignedTo }}
       </p>
       <div v-if="isEditing && selectedBug.assignedTo != null">
-        <label><strong>Feladatot elvállalta:</strong></label>
+        <label><strong>Feladatfelelős:</strong></label>
         <select v-model="selectedBug.assignedTo" class="form-select my-1">
           <option v-for="user in usersWithRoles" :key="user" :value="user">{{ user }}</option>
         </select>
@@ -322,43 +322,54 @@
             </div>
           </div>
 
-  <!-- Log Modal -->
-<div v-if="showLogModal" class="modal-overlay" @click="closeLogModal">
-  <div class="bg" @click.stop>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Eseménynapló</h3>
+
+<!-- Log Modal -->
+<div v-if="showLogModal" class="logmodal-overlay" @click="closeLogModal">
+  <div class="bg logmodal-bg" @click.stop :class="{ 'dark-mode': isDarkMode }">
+    <div class="logmodal-content" :class="{ 'dark-mode': isDarkMode }">
+      <div class="logmodal-header">
+        <h3 class="logmodal-title">Eseménynapló</h3>
       </div>
-      <div class="modal-body">
-        <!-- Displaying log entries in a table -->
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Státusz</th>
-              <th>Megjegyzés</th>
-              <th>Frissítve</th>
-              <th>Módosító</th>
-              <th>Feladatot elvállalta</th>
-              <th>Határidő</th>
-              <th>Prioritás</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="log in logEntries" :key="log.logid">
-              <!-- Render data if available; otherwise, render an empty cell for alignment -->
-              <td>{{ log.logStatus || '' }}</td>
-              <td>{{ log.logKomment || '' }}</td>
-              <td>{{ log.logUpdated_at ? new Date(log.logUpdated_at).toLocaleString() : '' }}</td>
-              <td>{{ log.logmodosito || '' }}</td>
-              <td>{{ log.logassignedTo || '' }}</td>
-              <td>{{ log.logdeadLine ? new Date(log.logdeadLine).toLocaleString() : '' }}</td>
-              <td>{{ log.logpriority || '' }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <p v-if="logEntries.length === 0">Nincsenek elérhető események.</p>
+      <div class="logmodal-body">
+        <!-- Displaying log entries in rows without headers, sorted by updated_at -->
+        <div v-if="logEntries.length > 0">
+          <div v-for="log in sortedLogEntries" :key="log.logid" class="logmodal-entry">
+            <div class="logmodal-row">
+              <div v-if="log.logUpdated_at" class="logmodal-item">
+                <strong>Frissítve</strong>
+                <p>{{ new Date(log.logUpdated_at).toLocaleString() }}</p>
+              </div>
+              <div v-if="log.logmodosito" class="logmodal-item">
+                <strong>Módosító</strong>
+                <p>{{ log.logmodosito }}</p>
+              </div>
+              <div v-if="log.logStatus" class="logmodal-item">
+                <strong>Státusz</strong>
+                <p>{{ log.logStatus }}</p>
+              </div>
+              <div v-if="log.logassignedTo" class="logmodal-item">
+                <strong>Feladatfelelős</strong>
+                <p>{{ log.logassignedTo }}</p>
+              </div>
+              <div v-if="log.logdeadLine" class="logmodal-item">
+                <strong>Határidő</strong>
+                <p>{{ new Date(log.logdeadLine).toLocaleString() }}</p>
+              </div>
+              <div v-if="log.logpriority" class="logmodal-item">
+                <strong>Prioritás</strong>
+                <p>{{ log.logpriority }}</p>
+              </div>
+              <div v-if="log.logKomment" class="description">
+                <strong>Hozzászólás</strong>
+                <p class="description-content">{{ log.logKomment }}</p>
+              </div>
+            </div>
+            <hr v-if="logEntries.length > 1" />
+          </div>
+        </div>
+        <p v-else>Nincsenek elérhető események.</p>
       </div>
-      <div class="modal-footer">
+      <div class="logmodal-footer">
         <button type="button" class="btn btn-secondary" @click="closeLogModal">Bezárás</button>
       </div>
     </div>
@@ -366,7 +377,6 @@
 </div>
 
 
-  
 
 
         </div>
@@ -427,6 +437,11 @@ export default {
     },
     photoCount() {
       return this.selectedBug.photos ? this.selectedBug.photos.length : 0;
+    },
+    sortedLogEntries() {
+      return this.logEntries.sort((a, b) => {
+        return new Date(b.logUpdated_at) - new Date(a.logUpdated_at);
+      });
     },
     
     filteredBugs() {
@@ -806,7 +821,7 @@ export default {
     const logData = await response.json();
     this.logEntries = logData.map(log => ({
       logid: log.ID,
-      logStatus: log.LStatus,
+      logStatus: log.Status,
       logKomment: log.Komment,
       logUpdated_at: log.Updated_at,
       logmodosito: log.modosito,
@@ -1111,12 +1126,14 @@ export default {
   /* Let it grow automatically */
   overflow: hidden;
   /* Prevent overflow */
-  word-wrap: break-word;
+  word-wrap: break-word !important;
   /* Break long words if necessary */
+  flex: 1;
+  grid-column: span 2;
 }
 
 .description-content {
-  padding: 0.5rem;
+  
   /* Add some padding for aesthetics */
   white-space: normal;
   /* Allow text to wrap onto new lines */
@@ -1540,4 +1557,110 @@ export default {
     height: auto;
   }
 }
+
+.logmodal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+}
+
+.logmodal-content {
+  background: white !important;
+  padding: 2rem;
+  border-radius: 2vh !important;
+  width: 100%; /* Ensures the modal takes up full width available */
+  max-width: 50vw; /* Set max width for modal */
+  min-width: 50vw; /* Set min width for modal */
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  max-height: 60vh; /* Ensure the modal height is limited, to avoid overflow */
+  overflow: hidden;
+}
+
+.logmodal-body {
+  overflow-y: auto; /* Allow scrolling */
+  flex-grow: 1; /* Allow it to grow */
+  max-height: 70vh; /* Set a maximum height for the body */
+  padding-right: 1rem;
+}
+
+.logmodal-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.logmodal-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: auto; /* Allow dynamic width */
+  min-width: 150px; /* Set a minimum width for consistency */
+}
+
+.logmodal-item strong {
+  margin-bottom: 5px; /* Space between the label and data */
+}
+
+.logmodal-item p {
+  margin: 0;
+  word-wrap: break-word; /* Allow long words to break and wrap properly */
+  white-space: normal; /* Ensure long lines wrap instead of overflowing */
+  max-width: 100%;
+}
+
+.logmodal-header {
+  padding-bottom: 1.5vw;
+}
+
+.logmodal-title {
+  margin: 0;
+}
+
+.logmodal-footer {
+  padding-top: 1.5vw;
+  text-align: right;
+}
+
+.dark-mode .logmodal-content {
+  background-color: #444 !important;
+  /* Dark background for modal */
+  color: white;
+  /* Text color for modal */
+  border-radius: 2vh;
+}
+
+.dark-mode .logmodal-header {
+  background-color: #444;
+  /* Header background for modal */
+  color: white;
+  /* Text color for modal header */
+}
+
+
+.dark-mode .logmodal-footer {
+  background-color: #444;
+  color: white;
+
+}
+
+@media (max-width: 600px) {
+  .logmodal-content {
+    max-width: 80vw !important; /* Ensure the modal doesn't exceed the width */
+  }
+  .logmodal-row {
+    flex-direction: column; /* Stack items vertically on phone */
+  }
+}
+
+
 </style>

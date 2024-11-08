@@ -1,6 +1,7 @@
 // /config/database.js
 
 const mysql = require('mysql2');
+const cron = require('node-cron');
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -19,6 +20,17 @@ connection.connect(function (error) {
   }
 });
 
+cron.schedule('0 0 * * *', () => { // Runs at midnight every day
+  connection.query(
+      "DELETE FROM hibabejelentesek WHERE updated_at < NOW() - INTERVAL 3 YEAR",
+      (error, results) => {
+          if (error) {
+              console.error('Error running cleanup query:', error);
+              return;
+          }
+          console.log('Old records deleted:', results.affectedRows);
+      }
+  );
+});
 
 module.exports = connection;
-
