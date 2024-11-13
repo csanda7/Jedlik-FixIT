@@ -198,7 +198,7 @@
       <input type="datetime-local" v-model="selectedBug.deadline" class="form-control" />
     </div>
   </div>
-              <div :class="{'description': true,'col-md-4': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0, }">
+              <div :class="{'description': true,'ml-2':true,'col-md-4': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0, }">
                 <p><strong>Hiba leírása:</strong></p>
                 <div class="description-content">{{ selectedBug.description }}</div>
               </div>
