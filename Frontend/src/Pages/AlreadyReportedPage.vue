@@ -191,7 +191,7 @@
       </div>
     </div>
       <p v-if="selectedBug.deadline != null && !isEditing" class="info-row">
-    <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString() }}
+    <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) }}
   </p>
     <div v-if="isEditing" class="info-row">
       <label><strong>Határidő:</strong></label>
@@ -338,7 +338,8 @@
             <div class="logmodal-row">
               <div v-if="log.logUpdated_at" class="logmodal-item">
                 <strong>Frissítve</strong>
-                <p>{{ new Date(log.logUpdated_at).toLocaleString() }}</p>
+                <p>{{ new Date(log.logUpdated_at).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) }}</p>
+
               </div>
               <div v-if="log.logmodosito" class="logmodal-item">
                 <strong>Módosító</strong>
@@ -346,7 +347,8 @@
               </div>
               <div v-if="log.logStatus" class="logmodal-item">
                 <strong>Státusz</strong>
-                <p>{{ log.logStatus }}</p>
+                <span :class="['badge', getBadgeClass(log.logStatus),{ 'dark-mode': isDarkMode }]">{{
+                    log.logStatus }}</span>
               </div>
               <div v-if="log.logassignedTo" class="logmodal-item">
                 <strong>Feladatfelelős</strong>
@@ -354,11 +356,14 @@
               </div>
               <div v-if="log.logdeadLine" class="logmodal-item">
                 <strong>Határidő</strong>
-                <p>{{ new Date(log.logdeadLine).toLocaleString() }}</p>
+                <p>{{ new Date(log.logdeadLine).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) }}</p>
               </div>
               <div v-if="log.logpriority" class="logmodal-item">
                 <strong>Prioritás</strong>
-                <p>{{ log.logpriority }}</p>
+                <div class="priority-container">
+                 <span :class="['priority-bar', getPriorityColor(log.logpriority)]"></span>
+                 <span class="priority-text">{{ log.logpriority }}</span>
+             </div>
               </div>
               <div v-if="log.logKomment" class="description">
                 <strong>Hozzászólás</strong>
@@ -549,7 +554,7 @@ export default {
 
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
-          reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString('hu-HU'),
+          reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
           assignedTo: bug['assignedTo'],
           description: bug['Hiba leírása'],
           deadline: bug['Határidő'],
@@ -929,7 +934,7 @@ export default {
 }
 
 .priority-bar.yellow {
-  background-color: yellow;
+  background-color: #FFCC00;
 }
 
 .priority-bar.orange {
@@ -1589,7 +1594,7 @@ export default {
   padding: 2rem;
   border-radius: 2vh !important;
   width: 100%; /* Ensures the modal takes up full width available */
-  max-width: 50vw; /* Set max width for modal */
+  max-width: 80vw; /* Set max width for modal */
   min-width: 50vw; /* Set min width for modal */
   z-index: 1000;
   display: flex;
