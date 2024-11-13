@@ -146,7 +146,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
-            <button v-if="!isEditing" type="button" class="btn btn-outline-secondary" @click="toggleEditMode">
+            <button v-if="!isEditing" type="button" class="btn btn-outline-secondary mb-3" @click="toggleEditMode">
               <i :class="['bi', 'bi-pencil', { 'text-white': isDarkMode }]"></i>
       </button>
       <div v-else>
@@ -1214,7 +1214,6 @@ export default {
 .modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
 .modal-footer {
@@ -1678,6 +1677,7 @@ export default {
     flex-direction: column; /* Stack items vertically on phone */
   }
 }
+
 
 
 </style>
