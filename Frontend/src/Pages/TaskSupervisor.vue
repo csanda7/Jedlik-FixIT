@@ -522,11 +522,6 @@ export default {
 
 
             });
-
-
-
-
-
             // Sorting logic based on sortKey and sortOrder
             return filtered.sort((a, b) => {
                 let compareA, compareB;
@@ -558,7 +553,7 @@ export default {
         },
         assignedTasks() {
             // Szűrjük azokat a feladatokat, ahol az assignedTo mező nem üres
-            const assignedBugs = this.bugs.filter(bug => bug.assignedTo);
+            const assignedBugs = this.filteredBugs.filter(bug => bug.assignedTo);
 
             // Csoportosítsuk a feladatokat a hozzárendelt felhasználók alapján
             return assignedBugs.reduce((groups, bug) => {
@@ -683,6 +678,7 @@ export default {
         toggleFilterVisibility() {
             this.showFilters = !this.showFilters;
         },
+
 
         // openPhoto(photo) {
         //   // Logic to open a larger view of the image
@@ -1792,7 +1788,7 @@ export default {
     background-color: #adcdff !important;
 }
 
-.dark-mode .usernameDisplay{
+.dark-mode .usernameDisplay {
     color: white !important;
     font-weight: bolder;
     font-size: 25px;
