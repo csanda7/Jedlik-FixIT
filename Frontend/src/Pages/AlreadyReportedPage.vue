@@ -150,8 +150,8 @@
               <i :class="['bi', 'bi-pencil', { 'text-white': isDarkMode }]"></i>
       </button>
       <div v-else>
-    <button type="button" class="btn btn-success me-2" @click="saveEdit">Megerősít</button>
-    <button type="button" class="btn btn-secondary" @click="toggleEditMode">Mégse</button>
+    <button type="button" class="btn btn-success me-2 mb-3" @click="saveEdit">Megerősít</button>
+    <button type="button" class="btn btn-secondary mb-3" @click="toggleEditMode">Mégse</button>
   </div>
           </div>
           <div class="modal-body">
@@ -198,7 +198,7 @@
       <input type="datetime-local" v-model="selectedBug.deadline" class="form-control" />
     </div>
   </div>
-              <div :class="{'description': true,'ml-2':true,'col-md-4': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0, }">
+              <div :class="{'description': true,'ml-2':true,'col-md-5': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0, }">
                 <p><strong>Hiba leírása:</strong></p>
                 <div class="description-content">{{ selectedBug.description }}</div>
               </div>
@@ -226,24 +226,24 @@
 
 
             <!-- Eseménynapló megnyitása -->
-            <button type="button" class="btn btn-secondary me-auto" @click="openLogModal(selectedBugId)">
+            <button v-if="!isEditing" type="button" class="btn btn-secondary me-auto" @click="openLogModal(selectedBugId)">
               Eseménynapló
             </button>
 
 
             <!-- Komment írása -->
-            <button type="button" class="btn btn-primary mx-1" @click="openCommentModal(Komment)">
+            <button v-if="!isEditing" type="button" class="btn btn-primary mx-1" @click="openCommentModal(Komment)">
               Megjegyzés
             </button>
 
             <!-- Feladat elvállalása -->
             <button type="button" class="btn btn-primary mx-1"
-              v-if="role === 'rendszergazda' && !selectedBug.assignedTo" @click="openCommentModal(takeTask)">
+              v-if="role === 'rendszergazda' && !selectedBug.assignedTo && !isEditing" @click="openCommentModal(takeTask)">
               Elvállalom
             </button>
 
             <!-- Feladat kiosztása -->
-            <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown"
+            <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo && !isEditing" class="dropdown"
               style="cursor: pointer;">
 
               <button ref="dropdownButton" class="btn btn-primary dropdown-toggle fixed-width my-2" type="button"
@@ -252,14 +252,14 @@
               </button>
 
               <ul class="dropdown-menu fixed-width">
-                <li v-for="user in usersWithRoles" :key="user">
+                <li v-for="user in usersWithRoles && !isEditing" :key="user">
                   <a class="dropdown-item text-center" @click="openCommentModal(assignTaskTo, user)">{{ user }}</a>
                 </li>
               </ul>
             </div>
 
             <!-- Dropdown Menu for Task Status Update -->
-            <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+            <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) && !isEditing">
               <div class="dropdown" style="cursor: pointer;">
                 <button class="btn btn-primary dropdown-toggle px-4" type="button" id="statusDropdown"
                   data-bs-toggle="dropdown" aria-expanded="false">
@@ -293,7 +293,7 @@
 
 
 
-            <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
+            <button v-if="!isEditing" type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
           </div>
 
 
