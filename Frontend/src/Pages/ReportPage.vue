@@ -27,16 +27,17 @@
 
       <div class="mb-3">
         <label for="bugDescription" class="form-label">Hiba leírása <span class="text-danger">*</span></label>
-        <textarea 
-          :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 
-          id="bugDescription" 
-          v-model="bugDescription" 
-          rows="3" 
-          placeholder="Adja meg a hiba leírását" 
-          maxlength="300" 
-          @input="adjustTextareaHeight($event); setCookie('bugDescription', bugDescription);" 
-          required>
-        </textarea>
+      <textarea 
+        :class="['form-control', isDarkMode ? 'dark-textbox' : '']" 
+        id="bugDescription" 
+        v-model="bugDescription" 
+        placeholder="Adja meg a hiba leírását" 
+        maxlength="300" 
+        @input ="adjustTextareaHeight($event); setCookie('bugDescription', bugDescription);" 
+        required 
+        style="overflow: hidden; resize: none;">
+      </textarea>
+
       </div>
 
      <div class="row">
@@ -249,7 +250,7 @@ export default {
     adjustTextareaHeight(event) {
       const textarea = event.target;
       textarea.style.height = 'auto'; // Reset height to auto to correctly calculate the new height
-      textarea.style.height = textarea.scrollHeight + 'px'; // Set height based on scroll height
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set height based on scroll height
     },
     selectLocation(selectedLocation) {
       this.location = selectedLocation;
