@@ -301,7 +301,7 @@
 
 
           <!-- Comment Modal -->
-          <div v-if="showCommentModal" class="Commentmodal-overlay" @click="closeCommentModal">
+          <div v-if="showCommentModal" class="Commentmodal-overlay">
             <div class="bg" @click.stop>
               <div class="Commentmodal-content wider-modal" :class="{ 'dark-mode': isDarkMode }">
                 <div class="Commentmodal-header">
@@ -311,7 +311,7 @@
                     <label for="komment" class="form-label">Megjegyzés</label>
                     <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="komment" v-model="komment"
                       rows="6" maxlength="300">
-        </textarea>
+                    </textarea>
                   </div>
                 </div>
                 <div class="modal-footer">
