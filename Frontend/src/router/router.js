@@ -5,6 +5,7 @@ import AlreadyReportedPage from '../Pages/AlreadyReportedPage.vue';
 import LoginPage from '../Pages/LoginPagE.vue';
 import MyTasks from '../Pages/MyTasks.vue';
 import Archive from '../Pages/Archive.vue';
+import TaskSupervisor from '../Pages/TaskSupervisor.vue';
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -13,6 +14,7 @@ const routes = [
   { path: '/reported', name: 'AlreadyReported', component: AlreadyReportedPage, meta: { requiresAuth: true } },
   { path: '/mytasks', name: 'MyTasks', component: MyTasks, meta: { requiresAuth: true } },
   { path: '/archive', name: 'Archive', component: Archive, meta: { requiresAuth: true } },
+  { path: '/tasksupervisor', name: 'TaskSupervisor', component: TaskSupervisor, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
