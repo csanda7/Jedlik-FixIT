@@ -50,6 +50,14 @@
               ARCHÍVUM
             </router-link>
           </li>
+          <li class="nav-item" v-if="isAuthenticated && hasAccess">
+            <router-link 
+              class="nav-link" 
+              :class="{'active-link': $route.path === '/tasksupervisor'}" 
+              to="/tasksupervisor">
+              FELADAT KÖVETÉS
+            </router-link>
+          </li>
         </ul>
 
         <!-- Only show the following part if the user is authenticated -->
@@ -71,8 +79,8 @@
             </label>
           </div>
 
-          <button class="btn btn-outline-light logout" @click="logout">
-            KILÉPÉS <i class="bi bi-box-arrow-right"></i>
+          <button class="btn btn-danger logout" @click="logout">
+             KILÉPÉS 
           </button>
         </div>
       </div>
