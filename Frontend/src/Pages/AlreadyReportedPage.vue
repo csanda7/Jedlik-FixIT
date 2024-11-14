@@ -252,7 +252,7 @@
               </button>
 
               <ul class="dropdown-menu fixed-width">
-                <li v-for="user in usersWithRoles && !isEditing" :key="user">
+                <li v-for="user in usersWithRoles" :key="user">
                   <a class="dropdown-item text-center" @click="openCommentModal(assignTaskTo, user)">{{ user }}</a>
                 </li>
               </ul>
