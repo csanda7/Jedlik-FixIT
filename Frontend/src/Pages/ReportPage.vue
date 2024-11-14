@@ -211,7 +211,7 @@ export default {
     
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      this.photos.push(file);
+      
 
       // Hash the filename
       const hashedName = CryptoJS.MD5(file.name).toString(); // Create a hash of the filename
