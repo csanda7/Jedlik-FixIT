@@ -47,7 +47,7 @@
               class="nav-link" 
               :class="{'active-link': $route.path === '/archive'}" 
               to="/archive">
-              ARCHÍVUM
+              LEZÁRT HIBÁK
             </router-link>
           </li>
           <li class="nav-item" v-if="isAuthenticated && hasAccess">
