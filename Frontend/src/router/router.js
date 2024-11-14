@@ -12,7 +12,7 @@ const routes = [
   { path: '/login', name: 'Login', component: LoginPage },
   { path: '/report', name: 'Report', component: ReportPage, meta: { requiresAuth: true } },
   { path: '/reported', name: 'AlreadyReported', component: AlreadyReportedPage, meta: { requiresAuth: true } },
-  { path: '/mytasks', name: 'MyTasks', component: MyTasks, meta: { requiresAuth: true } },
+  { path: '/mytasks', name: 'MyTasks', component: MyTasks, meta: { requiresAuth: true} },
   { path: '/archive', name: 'Archive', component: Archive, meta: { requiresAuth: true } },
   { path: '/tasksupervisor', name: 'TaskSupervisor', component: TaskSupervisor, meta: { requiresAuth: true } },
 ];
