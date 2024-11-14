@@ -12,6 +12,10 @@
         Hiba sikeresen elküldve!
       </div>
 
+      <div v-if="showImageLimitPopup" class="alert alert-danger" role="alert">
+        Maximum 4 képet tölthet fel!
+      </div>
+
       <div class="my-3">
         <label for="bugName" class="form-label">Hiba megnevezése <span class="text-danger">*</span></label>
         <input 
@@ -107,7 +111,7 @@
     <!-- Picture Upload Button -->
     <!-- Picture Upload Button -->
 <div >
-  <label for="photo" class="btn-primary pictureUploadButton w-100 ">Kép feltöltése</label>
+  <label for="photo" class="btn btn-primary pictureUploadButton w-100 ">Kép feltöltése</label>
   <input 
     type="file" 
     class="form-control" 
@@ -161,6 +165,7 @@ export default {
       showPopup: false, // State for the popup message
       showSuccessPopup: false,
       isDarkMode: false,
+      showImageLimitPopup: false,
 
     };
   },
@@ -192,14 +197,21 @@ export default {
 
 
     onFileChange(event) {
-    const files = event.target.files;
-    if (files.length + this.photos.length > 4) {
-      alert('Maximum 4 képet tölthet fel.');
-      return;
-    }
+  const files = event.target.files;
+  if (files.length + this.photos.length > 4) {
+    this.showImageLimitPopup = true; // Show the popup
+
+    event.target.value = "";
+
+    setTimeout(() => {
+      this.showImageLimitPopup = false;
+    }, 5000); // Hide popup after 5 seconds
+    return;
+  }
     
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
+      this.photos.push(file);
 
       // Hash the filename
       const hashedName = CryptoJS.MD5(file.name).toString(); // Create a hash of the filename
