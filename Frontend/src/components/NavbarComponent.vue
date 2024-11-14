@@ -149,7 +149,13 @@ export default {
 <style scoped>
 
 .navbar-brand {
-  color: white;
+  color: white; 
+  text-decoration: none; /* Ensure there's no underline or text decoration */ 
+}
+
+.navbar-brand:hover {
+  color: white; /* Remove any color change on hover */
+  text-decoration: none; /* Remove underline on hover */
 }
 
 .logout {

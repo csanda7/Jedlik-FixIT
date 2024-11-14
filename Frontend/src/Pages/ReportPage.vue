@@ -31,7 +31,8 @@
         </label>
         <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="bugDescription"
           v-model="bugDescription" rows="3" placeholder="Adja meg a hiba leírását" maxlength="250"
-          @input="adjustTextareaHeight($event); setCookie('bugDescription', bugDescription);" required>
+          @input="adjustTextareaHeight($event); setCookie('bugDescription', bugDescription);" required
+          style="overflow: hidden; resize: none;">
   </textarea>
         <span class="position-absolute top-0 end-0 me-2 mt-1 small" :class="isDarkMode ? 'text-white' : 'text-muted'">
           {{ bugDescription.length }}/250
@@ -235,7 +236,7 @@ export default {
     adjustTextareaHeight(event) {
       const textarea = event.target;
       textarea.style.height = 'auto'; // Reset height to auto to correctly calculate the new height
-      textarea.style.height = textarea.scrollHeight + 'px'; // Set height based on scroll height
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set height based on scroll height
     },
     selectLocation(selectedLocation) {
       this.location = selectedLocation;
