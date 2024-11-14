@@ -679,12 +679,14 @@ export default {
       this.showModal = true;
       this.assignedTo = this.selectedBug.assignedTo
       this.status = this.selectedBug.status
+      document.body.style.overflow = 'hidden'
 
     },
     closeModal() {
       this.showModal = false;
       this.selectedUser = null;
       this.isEditing = false;
+      document.body.style.overflow = '';  // Re-enable scrolling
     },
     openCommentModal(action, data) {
       this.showCommentModal = true; // Show the Comment modal
@@ -1159,6 +1161,7 @@ handleButtonClick() {
   /* Break long words if necessary */
   flex: 1;
   grid-column: span 2;
+  
 }
 
 .description-content {
@@ -1630,6 +1633,8 @@ handleButtonClick() {
   flex-grow: 1; /* Allow it to grow */
   max-height: 70vh; /* Set a maximum height for the body */
   padding-right: 1rem;
+  gap: 20px; /* Optional gap between columns */
+  
 }
 
 .logmodal-row {
