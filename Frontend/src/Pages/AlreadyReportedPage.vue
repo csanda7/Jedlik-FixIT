@@ -156,7 +156,7 @@
           </div>
           <div class="modal-body">
     <div class="row">
-      <div :class="{'col-md-6': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0}">
+      <div :class="{'col-md-6': selectedBug.photos.length === 0, 'col-md-4 ': selectedBug.photos.length > 0}">
       <div class="info-row">
         <strong>Prioritás: </strong>
         <div v-if="!isEditing">
@@ -1272,6 +1272,8 @@ handleButtonClick() {
   grid-template-columns: 160px 1fr; /* Adjust column width as needed */
   align-items: center;
   margin-bottom: 1rem; /* Adds space between rows */
+  min-width: 23rem;
+  max-width: 25rem !important;
 }
 
 .info-row strong {
