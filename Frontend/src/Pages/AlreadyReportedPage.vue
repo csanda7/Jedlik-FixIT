@@ -301,27 +301,31 @@
 
 
           <!-- Comment Modal -->
-          <div v-if="showCommentModal" class="Commentmodal-overlay" @click="closeCommentModal">
-            <div class="bg" @click.stop>
-              <div class="Commentmodal-content wider-modal" :class="{ 'dark-mode': isDarkMode }">
-                <div class="Commentmodal-header">
-                </div>
-                <div class="Commentmodal-body">
-                  <div class="mb-2">
-                    <label for="komment" class="form-label">Megjegyzés</label>
-                    <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="komment" v-model="komment"
-                      rows="6" maxlength="300">
-        </textarea>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
-                  <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
-
-                </div>
-              </div>
-            </div>
-          </div>
+<div v-if="showCommentModal" class="Commentmodal-overlay" @click="closeCommentModal">
+  <div class="bg" @click.stop>
+    <div class="Commentmodal-content wider-modal" :class="{ 'dark-mode': isDarkMode }">
+      <div class="Commentmodal-header">
+      </div>
+      <div class="Commentmodal-body">
+        <div class="mb-2">
+          <label for="komment" class="form-label d-flex justify-content-between align-items-center">
+            Megjegyzés
+            <span class="small ms-4" :style="{ color: isDarkMode ? '#D3D3D3' : '#6c757d' }">
+              {{ komment.length }}/300
+            </span>
+          </label>
+          <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="komment" v-model="komment"
+            rows="6" maxlength="300" @input="updateCharacterCount">
+          </textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
+        <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <!-- Log Modal -->
