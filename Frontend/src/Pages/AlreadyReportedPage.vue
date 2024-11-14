@@ -219,8 +219,8 @@
               <button type="button" class="btn btn-dark carousel-next py-4" @click="nextPhoto">&gt;</button>
             </div>
           </div>
-    
-            
+
+
           <div class="modal-footer">
 
 
@@ -252,7 +252,7 @@
               </button>
 
               <ul class="dropdown-menu fixed-width">
-                <li v-for="user in usersWithRoles" :key="user">
+                <li v-for="user in usersWithRoles && !isEditing" :key="user">
                   <a class="dropdown-item text-center" @click="openCommentModal(assignTaskTo, user)">{{ user }}</a>
                 </li>
               </ul>
@@ -630,6 +630,11 @@ export default {
       this.showFilters = !this.showFilters;
     },
 
+    // openPhoto(photo) {
+    //   // Logic to open a larger view of the image
+    //   const imgWindow = window.open(photo, '_blank');
+    //   imgWindow.focus(); // Focus on the new window
+    // },
     sortBy(key) {
       if (this.sortKey === key) {
         // If the same column is clicked, toggle the sort order
