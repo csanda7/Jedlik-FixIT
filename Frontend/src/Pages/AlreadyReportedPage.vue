@@ -232,7 +232,7 @@
 
 
             <!-- Komment írása -->
-            <button v-if="!isEditing" type="button" class="btn btn-primary mx-1" @click="openCommentModal(Komment)">
+            <button v-if="!isEditing" type="button" class="btn btn-primary mx-1" @click="handleButtonClick">
               Megjegyzés
             </button>
 
@@ -301,15 +301,21 @@
 
 
           <!-- Comment Modal -->
-<div v-if="showCommentModal" class="Commentmodal-overlay" @click="closeCommentModal">
+<div v-if="showCommentModal" class="Commentmodal-overlay" >
   <div class="bg" @click.stop>
     <div class="Commentmodal-content wider-modal" :class="{ 'dark-mode': isDarkMode }">
       <div class="Commentmodal-header">
       </div>
       <div class="Commentmodal-body">
         <div class="mb-2">
-          <label for="komment" class="form-label d-flex justify-content-between align-items-center">
+          <label v-if="iscommmentonly === true" for="komment" class="form-label d-flex justify-content-between align-items-center">
             Megjegyzés
+            <span class="small ms-4" :style="{ color: isDarkMode ? '#D3D3D3' : '#6c757d' }">
+              {{ komment.length }}/300
+            </span>
+          </label>
+          <label v-if="iscommmentonly === false" for="komment" class="form-label d-flex justify-content-between align-items-center">
+            Megjegyzés (opcionális)
             <span class="small ms-4" :style="{ color: isDarkMode ? '#D3D3D3' : '#6c757d' }">
               {{ komment.length }}/300
             </span>
@@ -429,6 +435,7 @@ export default {
       komment: '',
       logEntries: [], // Property to hold log entries
       isEditing: false,
+      iscommmentonly: false,
     };
   },
   computed: {
@@ -679,10 +686,18 @@ export default {
       this.actionToConfirm = action; // Store the action to confirm
       this.actionData = data; // Store any additional data needed for the action
     },
+
+     openCommentModal(action, data) {
+    this.showCommentModal = true; // Show the Comment modal
+    this.actionToConfirm = action; // Store the action to confirm
+    this.actionData = data; // Store any additional data needed for the action
+  
+  },
     closeCommentModal() {
       this.showCommentModal = false; // Close the Comment modal
       this.actionData = null; // Clear the action data
       this.komment = '';
+      this.iscommmentonly = false;
     },
     async openLogModal() {
       this.showLogModal = true;
@@ -876,7 +891,11 @@ export default {
   } catch (error) {
     console.error('Error updating bug:', error);
   }
-}
+},
+handleButtonClick() {
+    this.iscommmentonly = true;  // Change the state
+    this.openCommentModal(this.Komment);  // Open the modal
+  },
 
   },
 
