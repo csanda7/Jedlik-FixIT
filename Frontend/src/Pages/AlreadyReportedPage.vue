@@ -149,9 +149,9 @@
             <button v-if="!isEditing" type="button" class="btn btn-outline-secondary mb-3" @click="toggleEditMode">
               <i :class="['bi', 'bi-pencil', { 'text-white': isDarkMode }]"></i>
       </button>
-      <div v-else>
-    <button type="button" class="btn btn-success me-2 mb-3" @click="saveEdit">Megerősít</button>
-    <button type="button" class="btn btn-secondary mb-3" @click="toggleEditMode">Mégse</button>
+      <div v-else class="edit-width d-flex justify-content-end align-items-center gap-2 mb-3">
+    <button type="button" class="btn btn-success edit equal-width" @click="saveEdit">Megerősít</button>
+    <button type="button" class="btn btn-secondary edit equal-width" @click="toggleEditMode">Mégse</button>
   </div>
           </div>
           <div class="modal-body">
@@ -232,7 +232,7 @@
 
 
             <!-- Komment írása -->
-            <button v-if="!isEditing" type="button" class="btn btn-primary mx-1" @click="handleButtonClick">
+            <button v-if="!isEditing" type="button" class="btn btn-primary mx-1 equal-width" @click="openCommentModal(Komment)">
               Megjegyzés
             </button>
 
@@ -293,7 +293,7 @@
 
 
 
-            <button v-if="!isEditing" type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
+            <button v-if="!isEditing" type="button" class="btn btn-secondary mx-1 my-2 equal-width" @click="closeModal">Bezárás</button>
           </div>
 
 
@@ -1709,6 +1709,24 @@ handleButtonClick() {
   }
 }
 
+/* Style for making buttons of equal length */
+.equal-width {
+  width: 100%; /* Set the width of the button to be 100% of the available space */
+  max-width: 110px; /* Optional: Limit the max-width to avoid very large buttons */
+  text-align: center; /* Align text in the center */
+}
+
+.edit.equal-width {
+  max-width: 100px;
+}
+
+.edit-div {
+  max-width: 220px;
+}
+
+.edit-width {
+  width: 100%; /* Ensures the container spans the full width */
+}
 
 
 </style>
