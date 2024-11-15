@@ -55,7 +55,7 @@
               class="nav-link" 
               :class="{'active-link': $route.path === '/tasksupervisor'}" 
               to="/tasksupervisor">
-              FELADAT KÖVETÉS
+              MEGBÍZÁSOK
             </router-link>
           </li>
         </ul>
