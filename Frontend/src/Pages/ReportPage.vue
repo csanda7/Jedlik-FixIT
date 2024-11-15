@@ -15,6 +15,16 @@
       <div v-if="showImageLimitPopup" class="alert alert-danger" role="alert">
         Maximum 4 képet tölthet fel!
       </div>
+<!-- Pop-Up Message for Confirm Reset -->
+<div v-if="showResetPopup" class="alert alert-warning d-flex justify-content-between" role="alert">
+  Biztosan törölni szeretnéd az összes adatot?
+  <button class="btn btn-light btn-sm px-2" @click="resetData">Igen</button>
+  <button class="btn btn-light btn-sm ml-2 px-2" @click="cancelReset">Nem</button>
+</div>
+<!-- Success Message after Data Reset -->
+<div v-if="showSuccessResetPopup" class="alert alert-success" role="alert">
+  Adatok sikeresen törölve!
+</div>
 
       <div class="mb-3 position-relative">
         <label for="bugName" class="form-label">
@@ -147,6 +157,8 @@ export default {
       otherLocation: this.getCookie('otherLocation') || '',
       showPopup: false, // State for the popup message
       showSuccessPopup: false,
+      showSuccessResetPopup: false,
+      showResetPopup: false,
       isDarkMode: false,
       showImageLimitPopup: false,
 
@@ -256,11 +268,6 @@ export default {
       this.label = selectedlabel;
       this.setCookie('label', selectedlabel);
     },
-    confirmReset() {
-      if (confirm("Biztosan törölni szeretnéd az összes adatot?")) {
-        this.reset();
-      }
-    },
     bekuldes() {
       if (!this.bugName || !this.bugDescription || !this.location || !this.label || this.location === 'Egyéb' && !this.otherLocation) {
         this.showPopup = true; // Kötelező mezők kitöltése
@@ -306,15 +313,62 @@ export default {
           console.error('Error submitting bug report:', error);
           alert('Error: Unable to submit bug report.');
         });
-    }
+    },
+    // Megerősítő popup megjelenítése a törléshez
+    confirmReset() {
+      this.showResetPopup = true;
+    },
+    // Adatok törlésének végrehajtása (igen gomb)
+    resetData() {
+      this.bugName = '';
+      this.priority = '0';
+      this.bugDescription = '';
+      this.photos = [];
+      this.photoPreviews = [];
+      this.location = '';
+      this.label = '';
+      this.showOtherLocation = false;
+      this.otherLocation = '';
+      
+      // Sütik törlése
+      this.setCookie('bugName', '');
+      this.setCookie('priority', '0');
+      this.setCookie('bugDescription', '');
+      this.setCookie('location', '');
+      this.setCookie('label', '');
+      this.setCookie('otherLocation', '');
+      console.log('Adatok törölve!');
+      
+      this.showResetPopup = false; // Megerősítő üzenet eltüntetése
+      this.showSuccessResetPopup = true; // Sikerüzenet megjelenítése
+      
+      // Az üzenet automatikusan eltűnik 5 másodperc után
+      setTimeout(() => {
+        this.showSuccessResetPopup = false;
+      }, 5000);
+    },
 
+    // Törlés megszakítása (nem gomb)
+    cancelReset() {
+      this.showResetPopup = false; // Megerősítő popup eltüntetése
+  }},
   }
-};
-
-
 </script>
 
 <style scoped>
+.alert-success {
+  background-color: #d4edda; /* Zöld háttér */
+  color: #155724; /* Zöld szöveg */
+  border-color: #c3e6cb;
+  margin-top: 0;
+  margin-bottom: 0;
+  max-height: fit-content;
+}
+.alert-warning {
+  background-color: #4285f4; /* Kék háttér */
+  color: white; /* Sárga szöveg */
+  border-width: 0;
+}
 .image-preview-container {
   margin-left: 3rem;
   display: flex;
@@ -414,18 +468,6 @@ export default {
   color: white;
   border: 1px solid #777;
 }
-
-.alert-success {
-  background-color: #d4edda;
-  /* Zöld háttér */
-  color: #155724;
-  /* Zöld szöveg */
-  border-color: #c3e6cb;
-  margin-top: 0;
-  margin-bottom: 0;
-  max-height: fit-content;
-}
-
 #bugName::placeholder {
   color: rgb(168, 168, 168);
 }
