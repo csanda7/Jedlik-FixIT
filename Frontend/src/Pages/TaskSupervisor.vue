@@ -89,13 +89,33 @@
                     <table :class="['table', { 'dark-mode': isDarkMode }, 'table-hover', 'p-4']">
                         <thead>
                             <tr>
-                                <th>Hiba neve</th>
-                                <th>Prioritás</th>
+                                <th @click="sortBy('name')" style="cursor: pointer;">
+                                    Hiba neve
+                                    <i v-if="sortKey === 'name'"
+                                        :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                                </th>
+                                <th @click="sortBy('priority')" style="cursor: pointer;">
+                                    Prioritás
+                                    <i v-if="sortKey === 'priority'"
+                                        :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                                </th>
                                 <th class="hide-mobile">Címke</th>
                                 <th class="hide-mobile">Státusz</th>
-                                <th class="hide-mobile">Terem</th>
-                                <th class="hide-mobile">Bejelentette</th>
-                                <th class="hide-mobile">Bejelentés ideje</th>
+                                <th class="hide-mobile" @click="sortBy('room')" style="cursor: pointer;">
+                                    Terem
+                                    <i v-if="sortKey === 'room'"
+                                        :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                                </th>
+                                <th class="hide-mobile" @click="sortBy('reportedBy')" style="cursor: pointer;">
+                                    Bejelentette
+                                    <i v-if="sortKey === 'reportedBy'"
+                                        :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                                </th>
+                                <th class="hide-mobile" @click="sortBy('reportedAt')" style="cursor: pointer;">
+                                    Bejelentés ideje
+                                    <i v-if="sortKey === 'reportedAt'"
+                                        :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -103,7 +123,8 @@
                             <template v-for="(bugs, user) in assignedTasks">
                                 <!-- Felhasználó neve megjelenítése -->
                                 <tr class="">
-                                    <td colspan="8" class="usernameDisplay text-center bg-secondary bg-gradient">{{ user }}</td>
+                                    <td colspan="8" class="usernameDisplay text-center">{{ user
+                                        }}</td>
                                 </tr>
                                 <!-- Felhasználóhoz rendelt feladatok megjelenítése -->
                                 <tr v-for="(bug, index) in bugs" :key="index" @click="openModal(bug)"
@@ -466,8 +487,7 @@ export default {
             return [...new Set(this.bugs.map(bug => bug.label))];
         },
         uniqueStatuses() {
-            const exactStatuses = ["Bejelentve", "Folyamatban", "Beszerzésre vár", "Újból kiosztva"]
-            return [...new Set(this.bugs.map(bug => bug.status))].filter(status => exactStatuses.includes(status));
+            return [...new Set(this.bugs.map(bug => bug.status))];
         },
         uniqueRooms() {
             return [...new Set(this.bugs.map(bug => bug.room).sort())];
@@ -480,20 +500,7 @@ export default {
                 return new Date(b.logUpdated_at) - new Date(a.logUpdated_at);
             });
         },
-        assignedTasks() {
-            // Szűrjük azokat a feladatokat, ahol az assignedTo mező nem üres
-            const assignedBugs = this.bugs.filter(bug => bug.assignedTo);
 
-            // Csoportosítsuk a feladatokat a hozzárendelt felhasználók alapján
-            return assignedBugs.reduce((groups, bug) => {
-                const assignedUser = bug.assignedTo;
-                if (!groups[assignedUser]) {
-                    groups[assignedUser] = [];
-                }
-                groups[assignedUser].push(bug);
-                return groups;
-            }, {});
-        },
         filteredBugs() {
 
 
@@ -515,11 +522,6 @@ export default {
 
 
             });
-
-
-
-
-
             // Sorting logic based on sortKey and sortOrder
             return filtered.sort((a, b) => {
                 let compareA, compareB;
@@ -548,7 +550,21 @@ export default {
                         return 0; // Default sorting if no key is selected
                 }
             });
-        }
+        },
+        assignedTasks() {
+            // Szűrjük azokat a feladatokat, ahol az assignedTo mező nem üres
+            const assignedBugs = this.filteredBugs.filter(bug => bug.assignedTo);
+
+            // Csoportosítsuk a feladatokat a hozzárendelt felhasználók alapján
+            return assignedBugs.reduce((groups, bug) => {
+                const assignedUser = bug.assignedTo;
+                if (!groups[assignedUser]) {
+                    groups[assignedUser] = [];
+                }
+                groups[assignedUser].push(bug);
+                return groups;
+            }, {});
+        },
     },
     watch: {
         'selectedBug.priority': function (newPriority) {
@@ -663,6 +679,7 @@ export default {
             this.showFilters = !this.showFilters;
         },
 
+
         // openPhoto(photo) {
         //   // Logic to open a larger view of the image
         //   const imgWindow = window.open(photo, '_blank');
@@ -670,13 +687,28 @@ export default {
         // },
         sortBy(key) {
             if (this.sortKey === key) {
-                // If the same column is clicked, toggle the sort order
                 this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
             } else {
-                // If a new column is clicked, set it as the sorting key and default to ascending
                 this.sortKey = key;
                 this.sortOrder = 'asc';
             }
+
+            // Rendezés elvégzése
+            Object.keys(this.assignedTasks).forEach(user => {
+                this.assignedTasks[user].sort((a, b) => {
+                    let result;
+
+                    if (typeof a[key] === 'string' && typeof b[key] === 'string') {
+                        // Szöveges értékek összehasonlítása ABC sorrendben, kis- és nagybetűket nem megkülönböztetve
+                        result = a[key].localeCompare(b[key], 'hu', { sensitivity: 'base' });
+                    } else {
+                        // Számértékek összehasonlítása
+                        result = a[key] - b[key];
+                    }
+
+                    return this.sortOrder === 'asc' ? result : -result;
+                });
+            });
         },
         getPriorityColor(priority) {
             switch (priority) {
@@ -1748,10 +1780,18 @@ export default {
         /* Stack items vertically on phone */
     }
 }
-.usernameDisplay{
-    color: white;
+
+.usernameDisplay {
+    color: rgb(33, 55, 97) !important;
     font-weight: bolder;
-    font-size: larger;
+    font-size: 25px;
+    background-color: #adcdff !important;
 }
 
+.dark-mode .usernameDisplay {
+    color: white !important;
+    font-weight: bolder;
+    font-size: 25px;
+    background-color: rgb(19, 19, 19) !important;
+}
 </style>

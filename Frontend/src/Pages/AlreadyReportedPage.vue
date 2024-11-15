@@ -1274,6 +1274,7 @@ handleButtonClick() {
   margin-bottom: 1rem; /* Adds space between rows */
   min-width: 23rem;
   max-width: 25rem !important;
+  margin-right: 30rem !important;
 }
 
 .info-row strong {
