@@ -122,13 +122,14 @@
                             <!-- Felhasználók szerinti csoportosítás -->
                             <template v-for="(bugs, user) in assignedTasks">
                                 <!-- Felhasználó neve megjelenítése -->
-                                <tr class="user-row" @click="toggleUser(user)">
+                                <tr class="user-row" >
                                     <td colspan="8" class="usernameDisplay text-center">
                                         {{ user }} <span class="errorNumberDisplayforUser">({{ assignedTasks[user].length }} db)</span>
                                         <i
-                                            :class="['ms-2', isCollapsed(user) ? 'bi bi-chevron-right' : 'bi bi-chevron-down']" class="float-end"></i>
+                                            :class="['ms-2', isCollapsed(user) ? 'bi bi-caret-down-fill collapsed' : 'bi bi-caret-down-fill expanded']" class="float-end arrow" @click="toggleUser(user)" style="cursor: pointer;"></i>
                                     </td>
                                 </tr>
+                                
                                 <!-- Felhasználóhoz rendelt feladatok megjelenítése -->
                                 <tr v-for="(bug, index) in bugs" :key="index" v-show="!isCollapsed(user)"
                                     @click="openModal(bug)" style="cursor: pointer">
@@ -1835,5 +1836,21 @@ export default {
     color: rgb(32, 83, 179);
 }
 
+.arrow:hover {
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;;
+}
+
+
+.arrow.collapsed {
+    transform: rotate(0deg); /* Default state */
+    transition: transform 0.3s ease;
+}
+
+.arrow.expanded {
+    transform: rotate(180deg); /* Rotated state for expanded */
+    transition: transform 0.3s ease;
+}
 
 </style>
