@@ -238,7 +238,7 @@
 
 
             <!-- Komment írása -->
-            <button v-if="!isEditing" type="button" class="btn btn-primary  equal-width" v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1'" @click="handleButtonClick">
+            <button v-if="!isEditing" type="button" class="btn btn-primary   " v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 equal-width'" @click="handleButtonClick">
               Megjegyzés
             </button>
 
@@ -266,7 +266,7 @@
 
             <!-- Dropdown Menu for Task Status Update -->
             <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) && !isEditing">
-              <div class="dropdown phoneViewButton" style="cursor: pointer;">
+              <div class="dropdown " style="cursor: pointer;">
                 <button class="btn btn-primary dropdown-toggle " v-bind:class="isMobile ? 'phoneViewButton' : 'px-4'" type="button" id="statusDropdown"
                   data-bs-toggle="dropdown" aria-expanded="false">
                   Állapot frissítése
@@ -299,7 +299,7 @@
 
 
 
-            <button v-if="!isEditing" type="button" class="btn btn-secondary equal-width phoneViewButton" v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 my-2'" @click="closeModal">Bezárás</button>
+            <button v-if="!isEditing" type="button" class="btn btn-secondary" v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 my-2 equal-width'" @click="closeModal">Bezárás</button>
           </div>
         
 
@@ -703,7 +703,6 @@ export default {
       this.status = this.selectedBug.status
       document.body.style.overflow = 'hidden'
       this.checkMobileView();
-      console.log(this.isMobile)
 
     },
     closeModal() {
@@ -1738,6 +1737,8 @@ export default {
   .phoneViewButton
   {
     margin: 1vw !important; /* Add some margin to the button */ 
+    margin-right: 0 !important; /* Remove the margin from the right */
+    width: 12rem ; /* Set the width of the button */
   }
   .carousel-photo {
     width: 100%;
