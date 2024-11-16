@@ -8,6 +8,9 @@
           <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
             <i class="bi bi-funnel-fill"></i>
           </button>
+          <button v-if="areFiltersApplied" class="btn btn-danger ms-3" @click="resetFilters">
+            <i class="bi bi-trash-fill"></i>
+          </button>
         </div>
       </div>
       <!-- Updated filters section with responsive design -->
@@ -263,6 +266,14 @@ export default {
     uniqueRooms() {
       return [...new Set(this.bugs.map(bug => bug.room))];
     },
+    areFiltersApplied() {
+      return (
+        this.selectedPriorities.length > 0 ||
+        this.selectedLabels.length > 0 ||
+        this.selectedStatuses.length > 0 ||
+        this.selectedRooms.length > 0
+      );
+    },
     filteredBugs() {
 
       
@@ -360,6 +371,12 @@ return filtered.sort((a, b) => {
     },
     toggleFilterVisibility() {
       this.showFilters = !this.showFilters;
+    },
+    resetFilters() {
+      this.selectedPriorities = [];
+      this.selectedLabels = [];
+      this.selectedStatuses = [];
+      this.selectedRooms = [];
     },
 
     openPhoto(photo) {
