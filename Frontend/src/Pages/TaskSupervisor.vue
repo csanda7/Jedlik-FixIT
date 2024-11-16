@@ -123,7 +123,7 @@
                             <template v-for="(bugs, user) in assignedTasks">
                                 <!-- Felhasználó neve megjelenítése -->
                                 <tr class="user-row" >
-                                    <td colspan="8" class="usernameDisplay text-center">
+                                    <td colspan="8" class="usernameDisplay text-center" >
                                         {{ user }} <span class="errorNumberDisplayforUser">({{ assignedTasks[user].length }} db)</span>
                                         <i
                                             :class="['ms-2', isCollapsed(user) ? 'bi bi-caret-down-fill collapsed' : 'bi bi-caret-down-fill expanded']" class="float-end arrow" @click="toggleUser(user)" style="cursor: pointer;"></i>

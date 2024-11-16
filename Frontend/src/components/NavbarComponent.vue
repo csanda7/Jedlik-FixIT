@@ -18,7 +18,7 @@
       </button>
       <div class="collapse navbar-collapse mx-3 row" id="navbarNav">
         <ul class="navbar-nav col-lg-10 col-md-9">
-          <li class="nav-item" v-if="isAuthenticated && hasAccess">
+          <li class="nav-item" v-if="isAuthenticated && RGAccess">
             <router-link 
               class="nav-link" 
               :class="{'active-link': $route.path === '/report'}" 
@@ -26,7 +26,7 @@
               HIBA BEJELENTÉSE
             </router-link>
           </li>
-          <li class="nav-item" v-if="isAuthenticated && hasAccess">
+          <li class="nav-item" v-if="isAuthenticated && RGAccess">
             <router-link 
               class="nav-link" 
               :class="{'active-link': $route.path === '/reported'}" 
@@ -34,7 +34,7 @@
               HIBÁK LISTÁJA
             </router-link>
           </li>
-          <li class="nav-item" v-if="isAuthenticated && hasAccess">
+          <li class="nav-item" v-if="isAuthenticated && RGAccess">
             <router-link 
               class="nav-link" 
               :class="{'active-link': $route.path === '/mytasks'}" 
@@ -42,7 +42,15 @@
               FELADATAIM
             </router-link>
           </li>
-          <li class="nav-item" v-if="isAuthenticated && hasAccess">
+          <li class="nav-item" v-if="isAuthenticated && MVAccess">
+            <router-link 
+              class="nav-link" 
+              :class="{'active-link': $route.path === '/tasksupervisor'}" 
+              to="/tasksupervisor">
+              MEGBÍZÁSOK
+            </router-link>
+          </li> 
+          <li class="nav-item" v-if="isAuthenticated && RGAccess">
             <router-link 
               class="nav-link" 
               :class="{'active-link': $route.path === '/archive'}" 
@@ -50,14 +58,7 @@
               LEZÁRT HIBÁK
             </router-link>
           </li>
-          <li class="nav-item" v-if="isAuthenticated && hasAccess">
-            <router-link 
-              class="nav-link" 
-              :class="{'active-link': $route.path === '/tasksupervisor'}" 
-              to="/tasksupervisor">
-              MEGBÍZÁSOK
-            </router-link>
-          </li>
+          
         </ul>
 
         <!-- Only show the following part if the user is authenticated -->
@@ -110,10 +111,15 @@ export default {
       const authStore = useAuthStore();
       return authStore.isAuthenticated;
     },
-    hasAccess() {
+    RGAccess() {
       // Check if user role is "mv" or "r"
       const role = sessionStorage.getItem('role');
       return role === 'muszakivezeto' || role === 'rendszergazda';
+    },
+    MVAccess() {
+      // Check if user role is "mv" or "r"
+      const role = sessionStorage.getItem('role');
+      return role === 'muszakivezeto';
     },
     isAdmin() {
       const authStore = useAuthStore();

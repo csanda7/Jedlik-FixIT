@@ -870,9 +870,9 @@ export default {
     async saveEdit() {
   // Check if each field has changed; if not, set it to null
   const updatedData = {
-    priority: this.selectedBug.priority !== this.originalBug.priority ? this.selectedBug.priority : null,
-    assignedTo: this.selectedBug.assignedTo !== this.originalBug.assignedTo ? this.selectedBug.assignedTo : null,
-    deadline: this.selectedBug.deadline !== this.originalBug.deadline ? this.selectedBug.deadline : null,
+    priority: this.selectedBug.priority !== this.originalBug.priority ? this.selectedBug.priority : this.originalBug.priority,
+  assignedTo: this.selectedBug.assignedTo !== this.originalBug.assignedTo ? this.selectedBug.assignedTo : this.originalBug.assignedTo,
+  deadline: this.selectedBug.deadline !== this.originalBug.deadline ? this.selectedBug.deadline : this.originalBug.deadline,
     modosito: this.loggedInUser // Always send the modifying user
   };
 

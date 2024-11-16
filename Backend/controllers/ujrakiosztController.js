@@ -9,7 +9,7 @@ const updateStatusandAssigndTo = (req, res) => {
 
 
   // SQL query to update the status
-  const updateQuery = 'UPDATE hibabejelentesek SET Status = ?, AssignedTo = "", updatert_at = NOW() WHERE ID = ?';
+  const updateQuery = 'UPDATE hibabejelentesek SET Status = ?, AssignedTo = "", updated_at = NOW() WHERE ID = ?';
 
   connection.query(updateQuery, [newStatus, bugId], (error, results) => {
     if (error) {
