@@ -10,6 +10,9 @@
                     <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
                         <i class="bi bi-funnel-fill"></i>
                     </button>
+                    <button v-if="areFiltersApplied" class="btn btn-danger ms-3" @click="resetFilters">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
                 </div>
             </div>
             <!-- Updated filters section with responsive design -->
@@ -122,14 +125,16 @@
                             <!-- Felhasználók szerinti csoportosítás -->
                             <template v-for="(bugs, user) in assignedTasks">
                                 <!-- Felhasználó neve megjelenítése -->
-                                <tr class="user-row" >
-                                    <td colspan="8" class="usernameDisplay text-center" >
-                                        {{ user }} <span class="errorNumberDisplayforUser">({{ assignedTasks[user].length }} db)</span>
-                                        <i
-                                            :class="['ms-2', isCollapsed(user) ? 'bi bi-caret-down-fill collapsed' : 'bi bi-caret-down-fill expanded']" class="float-end arrow" @click="toggleUser(user)" style="cursor: pointer;"></i>
+                                <tr class="user-row">
+                                    <td colspan="8" class="usernameDisplay text-center">
+                                        {{ user }} <span class="errorNumberDisplayforUser">({{
+                                            assignedTasks[user].length }} db)</span>
+                                        <i :class="['ms-2', isCollapsed(user) ? 'bi bi-caret-down-fill collapsed' : 'bi bi-caret-down-fill expanded']"
+                                            class="float-end arrow" @click="toggleUser(user)"
+                                            style="cursor: pointer;"></i>
                                     </td>
                                 </tr>
-                                
+
                                 <!-- Felhasználóhoz rendelt feladatok megjelenítése -->
                                 <tr v-for="(bug, index) in bugs" :key="index" v-show="!isCollapsed(user)"
                                     @click="openModal(bug)" style="cursor: pointer">
@@ -162,299 +167,294 @@
         </div>
 
 
-            <!-- Modal -->
-            <div v-if="showModal" class="modal-overlay" @click="closeModal">
-                <div class="bg" @click.stop>
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title">{{ selectedBug.name }}</h3>
-                            <button v-if="!isEditing" type="button" class="btn btn-outline-secondary mb-3"
-                                @click="toggleEditMode">
-                                <i :class="['bi', 'bi-pencil', { 'text-white': isDarkMode }]"></i>
-                            </button>
-                            <div v-else>
-                                <button type="button" class="btn btn-success me-2" @click="saveEdit">Megerősít</button>
-                                <button type="button" class="btn btn-secondary" @click="toggleEditMode">Mégse</button>
-                            </div>
+        <!-- Modal -->
+        <div v-if="showModal" class="modal-overlay" @click="closeModal">
+            <div class="bg" @click.stop>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">{{ selectedBug.name }}</h3>
+                        <button v-if="!isEditing" type="button" class="btn btn-outline-secondary mb-3"
+                            @click="toggleEditMode">
+                            <i :class="['bi', 'bi-pencil', { 'text-white': isDarkMode }]"></i>
+                        </button>
+                        <div v-else>
+                            <button type="button" class="btn btn-success me-2" @click="saveEdit">Megerősít</button>
+                            <button type="button" class="btn btn-secondary" @click="toggleEditMode">Mégse</button>
                         </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div
-                                    :class="{ 'col-md-6': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0 }">
-                                    <div class="info-row">
-                                        <strong>Prioritás: </strong>
-                                        <div v-if="!isEditing">
-                                            <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
-                                            <div v-else class="priority-container my-1">
-                                                <span :class="['priority-bar', selectedBug.priorityColor]"></span>
-                                                <span>{{ selectedBug.priority }}</span>
-                                            </div>
-                                        </div>
-                                        <div v-if="isEditing">
-                                            <select v-model="selectedBug.priority" class="form-select  my-1">
-                                                <option v-for="n in 6" :key="n - 1" :value="n - 1">{{ n - 1 }}</option>
-                                            </select>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div
+                                :class="{ 'col-md-6': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0 }">
+                                <div class="info-row">
+                                    <strong>Prioritás: </strong>
+                                    <div v-if="!isEditing">
+                                        <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
+                                        <div v-else class="priority-container my-1">
+                                            <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+                                            <span>{{ selectedBug.priority }}</span>
                                         </div>
                                     </div>
-                                    <div class="info-row"><strong>Címke:</strong> {{ selectedBug.label }}</div>
-                                    <div class="info-row">
-                                        <strong>Státusz: </strong>
-                                        <span :class="['badge', selectedBug.badgeClass, { 'dark-mode': isDarkMode }]">{{
-                                            selectedBug.status }}</span>
-                                    </div>
-                                    <p class="info-row"><strong>Terem:</strong> {{ selectedBug.room }}</p>
-                                    <p class="info-row"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
-                                    <p class="info-row"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}
-                                    </p>
-                                    <div class="info-row" v-if="selectedBug.assignedTo">
-                                        <strong>Feladatot elvállalta:</strong>
-                                        <p v-if="!isEditing && selectedBug.assignedTo" class="my-1">{{
-                                            selectedBug.assignedTo }}</p>
-                                        <div v-if="isEditing && selectedBug.assignedTo != null">
-                                            <select v-model="selectedBug.assignedTo" class="form-select my-1">
-                                                <option v-for="user in usersWithRoles" :key="user" :value="user">{{ user
-                                                    }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <p v-if="selectedBug.deadline != null && !isEditing" class="info-row">
-                                        <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString([],
-                                            {
-                                                year:
-                                                    'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
-                                            })
-                                        }}
-                                    </p>
-                                    <div v-if="isEditing" class="info-row">
-                                        <label><strong>Határidő:</strong></label>
-                                        <input type="datetime-local" v-model="selectedBug.deadline"
-                                            class="form-control" />
+                                    <div v-if="isEditing">
+                                        <select v-model="selectedBug.priority" class="form-select  my-1">
+                                            <option v-for="n in 6" :key="n - 1" :value="n - 1">{{ n - 1 }}</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div
-                                    :class="{ 'description': true, 'ml-2': true, 'col-md-4': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0, }">
-                                    <p><strong>Hiba leírása:</strong></p>
-                                    <div class="description-content">{{ selectedBug.description }}</div>
+                                <div class="info-row"><strong>Címke:</strong> {{ selectedBug.label }}</div>
+                                <div class="info-row">
+                                    <strong>Státusz: </strong>
+                                    <span :class="['badge', selectedBug.badgeClass, { 'dark-mode': isDarkMode }]">{{
+                                        selectedBug.status }}</span>
                                 </div>
-                                <div class="col-md-4 photo_box">
-                                    <div class="photo-grid">
-                                        <div v-for="(photo, index) in selectedBug.photos" :key="index"
-                                            class="photo-item">
-                                            <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index"
-                                                @click="openPhoto(photo)" />
-                                        </div>
+                                <p class="info-row"><strong>Terem:</strong> {{ selectedBug.room }}</p>
+                                <p class="info-row"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+                                <p class="info-row"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}
+                                </p>
+                                <div class="info-row" v-if="selectedBug.assignedTo">
+                                    <strong>Feladatot elvállalta:</strong>
+                                    <p v-if="!isEditing && selectedBug.assignedTo" class="my-1">{{
+                                        selectedBug.assignedTo }}</p>
+                                    <div v-if="isEditing && selectedBug.assignedTo != null">
+                                        <select v-model="selectedBug.assignedTo" class="form-select my-1">
+                                            <option v-for="user in usersWithRoles" :key="user" :value="user">{{ user
+                                                }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <p v-if="selectedBug.deadline != null && !isEditing" class="info-row">
+                                    <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString([],
+                                        {
+                                            year:
+                                                'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+                                        })
+                                    }}
+                                </p>
+                                <div v-if="isEditing" class="info-row">
+                                    <label><strong>Határidő:</strong></label>
+                                    <input type="datetime-local" v-model="selectedBug.deadline" class="form-control" />
+                                </div>
+                            </div>
+                            <div
+                                :class="{ 'description': true, 'ml-2': true, 'col-md-4': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0, }">
+                                <p><strong>Hiba leírása:</strong></p>
+                                <div class="description-content">{{ selectedBug.description }}</div>
+                            </div>
+                            <div class="col-md-4 photo_box">
+                                <div class="photo-grid">
+                                    <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
+                                        <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index"
+                                            @click="openPhoto(photo)" />
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div v-if="showPhotoModal" class="carousel-modal-overlay" @click="closePhotoModal">
-                            <div class="carousel-modal-content" @click.stop>
-                                <span class=" btn btn-dark carousel-close" @click="closePhotoModal">&times;</span>
-                                <button type="button" class="btn btn-dark carousel-prev py-4"
-                                    @click="prevPhoto">&lt;</button>
-                                <img :src="selectedPhoto" alt="Selected Bug Photo" class="carousel-photo" />
-                                <button type="button" class="btn btn-dark carousel-next py-4"
-                                    @click="nextPhoto">&gt;</button>
-                            </div>
+                    </div>
+                    <div v-if="showPhotoModal" class="carousel-modal-overlay" @click="closePhotoModal">
+                        <div class="carousel-modal-content" @click.stop>
+                            <span class=" btn btn-dark carousel-close" @click="closePhotoModal">&times;</span>
+                            <button type="button" class="btn btn-dark carousel-prev py-4"
+                                @click="prevPhoto">&lt;</button>
+                            <img :src="selectedPhoto" alt="Selected Bug Photo" class="carousel-photo" />
+                            <button type="button" class="btn btn-dark carousel-next py-4"
+                                @click="nextPhoto">&gt;</button>
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer">
+
+
+
+                        <!-- Eseménynapló megnyitása -->
+                        <button type="button" class="btn btn-secondary me-auto" @click="openLogModal(selectedBugId)">
+                            Eseménynapló
+                        </button>
+
+
+                        <!-- Komment írása -->
+                        <button type="button" class="btn btn-primary mx-1" @click="openCommentModal(Komment)">
+                            Megjegyzés
+                        </button>
+
+                        <!-- Feladat elvállalása -->
+                        <button type="button" class="btn btn-primary mx-1"
+                            v-if="role === 'rendszergazda' && !selectedBug.assignedTo"
+                            @click="openCommentModal(takeTask)">
+                            Elvállalom
+                        </button>
+
+                        <!-- Feladat kiosztása -->
+                        <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown"
+                            style="cursor: pointer;">
+
+                            <button ref="dropdownButton" class="btn btn-primary dropdown-toggle fixed-width my-2"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ selectedUser || 'Feladat kiosztása' }}
+                            </button>
+
+                            <ul class="dropdown-menu fixed-width">
+                                <li v-for="user in usersWithRoles" :key="user">
+                                    <a class="dropdown-item text-center"
+                                        @click="openCommentModal(assignTaskTo, user)">{{ user
+                                        }}</a>
+                                </li>
+                            </ul>
                         </div>
 
-
-                        <div class="modal-footer">
-
-
-
-                            <!-- Eseménynapló megnyitása -->
-                            <button type="button" class="btn btn-secondary me-auto"
-                                @click="openLogModal(selectedBugId)">
-                                Eseménynapló
-                            </button>
-
-
-                            <!-- Komment írása -->
-                            <button type="button" class="btn btn-primary mx-1" @click="openCommentModal(Komment)">
-                                Megjegyzés
-                            </button>
-
-                            <!-- Feladat elvállalása -->
-                            <button type="button" class="btn btn-primary mx-1"
-                                v-if="role === 'rendszergazda' && !selectedBug.assignedTo"
-                                @click="openCommentModal(takeTask)">
-                                Elvállalom
-                            </button>
-
-                            <!-- Feladat kiosztása -->
-                            <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo" class="dropdown"
-                                style="cursor: pointer;">
-
-                                <button ref="dropdownButton" class="btn btn-primary dropdown-toggle fixed-width my-2"
-                                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{ selectedUser || 'Feladat kiosztása' }}
+                        <!-- Dropdown Menu for Task Status Update -->
+                        <div
+                            v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+                            <div class="dropdown" style="cursor: pointer;">
+                                <button class="btn btn-primary dropdown-toggle px-4" type="button" id="statusDropdown"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Állapot frissítése
                                 </button>
+                                <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
+                                    <!-- Kész option -->
+                                    <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+                                        <a class="dropdown-item"
+                                            @click="openCommentModal(Done, { status: 'Kész' })">Kész</a>
+                                    </li>
 
-                                <ul class="dropdown-menu fixed-width">
-                                    <li v-for="user in usersWithRoles" :key="user">
-                                        <a class="dropdown-item text-center"
-                                            @click="openCommentModal(assignTaskTo, user)">{{ user
-                                            }}</a>
+                                    <!-- Meghiúsult option -->
+                                    <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
+                                        <a class="dropdown-item"
+                                            @click="openCommentModal(Failed, { status: 'Meghiúsult' })">Meghiúsult</a>
+                                    </li>
+
+                                    <!-- Beszerzés szükséges option, only when status is 'Folyamatban' -->
+                                    <li v-if="status === 'Folyamatban'">
+                                        <a class="dropdown-item"
+                                            @click="openCommentModal(Supply, { status: 'Beszerzés szükséges' })">Beszerzés
+                                            szükséges</a>
+                                    </li>
+
+                                    <!-- Folyamatban option, only when status is 'Beszerzésre vár' -->
+                                    <li v-if="status === 'Beszerzésre vár'">
+                                        <a class="dropdown-item"
+                                            @click="openCommentModal(InProgress, { status: 'Folyamatban' })">Folyamatban</a>
                                     </li>
                                 </ul>
                             </div>
-
-                            <!-- Dropdown Menu for Task Status Update -->
-                            <div
-                                v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-                                <div class="dropdown" style="cursor: pointer;">
-                                    <button class="btn btn-primary dropdown-toggle px-4" type="button"
-                                        id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Állapot frissítése
-                                    </button>
-                                    <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
-                                        <!-- Kész option -->
-                                        <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-                                            <a class="dropdown-item"
-                                                @click="openCommentModal(Done, { status: 'Kész' })">Kész</a>
-                                        </li>
-
-                                        <!-- Meghiúsult option -->
-                                        <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
-                                            <a class="dropdown-item"
-                                                @click="openCommentModal(Failed, { status: 'Meghiúsult' })">Meghiúsult</a>
-                                        </li>
-
-                                        <!-- Beszerzés szükséges option, only when status is 'Folyamatban' -->
-                                        <li v-if="status === 'Folyamatban'">
-                                            <a class="dropdown-item"
-                                                @click="openCommentModal(Supply, { status: 'Beszerzés szükséges' })">Beszerzés
-                                                szükséges</a>
-                                        </li>
-
-                                        <!-- Folyamatban option, only when status is 'Beszerzésre vár' -->
-                                        <li v-if="status === 'Beszerzésre vár'">
-                                            <a class="dropdown-item"
-                                                @click="openCommentModal(InProgress, { status: 'Folyamatban' })">Folyamatban</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-
-
-                            <button type="button" class="btn btn-secondary mx-1 my-2"
-                                @click="closeModal">Bezárás</button>
                         </div>
 
 
 
+                        <button type="button" class="btn btn-secondary mx-1 my-2" @click="closeModal">Bezárás</button>
+                    </div>
 
 
-                        <!-- Comment Modal -->
-                        <div v-if="showCommentModal" class="Commentmodal-overlay" @click="closeCommentModal">
-                            <div class="bg" @click.stop>
-                                <div class="Commentmodal-content wider-modal" :class="{ 'dark-mode': isDarkMode }">
-                                    <div class="Commentmodal-header">
-                                    </div>
-                                    <div class="Commentmodal-body">
-                                        <div class="mb-2">
-                                            <label for="komment" class="form-label">Megjegyzés</label>
-                                            <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']"
-                                                id="komment" v-model="komment" rows="6" maxlength="300">
+
+
+
+                    <!-- Comment Modal -->
+                    <div v-if="showCommentModal" class="Commentmodal-overlay" @click="closeCommentModal">
+                        <div class="bg" @click.stop>
+                            <div class="Commentmodal-content wider-modal" :class="{ 'dark-mode': isDarkMode }">
+                                <div class="Commentmodal-header">
+                                </div>
+                                <div class="Commentmodal-body">
+                                    <div class="mb-2">
+                                        <label for="komment" class="form-label">Megjegyzés</label>
+                                        <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']"
+                                            id="komment" v-model="komment" rows="6" maxlength="300">
                                 </textarea>
-                                        </div>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary mx-1"
-                                            @click="confirmAction">Küldés</button>
-                                        <button type="button" class="btn btn-secondary mx-1"
-                                            @click="closeCommentModal">Mégse</button>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary mx-1"
+                                        @click="confirmAction">Küldés</button>
+                                    <button type="button" class="btn btn-secondary mx-1"
+                                        @click="closeCommentModal">Mégse</button>
 
-                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
 
-                        <!-- Log Modal -->
-                        <div v-if="showLogModal" class="logmodal-overlay" @click="closeLogModal">
-                            <div class="bg logmodal-bg" @click.stop :class="{ 'dark-mode': isDarkMode }">
-                                <div class="logmodal-content" :class="{ 'dark-mode': isDarkMode }">
-                                    <div class="logmodal-header">
-                                        <h3 class="logmodal-title">Eseménynapló</h3>
-                                    </div>
-                                    <div class="logmodal-body">
-                                        <!-- Displaying log entries in rows without headers, sorted by updated_at -->
-                                        <div v-if="logEntries.length > 0">
-                                            <div v-for="log in sortedLogEntries" :key="log.logid"
-                                                class="logmodal-entry">
-                                                <div class="logmodal-row">
-                                                    <div v-if="log.logUpdated_at" class="logmodal-item">
-                                                        <strong>Frissítve</strong>
-                                                        <p>{{ new Date(log.logUpdated_at).toLocaleString([], {
-                                                            year:
-                                                                'numeric',
-                                                            month: '2-digit', day: '2-digit', hour: '2-digit', minute:
-                                                                '2-digit'
-                                                        })
-                                                            }}</p>
+                    <!-- Log Modal -->
+                    <div v-if="showLogModal" class="logmodal-overlay" @click="closeLogModal">
+                        <div class="bg logmodal-bg" @click.stop :class="{ 'dark-mode': isDarkMode }">
+                            <div class="logmodal-content" :class="{ 'dark-mode': isDarkMode }">
+                                <div class="logmodal-header">
+                                    <h3 class="logmodal-title">Eseménynapló</h3>
+                                </div>
+                                <div class="logmodal-body">
+                                    <!-- Displaying log entries in rows without headers, sorted by updated_at -->
+                                    <div v-if="logEntries.length > 0">
+                                        <div v-for="log in sortedLogEntries" :key="log.logid" class="logmodal-entry">
+                                            <div class="logmodal-row">
+                                                <div v-if="log.logUpdated_at" class="logmodal-item">
+                                                    <strong>Frissítve</strong>
+                                                    <p>{{ new Date(log.logUpdated_at).toLocaleString([], {
+                                                        year:
+                                                            'numeric',
+                                                        month: '2-digit', day: '2-digit', hour: '2-digit', minute:
+                                                            '2-digit'
+                                                    })
+                                                        }}</p>
 
-                                                    </div>
-                                                    <div v-if="log.logmodosito" class="logmodal-item">
-                                                        <strong>Módosító</strong>
-                                                        <p>{{ log.logmodosito }}</p>
-                                                    </div>
-                                                    <div v-if="log.logStatus" class="logmodal-item">
-                                                        <strong>Státusz</strong>
+                                                </div>
+                                                <div v-if="log.logmodosito" class="logmodal-item">
+                                                    <strong>Módosító</strong>
+                                                    <p>{{ log.logmodosito }}</p>
+                                                </div>
+                                                <div v-if="log.logStatus" class="logmodal-item">
+                                                    <strong>Státusz</strong>
+                                                    <span
+                                                        :class="['badge', getBadgeClass(log.logStatus), { 'dark-mode': isDarkMode }]">{{
+                                                            log.logStatus }}</span>
+                                                </div>
+                                                <div v-if="log.logassignedTo" class="logmodal-item">
+                                                    <strong>Feladatfelelős</strong>
+                                                    <p>{{ log.logassignedTo }}</p>
+                                                </div>
+                                                <div v-if="log.logdeadLine" class="logmodal-item">
+                                                    <strong>Határidő</strong>
+                                                    <p>{{ new Date(log.logdeadLine).toLocaleString([], {
+                                                        year:
+                                                            'numeric', month:
+                                                            '2-digit', day: '2-digit', hour: '2-digit', minute:
+                                                            '2-digit'
+                                                    })
+                                                        }}</p>
+                                                </div>
+                                                <div v-if="log.logpriority" class="logmodal-item">
+                                                    <strong>Prioritás</strong>
+                                                    <div class="priority-container">
                                                         <span
-                                                            :class="['badge', getBadgeClass(log.logStatus), { 'dark-mode': isDarkMode }]">{{
-                                                                log.logStatus }}</span>
-                                                    </div>
-                                                    <div v-if="log.logassignedTo" class="logmodal-item">
-                                                        <strong>Feladatfelelős</strong>
-                                                        <p>{{ log.logassignedTo }}</p>
-                                                    </div>
-                                                    <div v-if="log.logdeadLine" class="logmodal-item">
-                                                        <strong>Határidő</strong>
-                                                        <p>{{ new Date(log.logdeadLine).toLocaleString([], {
-                                                            year:
-                                                                'numeric', month:
-                                                                '2-digit', day: '2-digit', hour: '2-digit', minute:
-                                                                '2-digit'
-                                                            })
-                                                            }}</p>
-                                                    </div>
-                                                    <div v-if="log.logpriority" class="logmodal-item">
-                                                        <strong>Prioritás</strong>
-                                                        <div class="priority-container">
-                                                            <span
-                                                                :class="['priority-bar', getPriorityColor(log.logpriority)]"></span>
-                                                            <span class="priority-text">{{ log.logpriority }}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div v-if="log.logKomment" class="description">
-                                                        <strong>Hozzászólás</strong>
-                                                        <p class="description-content">{{ log.logKomment }}</p>
+                                                            :class="['priority-bar', getPriorityColor(log.logpriority)]"></span>
+                                                        <span class="priority-text">{{ log.logpriority }}</span>
                                                     </div>
                                                 </div>
-                                                <hr v-if="logEntries.length > 1" />
+                                                <div v-if="log.logKomment" class="description">
+                                                    <strong>Hozzászólás</strong>
+                                                    <p class="description-content">{{ log.logKomment }}</p>
+                                                </div>
                                             </div>
+                                            <hr v-if="logEntries.length > 1" />
                                         </div>
-                                        <p v-else>Nincsenek elérhető események.</p>
                                     </div>
-                                    <div class="logmodal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            @click="closeLogModal">Bezárás</button>
-                                    </div>
+                                    <p v-else>Nincsenek elérhető események.</p>
+                                </div>
+                                <div class="logmodal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        @click="closeLogModal">Bezárás</button>
                                 </div>
                             </div>
                         </div>
-
-
-
-
                     </div>
+
+
+
+
                 </div>
             </div>
         </div>
+    </div>
 </template>
 
 <script>
@@ -514,6 +514,13 @@ export default {
             return this.logEntries.sort((a, b) => {
                 return new Date(b.logUpdated_at) - new Date(a.logUpdated_at);
             });
+        }, areFiltersApplied() {
+            return (
+                this.selectedPriorities.length > 0 ||
+                this.selectedLabels.length > 0 ||
+                this.selectedStatuses.length > 0 ||
+                this.selectedRooms.length > 0
+            );
         },
 
         filteredBugs() {
@@ -692,6 +699,12 @@ export default {
 
         toggleFilterVisibility() {
             this.showFilters = !this.showFilters;
+        },
+        resetFilters() {
+            this.selectedPriorities = [];
+            this.selectedLabels = [];
+            this.selectedStatuses = [];
+            this.selectedRooms = [];
         },
         toggleUser(user) {
             if (this.collapsedUsers.includes(user)) {
@@ -1809,13 +1822,14 @@ export default {
     background-color: rgb(19, 19, 19) !important;
 }
 
-.dark-mode .errorNumberDisplayforUser{
+.dark-mode .errorNumberDisplayforUser {
     font-weight: normal !important;
     font-size: medium;
     vertical-align: auto;
     color: rgb(116, 116, 116);
 }
-.errorNumberDisplayforUser{
+
+.errorNumberDisplayforUser {
     font-weight: normal !important;
     font-size: medium;
     vertical-align: auto;
@@ -1825,18 +1839,20 @@ export default {
 .arrow:hover {
     color: white;
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-    transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;;
+    transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+    ;
 }
 
 
 .arrow.collapsed {
-    transform: rotate(0deg); /* Default state */
+    transform: rotate(0deg);
+    /* Default state */
     transition: transform 0.3s ease;
 }
 
 .arrow.expanded {
-    transform: rotate(180deg); /* Rotated state for expanded */
+    transform: rotate(180deg);
+    /* Rotated state for expanded */
     transition: transform 0.3s ease;
 }
-
 </style>

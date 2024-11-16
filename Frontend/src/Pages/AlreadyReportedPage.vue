@@ -9,6 +9,9 @@
           <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
             <i class="bi bi-funnel-fill"></i>
           </button>
+          <button v-if="areFiltersApplied" class="btn btn-danger ms-3" @click="resetFilters">
+            <i class="bi bi-trash-fill"></i>
+          </button>
         </div>
       </div>
       <!-- Updated filters section with responsive design -->
@@ -148,57 +151,60 @@
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
             <button v-if="!isEditing" type="button" class="btn btn-outline-secondary mb-3" @click="toggleEditMode">
               <i :class="['bi', 'bi-pencil', { 'text-white': isDarkMode }]"></i>
-      </button>
-      <div v-else class="edit-width d-flex justify-content-end align-items-center gap-2 mb-3">
-    <button type="button" class="btn btn-success edit equal-width" @click="saveEdit">Megerősít</button>
-    <button type="button" class="btn btn-secondary edit equal-width" @click="toggleEditMode">Mégse</button>
-  </div>
+            </button>
+            <div v-else class="edit-width d-flex justify-content-end align-items-center gap-2 mb-3">
+              <button type="button" class="btn btn-success edit equal-width" @click="saveEdit">Megerősít</button>
+              <button type="button" class="btn btn-secondary edit equal-width" @click="toggleEditMode">Mégse</button>
+            </div>
           </div>
           <div class="modal-body">
-    <div class="row">
-      <div :class="{'col-md-6': selectedBug.photos.length === 0, 'col-md-4 ': selectedBug.photos.length > 0}">
-      <div class="info-row">
-        <strong>Prioritás: </strong>
-        <div v-if="!isEditing">
-          <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
-          <div v-else class="priority-container my-1">
-            <span :class="['priority-bar', selectedBug.priorityColor]"></span>
-            <span>{{ selectedBug.priority }}</span>
-          </div>
-        </div>
-        <div v-if="isEditing">
-          <select v-model="selectedBug.priority" class="form-select  my-1">
-            <option v-for="n in 6" :key="n - 1" :value="n - 1">{{ n - 1 }}</option>
-          </select>
-        </div>
-      </div>
+            <div class="row">
+              <div :class="{ 'col-md-6': selectedBug.photos.length === 0, 'col-md-4 ': selectedBug.photos.length > 0 }">
+                <div class="info-row">
+                  <strong>Prioritás: </strong>
+                  <div v-if="!isEditing">
+                    <div v-if="selectedBug.priority === 0" class="ms-2">Nincs prioritás</div>
+                    <div v-else class="priority-container my-1">
+                      <span :class="['priority-bar', selectedBug.priorityColor]"></span>
+                      <span>{{ selectedBug.priority }}</span>
+                    </div>
+                  </div>
+                  <div v-if="isEditing">
+                    <select v-model="selectedBug.priority" class="form-select  my-1">
+                      <option v-for="n in 6" :key="n - 1" :value="n - 1">{{ n - 1 }}</option>
+                    </select>
+                  </div>
+                </div>
                 <div class="info-row"><strong>Címke:</strong> {{ selectedBug.label }}</div>
                 <div class="info-row">
                   <strong>Státusz: </strong>
-                  <span :class="['badge', selectedBug.badgeClass,{ 'dark-mode': isDarkMode }]">{{
+                  <span :class="['badge', selectedBug.badgeClass, { 'dark-mode': isDarkMode }]">{{
                     selectedBug.status }}</span>
                 </div>
                 <p class="info-row"><strong>Terem:</strong> {{ selectedBug.room }}</p>
                 <p class="info-row"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
                 <p class="info-row"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
                 <div class="info-row" v-if="selectedBug.assignedTo">
-      <strong>Feladatot elvállalta:</strong>
-      <p v-if="!isEditing && selectedBug.assignedTo" class= "my-1">{{ selectedBug.assignedTo }}</p>
-      <div v-if="isEditing && selectedBug.assignedTo != null">
-        <select v-model="selectedBug.assignedTo" class="form-select my-1">
-          <option v-for="user in usersWithRoles" :key="user" :value="user">{{ user }}</option>
-        </select>
-      </div>
-    </div>
-      <p v-if="selectedBug.deadline != null && !isEditing" class="info-row">
-    <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) }}
-  </p>
-    <div v-if="isEditing" class="info-row">
-      <label><strong>Határidő:</strong></label>
-      <input type="datetime-local" v-model="selectedBug.deadline" class="form-control" />
-    </div>
-  </div>
-              <div :class="{'description': true,'ml-2':true,'col-md-5': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0, }">
+                  <strong>Feladatot elvállalta:</strong>
+                  <p v-if="!isEditing && selectedBug.assignedTo" class="my-1">{{ selectedBug.assignedTo }}</p>
+                  <div v-if="isEditing && selectedBug.assignedTo != null">
+                    <select v-model="selectedBug.assignedTo" class="form-select my-1">
+                      <option v-for="user in usersWithRoles" :key="user" :value="user">{{ user }}</option>
+                    </select>
+                  </div>
+                </div>
+                <p v-if="selectedBug.deadline != null && !isEditing" class="info-row">
+                  <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString([], {
+                    year: 'numeric',
+                    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) }}
+                </p>
+                <div v-if="isEditing" class="info-row">
+                  <label><strong>Határidő:</strong></label>
+                  <input type="datetime-local" v-model="selectedBug.deadline" class="form-control" />
+                </div>
+              </div>
+              <div
+                :class="{ 'description': true, 'ml-2': true, 'col-md-5': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0, }">
                 <p><strong>Hiba leírása:</strong></p>
                 <div class="description-content">{{ selectedBug.description }}</div>
               </div>
@@ -301,96 +307,102 @@
 
 
           <!-- Comment Modal -->
-<div v-if="showCommentModal" class="Commentmodal-overlay" >
-  <div class="bg" @click.stop>
-    <div class="Commentmodal-content wider-modal" :class="{ 'dark-mode': isDarkMode }">
-      <div class="Commentmodal-header">
-      </div>
-      <div class="Commentmodal-body">
-        <div class="mb-2">
-          <label v-if="iscommmentonly === true" for="komment" class="form-label d-flex justify-content-between align-items-center">
-            Megjegyzés
-            <span class="small ms-4" :style="{ color: isDarkMode ? '#D3D3D3' : '#6c757d' }">
-              {{ komment.length }}/300
-            </span>
-          </label>
-          <label v-if="iscommmentonly === false" for="komment" class="form-label d-flex justify-content-between align-items-center">
-            Megjegyzés (opcionális)
-            <span class="small ms-4" :style="{ color: isDarkMode ? '#D3D3D3' : '#6c757d' }">
-              {{ komment.length }}/300
-            </span>
-          </label>
-          <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="komment" v-model="komment"
-            rows="6" maxlength="300" @input="updateCharacterCount">
+          <div v-if="showCommentModal" class="Commentmodal-overlay">
+            <div class="bg" @click.stop>
+              <div class="Commentmodal-content wider-modal" :class="{ 'dark-mode': isDarkMode }">
+                <div class="Commentmodal-header">
+                </div>
+                <div class="Commentmodal-body">
+                  <div class="mb-2">
+                    <label v-if="iscommmentonly === true" for="komment"
+                      class="form-label d-flex justify-content-between align-items-center">
+                      Megjegyzés
+                      <span class="small ms-4" :style="{ color: isDarkMode ? '#D3D3D3' : '#6c757d' }">
+                        {{ komment.length }}/300
+                      </span>
+                    </label>
+                    <label v-if="iscommmentonly === false" for="komment"
+                      class="form-label d-flex justify-content-between align-items-center">
+                      Megjegyzés (opcionális)
+                      <span class="small ms-4" :style="{ color: isDarkMode ? '#D3D3D3' : '#6c757d' }">
+                        {{ komment.length }}/300
+                      </span>
+                    </label>
+                    <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="komment" v-model="komment"
+                      rows="6" maxlength="300" @input="updateCharacterCount">
           </textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
-        <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- Log Modal -->
-<div v-if="showLogModal" class="logmodal-overlay" @click="closeLogModal">
-  <div class="bg logmodal-bg" @click.stop :class="{ 'dark-mode': isDarkMode }">
-    <div class="logmodal-content" :class="{ 'dark-mode': isDarkMode }">
-      <div class="logmodal-header">
-        <h3 class="logmodal-title">Eseménynapló</h3>
-      </div>
-      <div class="logmodal-body">
-        <!-- Displaying log entries in rows without headers, sorted by updated_at -->
-        <div v-if="logEntries.length > 0">
-          <div v-for="log in sortedLogEntries" :key="log.logid" class="logmodal-entry">
-            <div class="logmodal-row">
-              <div v-if="log.logUpdated_at" class="logmodal-item">
-                <strong>Frissítve</strong>
-                <p>{{ new Date(log.logUpdated_at).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) }}</p>
-
-              </div>
-              <div v-if="log.logmodosito" class="logmodal-item">
-                <strong>Módosító</strong>
-                <p>{{ log.logmodosito }}</p>
-              </div>
-              <div v-if="log.logStatus" class="logmodal-item">
-                <strong>Státusz</strong>
-                <span :class="['badge', getBadgeClass(log.logStatus),{ 'dark-mode': isDarkMode }]">{{
-                    log.logStatus }}</span>
-              </div>
-              <div v-if="log.logassignedTo" class="logmodal-item">
-                <strong>Feladatfelelős</strong>
-                <p>{{ log.logassignedTo }}</p>
-              </div>
-              <div v-if="log.logdeadLine" class="logmodal-item">
-                <strong>Határidő</strong>
-                <p>{{ new Date(log.logdeadLine).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) }}</p>
-              </div>
-              <div v-if="log.logpriority" class="logmodal-item">
-                <strong>Prioritás</strong>
-                <div class="priority-container">
-                 <span :class="['priority-bar', getPriorityColor(log.logpriority)]"></span>
-                 <span class="priority-text">{{ log.logpriority }}</span>
-             </div>
-              </div>
-              <div v-if="log.logKomment" class="description">
-                <strong>Hozzászólás</strong>
-                <p class="description-content">{{ log.logKomment }}</p>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
+                  <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
+                </div>
               </div>
             </div>
-            <hr v-if="logEntries.length > 1" />
           </div>
-        </div>
-        <p v-else>Nincsenek elérhető események.</p>
-      </div>
-      <div class="logmodal-footer">
-        <button type="button" class="btn btn-secondary" @click="closeLogModal">Bezárás</button>
-      </div>
-    </div>
-  </div>
-</div>
+
+
+          <!-- Log Modal -->
+          <div v-if="showLogModal" class="logmodal-overlay" @click="closeLogModal">
+            <div class="bg logmodal-bg" @click.stop :class="{ 'dark-mode': isDarkMode }">
+              <div class="logmodal-content" :class="{ 'dark-mode': isDarkMode }">
+                <div class="logmodal-header">
+                  <h3 class="logmodal-title">Eseménynapló</h3>
+                </div>
+                <div class="logmodal-body">
+                  <!-- Displaying log entries in rows without headers, sorted by updated_at -->
+                  <div v-if="logEntries.length > 0">
+                    <div v-for="log in sortedLogEntries" :key="log.logid" class="logmodal-entry">
+                      <div class="logmodal-row">
+                        <div v-if="log.logUpdated_at" class="logmodal-item">
+                          <strong>Frissítve</strong>
+                          <p>{{ new Date(log.logUpdated_at).toLocaleString([], {
+                            year: 'numeric', month: '2-digit', day:
+                              '2-digit', hour: '2-digit', minute: '2-digit' }) }}</p>
+
+                        </div>
+                        <div v-if="log.logmodosito" class="logmodal-item">
+                          <strong>Módosító</strong>
+                          <p>{{ log.logmodosito }}</p>
+                        </div>
+                        <div v-if="log.logStatus" class="logmodal-item">
+                          <strong>Státusz</strong>
+                          <span :class="['badge', getBadgeClass(log.logStatus), { 'dark-mode': isDarkMode }]">{{
+                            log.logStatus }}</span>
+                        </div>
+                        <div v-if="log.logassignedTo" class="logmodal-item">
+                          <strong>Feladatfelelős</strong>
+                          <p>{{ log.logassignedTo }}</p>
+                        </div>
+                        <div v-if="log.logdeadLine" class="logmodal-item">
+                          <strong>Határidő</strong>
+                          <p>{{ new Date(log.logdeadLine).toLocaleString([], {
+                            year: 'numeric', month: '2-digit', day:
+                              '2-digit', hour: '2-digit', minute: '2-digit' }) }}</p>
+                        </div>
+                        <div v-if="log.logpriority" class="logmodal-item">
+                          <strong>Prioritás</strong>
+                          <div class="priority-container">
+                            <span :class="['priority-bar', getPriorityColor(log.logpriority)]"></span>
+                            <span class="priority-text">{{ log.logpriority }}</span>
+                          </div>
+                        </div>
+                        <div v-if="log.logKomment" class="description">
+                          <strong>Hozzászólás</strong>
+                          <p class="description-content">{{ log.logKomment }}</p>
+                        </div>
+                      </div>
+                      <hr v-if="logEntries.length > 1" />
+                    </div>
+                  </div>
+                  <p v-else>Nincsenek elérhető események.</p>
+                </div>
+                <div class="logmodal-footer">
+                  <button type="button" class="btn btn-secondary" @click="closeLogModal">Bezárás</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
 
 
@@ -453,6 +465,14 @@ export default {
     uniqueRooms() {
       return [...new Set(this.bugs.map(bug => bug.room).sort())];
     },
+    areFiltersApplied() {
+      return (
+        this.selectedPriorities.length > 0 ||
+        this.selectedLabels.length > 0 ||
+        this.selectedStatuses.length > 0 ||
+        this.selectedRooms.length > 0
+      );
+    },
     photoCount() {
       return this.selectedBug.photos ? this.selectedBug.photos.length : 0;
     },
@@ -461,7 +481,7 @@ export default {
         return new Date(b.logUpdated_at) - new Date(a.logUpdated_at);
       });
     },
-    
+
     filteredBugs() {
 
 
@@ -548,7 +568,7 @@ export default {
         if (!response.ok) throw new Error('Network response was not ok');
 
         const data = await response.json();
-        
+
 
         this.bugs = data.map(bug => ({
           id: bug.ID,
@@ -561,8 +581,8 @@ export default {
             bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
               bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' :
                 bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' :
-                bug['Státusz'] === 'Kész' ? 'badge-done' :
-                      bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' : '',
+                  bug['Státusz'] === 'Kész' ? 'badge-done' :
+                    bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' : '',
 
           room: bug['Terem'],
           reportedBy: bug['Bejelentette'],
@@ -577,6 +597,12 @@ export default {
         console.error('Error fetching bug data:', error);
       }
 
+    },
+    resetFilters() {
+      this.selectedPriorities = [];
+      this.selectedLabels = [];
+      this.selectedStatuses = [];
+      this.selectedRooms = [];
     },
 
     // Method to open photo modal and set selected photo
@@ -652,21 +678,21 @@ export default {
       }
     },
     getBadgeClass(status) {
-    switch (status) {
-      case 'Bejelentve':
-        return 'badge-reported';  // You can customize the class to suit your needs
-      case 'Folyamatban':
-        return 'badge-progress';
-      case 'Beszerzésre vár':
-        return 'badge-supply';
+      switch (status) {
+        case 'Bejelentve':
+          return 'badge-reported';  // You can customize the class to suit your needs
+        case 'Folyamatban':
+          return 'badge-progress';
+        case 'Beszerzésre vár':
+          return 'badge-supply';
         case 'Újból kiosztva':
           return 'badge-resent';
-          case 'Kész':
-            return 'badge-done';
-            case 'Meghiúsult':
-              return 'badge-failed' // Default class for undefined status
-    }
-  },
+        case 'Kész':
+          return 'badge-done';
+        case 'Meghiúsult':
+          return 'badge-failed' // Default class for undefined status
+      }
+    },
     updateTheme() {
       this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
     },
@@ -693,6 +719,12 @@ export default {
       this.komment = ''; // Clear any previous comment
     },
 
+    openCommentModal(action, data) {
+      this.showCommentModal = true; // Show the Comment modal
+      this.actionToConfirm = action; // Store the action to confirm
+      this.actionData = data; // Store any additional data needed for the action
+
+    },
     closeCommentModal() {
       this.showCommentModal = false; // Close the Comment modal
       this.actionData = null; // Clear the action data
@@ -775,7 +807,7 @@ export default {
 
         this.selectedBug.status = status;
         //alert(`Status successfully updated to "${status}".`);
-      this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
+        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
 
         this.fetchBugs();
       } catch (error) {
@@ -806,7 +838,7 @@ export default {
         this.selectedBug.assignedTo = username;
         //alert('Task successfully assigned to you.');
         this.komment = '';
-       this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
+        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
         this.closeModal();
         this.openModal(this.selectedBug);
@@ -840,26 +872,26 @@ export default {
       }
     },
     async fetchLogEntries() {
-  try {
-    const response = await fetch(`http://localhost:4500/api/logs/${this.selectedBug.id}`);
-    if (!response.ok) throw new Error('Failed to fetch log entries');
+      try {
+        const response = await fetch(`http://localhost:4500/api/logs/${this.selectedBug.id}`);
+        if (!response.ok) throw new Error('Failed to fetch log entries');
 
-    const logData = await response.json();
-    this.logEntries = logData.map(log => ({
-      logid: log.ID,
-      logStatus: log.Status,
-      logKomment: log.Komment,
-      logUpdated_at: log.Updated_at,
-      logmodosito: log.modosito,
-      logassignedTo: log.assignedTo,
-      logdeadLine: log.deadLine,
-      logpriority: log.priority
-    }));
+        const logData = await response.json();
+        this.logEntries = logData.map(log => ({
+          logid: log.ID,
+          logStatus: log.Status,
+          logKomment: log.Komment,
+          logUpdated_at: log.Updated_at,
+          logmodosito: log.modosito,
+          logassignedTo: log.assignedTo,
+          logdeadLine: log.deadLine,
+          logpriority: log.priority
+        }));
 
-  } catch (error) {
-    console.error('Error fetching log entries:', error);
-  }
-},
+      } catch (error) {
+        console.error('Error fetching log entries:', error);
+      }
+    },
 
 
     toggleEditMode() {
@@ -875,20 +907,20 @@ export default {
     modosito: this.loggedInUser // Always send the modifying user
   };
 
-  // Remove any fields that are null to avoid sending unnecessary data
-  Object.keys(updatedData).forEach(key => {
-    if (updatedData[key] === null) delete updatedData[key];
-  });
+      // Remove any fields that are null to avoid sending unnecessary data
+      Object.keys(updatedData).forEach(key => {
+        if (updatedData[key] === null) delete updatedData[key];
+      });
 
-  try {
-    // Send the PUT request to the backend
-    const response = await fetch(`http://localhost:4500/api/editBug/${this.selectedBug.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedData),
-    });
+      try {
+        // Send the PUT request to the backend
+        const response = await fetch(`http://localhost:4500/api/editBug/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedData),
+        });
 
     this.isEditing = !this.isEditing;
     this.fetchBugs(); // Refresh the list to reflect the updated bug
@@ -896,14 +928,14 @@ export default {
     this.openModal(this.selectedBug);
     this.selectedBug.priorityColor = this.getPriorityColor(this.selectedBug.priority);
 
-  } catch (error) {
-    console.error('Error updating bug:', error);
-  }
-},
-handleButtonClick() {
-    this.iscommmentonly = true;  // Change the state
-    this.openCommentModal(this.Komment);  // Open the modal
-  },
+      } catch (error) {
+        console.error('Error updating bug:', error);
+      }
+    },
+    handleButtonClick() {
+      this.iscommmentonly = true;  // Change the state
+      this.openCommentModal(this.Komment);  // Open the modal
+    },
 
   },
 
@@ -1005,6 +1037,7 @@ handleButtonClick() {
   background-color: rgb(157, 0, 255);
   color: #ffffff;
 }
+
 .badge-failed {
   background-color: red;
   color: #ffffff;
@@ -1072,7 +1105,8 @@ handleButtonClick() {
   max-height: 70vh; /* Set a max-height for a taller modal */
   min-height: 10vh !important; /* Ensure a taller minimum height */
   width: 100%;
-  overflow-y: auto; /* Add scrolling if content overflows */
+  overflow-y: auto;
+  /* Add scrolling if content overflows */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1143,11 +1177,11 @@ handleButtonClick() {
   /* Break long words if necessary */
   flex: 1;
   grid-column: span 2;
-  
+
 }
 
 .description-content {
-  
+
   /* Add some padding for aesthetics */
   white-space: normal;
   /* Allow text to wrap onto new lines */
@@ -1251,9 +1285,11 @@ handleButtonClick() {
 
 .info-row {
   display: grid;
-  grid-template-columns: 160px 1fr; /* Adjust column width as needed */
+  grid-template-columns: 160px 1fr;
+  /* Adjust column width as needed */
   align-items: center;
-  margin-bottom: 1rem; /* Adds space between rows */
+  margin-bottom: 1rem;
+  /* Adds space between rows */
   min-width: 23rem;
   max-width: 25rem !important;
   margin-right: 30rem !important;
@@ -1412,7 +1448,7 @@ handleButtonClick() {
   /* Make placeholder text white as well */
 }
 
-.dark-mode .badge-done{
+.dark-mode .badge-done {
   background-color: #35b821;
   border: none;
 }
@@ -1598,13 +1634,17 @@ handleButtonClick() {
   background: white !important;
   padding: 2rem;
   border-radius: 2vh !important;
-  width: 100%; /* Ensures the modal takes up full width available */
-  max-width: 80vw; /* Set max width for modal */
-  min-width: 50vw; /* Set min width for modal */
+  width: 100%;
+  /* Ensures the modal takes up full width available */
+  max-width: 80vw;
+  /* Set max width for modal */
+  min-width: 50vw;
+  /* Set min width for modal */
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  max-height: 60vh; /* Ensure the modal height is limited, to avoid overflow */
+  max-height: 60vh;
+  /* Ensure the modal height is limited, to avoid overflow */
   overflow: hidden;
 }
 
@@ -1627,18 +1667,23 @@ handleButtonClick() {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: auto; /* Allow dynamic width */
-  min-width: 150px; /* Set a minimum width for consistency */
+  width: auto;
+  /* Allow dynamic width */
+  min-width: 150px;
+  /* Set a minimum width for consistency */
 }
 
 .logmodal-item strong {
-  margin-bottom: 5px; /* Space between the label and data */
+  margin-bottom: 5px;
+  /* Space between the label and data */
 }
 
 .logmodal-item p {
   margin: 0;
-  word-wrap: break-word; /* Allow long words to break and wrap properly */
-  white-space: normal; /* Ensure long lines wrap instead of overflowing */
+  word-wrap: break-word;
+  /* Allow long words to break and wrap properly */
+  white-space: normal;
+  /* Ensure long lines wrap instead of overflowing */
   max-width: 100%;
 }
 
@@ -1705,8 +1750,10 @@ handleButtonClick() {
     min-height: 90vw !important; /* Ensure the modal doesn't exceed the height */
 
   }
+
   .logmodal-row {
-    flex-direction: column; /* Stack items vertically on phone */
+    flex-direction: column;
+    /* Stack items vertically on phone */
   }
   .Commentmodal-content {
   min-width: 80vw !important; /* Ensure it stays wide */
@@ -1739,9 +1786,12 @@ handleButtonClick() {
 
 /* Style for making buttons of equal length */
 .equal-width {
-  width: 100%; /* Set the width of the button to be 100% of the available space */
-  max-width: 110px; /* Optional: Limit the max-width to avoid very large buttons */
-  text-align: center; /* Align text in the center */
+  width: 100%;
+  /* Set the width of the button to be 100% of the available space */
+  max-width: 110px;
+  /* Optional: Limit the max-width to avoid very large buttons */
+  text-align: center;
+  /* Align text in the center */
 }
 
 .edit.equal-width {
@@ -1753,8 +1803,7 @@ handleButtonClick() {
 }
 
 .edit-width {
-  width: 100%; /* Ensures the container spans the full width */
+  width: 100%;
+  /* Ensures the container spans the full width */
 }
-
-
 </style>
