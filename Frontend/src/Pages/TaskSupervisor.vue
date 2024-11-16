@@ -1220,20 +1220,6 @@ export default {
     }
 }
 
-@media (max-width: 767.98px) {
-
-    /* Adjust breakpoint as needed */
-    .wider-modal {
-        max-width: 100%;
-        /* Make it full width */
-        min-width: 100% !important;
-        width: 100%;
-        /* Ensure width is set to 100% */
-        margin: 0;
-        /* Remove margin */
-        padding: 2rem;
-    }
-}
 
 .drown-kioszt {
     min-width: 100px !important;

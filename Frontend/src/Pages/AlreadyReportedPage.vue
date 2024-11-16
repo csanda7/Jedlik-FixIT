@@ -142,7 +142,7 @@
 
     <!-- Modal -->
     <div v-if="showModal" class="modal-overlay" @click="closeModal">
-      <div class="bg" @click.stop>
+      <div class="bg" @click.stop>       
         <div class="modal-content">
           <div class="modal-header">
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
@@ -226,18 +226,18 @@
 
 
             <!-- Eseménynapló megnyitása -->
-            <button v-if="!isEditing" type="button" class="btn btn-secondary me-auto" @click="openLogModal(selectedBugId)">
+            <button v-if="!isEditing" type="button" class="btn btn-secondary" v-bind:class="isMobile ? 'phoneViewButton' : 'me-auto'" @click="openLogModal(selectedBugId)">
               Eseménynapló
             </button>
 
 
             <!-- Komment írása -->
-            <button v-if="!isEditing" type="button" class="btn btn-primary mx-1 equal-width" @click="openCommentModal(Komment)">
+            <button v-if="!isEditing" type="button" class="btn btn-primary  equal-width" v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1'" @click="handleButtonClick">
               Megjegyzés
             </button>
 
             <!-- Feladat elvállalása -->
-            <button type="button" class="btn btn-primary mx-1"
+            <button type="button" class="btn btn-primary" v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1'" 
               v-if="role === 'rendszergazda' && !selectedBug.assignedTo && !isEditing" @click="openCommentModal(takeTask)">
               Elvállalom
             </button>
@@ -246,7 +246,7 @@
             <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo && !isEditing" class="dropdown"
               style="cursor: pointer;">
 
-              <button ref="dropdownButton" class="btn btn-primary dropdown-toggle fixed-width my-2" type="button"
+              <button ref="dropdownButton" class="btn btn-primary dropdown-toggle fixed-width" v-bind:class="isMobile ? 'phoneViewButton' : 'my-2'" type="button"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 {{ selectedUser || 'Feladat kiosztása' }}
               </button>
@@ -260,8 +260,8 @@
 
             <!-- Dropdown Menu for Task Status Update -->
             <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) && !isEditing">
-              <div class="dropdown" style="cursor: pointer;">
-                <button class="btn btn-primary dropdown-toggle px-4" type="button" id="statusDropdown"
+              <div class="dropdown phoneViewButton" style="cursor: pointer;">
+                <button class="btn btn-primary dropdown-toggle " v-bind:class="isMobile ? 'phoneViewButton' : 'px-4'" type="button" id="statusDropdown"
                   data-bs-toggle="dropdown" aria-expanded="false">
                   Állapot frissítése
                 </button>
@@ -293,9 +293,9 @@
 
 
 
-            <button v-if="!isEditing" type="button" class="btn btn-secondary mx-1 my-2 equal-width" @click="closeModal">Bezárás</button>
+            <button v-if="!isEditing" type="button" class="btn btn-secondary equal-width phoneViewButton" v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 my-2'" @click="closeModal">Bezárás</button>
           </div>
-
+        
 
 
 
@@ -436,6 +436,7 @@ export default {
       logEntries: [], // Property to hold log entries
       isEditing: false,
       iscommmentonly: false,
+      isMobile: false,
     };
   },
   computed: {
@@ -517,18 +518,7 @@ export default {
       });
     }
   },
-  watch: {
-  'selectedBug.priority': function(newPriority) {
-    this.$nextTick(() => {
-      this.selectedBug.priorityColor = this.getPriorityColor(newPriority);
-    });
-  },
-  'selectedBug.status': function(newStatus) {
-    this.$nextTick(() => {
-      this.selectedBug.badgeClass = this.getBadgeClass(newStatus);
-    });
-  },
-},
+ 
 
   mounted() {
     this.fetchBugs();
@@ -538,8 +528,19 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('theme-changed', this.updateTheme);
+
   },
+
+
   methods: {
+    checkMobileView() {
+      // Change breakpoint as necessary (e.g., 768px for tablets)
+      if (window.innerWidth <= 768) {
+        this.isMobile = true;
+      } else {  
+        this.isMobile = false;
+      } 
+    },
     async fetchBugs() {
       console.log(this.userRole)
       try {
@@ -630,11 +631,6 @@ export default {
       this.showFilters = !this.showFilters;
     },
 
-    // openPhoto(photo) {
-    //   // Logic to open a larger view of the image
-    //   const imgWindow = window.open(photo, '_blank');
-    //   imgWindow.focus(); // Focus on the new window
-    // },
     sortBy(key) {
       if (this.sortKey === key) {
         // If the same column is clicked, toggle the sort order
@@ -680,6 +676,8 @@ export default {
       this.assignedTo = this.selectedBug.assignedTo
       this.status = this.selectedBug.status
       document.body.style.overflow = 'hidden'
+      this.checkMobileView();
+      console.log(this.isMobile)
 
     },
     closeModal() {
@@ -692,14 +690,9 @@ export default {
       this.showCommentModal = true; // Show the Comment modal
       this.actionToConfirm = action; // Store the action to confirm
       this.actionData = data; // Store any additional data needed for the action
+      this.komment = ''; // Clear any previous comment
     },
 
-     openCommentModal(action, data) {
-    this.showCommentModal = true; // Show the Comment modal
-    this.actionToConfirm = action; // Store the action to confirm
-    this.actionData = data; // Store any additional data needed for the action
-  
-  },
     closeCommentModal() {
       this.showCommentModal = false; // Close the Comment modal
       this.actionData = null; // Clear the action data
@@ -723,6 +716,8 @@ export default {
         }
       }
       this.closeCommentModal();
+      this.closeModal();
+      this.openModal(this.selectedBug);
     },
     async Komment() {
       // Check if the komment textbox is empty
@@ -813,6 +808,8 @@ export default {
         this.komment = '';
        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
+        this.closeModal();
+        this.openModal(this.selectedBug);
       } catch (error) {
         console.error('Error assigning task:', error);
         alert('Failed to assign the task.');
@@ -834,6 +831,8 @@ export default {
         //alert(`Task assigned to ${user}`);
         this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
+        this.closeModal();
+        this.openModal(this.selectedBug);
 
       } catch (error) {
         console.error('Error assigning task:', error);
@@ -870,7 +869,7 @@ export default {
     async saveEdit() {
   // Check if each field has changed; if not, set it to null
   const updatedData = {
-    priority: this.selectedBug.priority !== this.originalBug.priority ? this.selectedBug.priority : this.originalBug.priority,
+     priority: this.selectedBug.priority !== this.originalBug.priority ? this.selectedBug.priority : this.originalBug.priority,
   assignedTo: this.selectedBug.assignedTo !== this.originalBug.assignedTo ? this.selectedBug.assignedTo : this.originalBug.assignedTo,
   deadline: this.selectedBug.deadline !== this.originalBug.deadline ? this.selectedBug.deadline : this.originalBug.deadline,
     modosito: this.loggedInUser // Always send the modifying user
@@ -893,6 +892,8 @@ export default {
 
     this.isEditing = !this.isEditing;
     this.fetchBugs(); // Refresh the list to reflect the updated bug
+    this.closeModal();
+    this.openModal(this.selectedBug);
     this.selectedBug.priorityColor = this.getPriorityColor(this.selectedBug.priority);
 
   } catch (error) {
@@ -1069,7 +1070,7 @@ handleButtonClick() {
   max-width: 50vw; /* Increase max-width for a wider modal */
   min-width: 40vw; /* Increase min-width for consistency */
   max-height: 70vh; /* Set a max-height for a taller modal */
-  min-height: 40vh; /* Ensure a taller minimum height */
+  min-height: 10vh !important; /* Ensure a taller minimum height */
   width: 100%;
   overflow-y: auto; /* Add scrolling if content overflows */
   display: flex;
@@ -1082,8 +1083,10 @@ handleButtonClick() {
 /* Modal Body */
 .Commentmodal-body {
   flex-grow: 1;
-  margin-top: 0.5rem; /* Brings the label closer to the top */
+  margin-top: 0rem; /* Brings the label closer to the top */
   margin-bottom: 1rem;
+  max-height: 12rem;
+  
 }
 
 
@@ -1122,29 +1125,8 @@ handleButtonClick() {
   color: white;
 }
 
-@media (max-height: 400px) and (orientation: landscape) {
-  .Commentmodal-content {
-    max-width: 120vw !important; /* Set nearly full width */
-    min-width: 90vw; /* Ensure it stays wide */
-    max-height: 80vh; /* Use more of the screen height */
-    min-height: 60vh;
-  }
-}
 
-@media (max-width: 767.98px) {
 
-  /* Adjust breakpoint as needed */
-  .wider-modal {
-    max-width: 100%;
-    /* Make it full width */
-    min-width: 100% !important;
-    width: 100%;
-    /* Ensure width is set to 100% */
-    margin: 0;
-    /* Remove margin */
-    padding: 2rem;
-  }
-}
 
 .drown-kioszt {
   min-width: 100px !important;
@@ -1596,12 +1578,7 @@ handleButtonClick() {
   border-radius: 50% 50% 50% 50%;
 }
 
-@media (max-width: 768px) {
-  .carousel-photo {
-    width: 100%;
-    height: auto;
-  }
-}
+
 
 .logmodal-overlay {
   position: fixed;
@@ -1632,11 +1609,11 @@ handleButtonClick() {
 }
 
 .logmodal-body {
-  overflow-y: auto; /* Allow scrolling */
   flex-grow: 1; /* Allow it to grow */
-  max-height: 70vh; /* Set a maximum height for the body */
+  max-height: 5vh !important; /* Set a maximum height for the body */
   padding-right: 1rem;
   gap: 20px; /* Optional gap between columns */
+  
   
 }
 
@@ -1701,12 +1678,63 @@ handleButtonClick() {
 }
 
 @media (max-width: 600px) {
+  .modal-content {
+    max-width: 100vw !important; /* Set nearly full width */
+    max-height: 90vh; /* Adjust this value as needed */
+  overflow-y: auto; /* Enable scrolling if the content exceeds the max-height */
+  border-radius: 2vh;
+  }
+  .modal-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important; /* Align to the right */
+    margin-block-end: auto !important;
+  }
+  .phoneViewButton
+  {
+    margin: 1vw !important; /* Add some margin to the button */ 
+  }
+  .carousel-photo {
+    width: 100%;
+    height: auto;
+  }
   .logmodal-content {
-    max-width: 80vw !important; /* Ensure the modal doesn't exceed the width */
+    min-width : 80vw !important; /* Ensure the modal doesn't exceed the width */
+  }
+  .logmodal-body {
+    min-height: 90vw !important; /* Ensure the modal doesn't exceed the height */
+
   }
   .logmodal-row {
     flex-direction: column; /* Stack items vertically on phone */
   }
+  .Commentmodal-content {
+  min-width: 80vw !important; /* Ensure it stays wide */
+    
+  }
+
+}
+@media (max-height: 600px){
+  .modal-content {
+    max-width: 100vw !important; /* Set nearly full width */
+    max-height: 90vh; /* Adjust this value as needed */
+  overflow-y: auto; /* Enable scrolling if the content exceeds the max-height */
+  border-radius: 2vh;
+  }
+  .Commentmodal-content {
+    max-width: 200vw !important; /* Set nearly full width */
+    min-width: 70vw !important; /* Ensure it stays wide */
+    max-height: 80vh !important; /* Use more of the screen height */
+    min-height: 60vh !important;
+  }
+  .logmodal-content {
+    min-height: 40vw !important; /* Ensure the modal doesn't exceed the height */
+  }
+  .logmodal-body {
+    max-height: 90vw !important; /* Ensure the modal doesn't exceed the height */
+
+  }
+  
 }
 
 /* Style for making buttons of equal length */
