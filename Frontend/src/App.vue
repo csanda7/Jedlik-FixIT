@@ -102,10 +102,7 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.btn:hover {
-  background-color: #ffffff;
-  color: rgb(0, 0, 86);
-}
+
 
 .btn-primary {
   background-color: #4285f4;

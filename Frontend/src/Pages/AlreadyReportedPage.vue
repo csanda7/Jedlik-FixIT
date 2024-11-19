@@ -146,7 +146,7 @@
     <!-- Modal -->
     <div v-if="showModal" class="modal-overlay" @click="closeModal">
       <div class="bg" @click.stop>       
-        <div class="modal-content">
+        <div class="modal-content"  s>
           <div class="modal-header">
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
             <button v-if="!isEditing" type="button" class="btn btn-outline-secondary mb-3" @click="toggleEditMode">
@@ -159,7 +159,10 @@
           </div>
           <div class="modal-body">
             <div class="row">
-              <div :class="{ 'col-md-6': selectedBug.photos.length === 0, 'col-md-4 ': selectedBug.photos.length > 0 }">
+              <div :class="{
+              'col-md-6': selectedBug.photos.length === 0,
+              'col-md-4': selectedBug.photos.length > 0
+                }">
                 <div class="info-row">
                   <strong>Prioritás: </strong>
                   <div v-if="!isEditing">
@@ -203,12 +206,21 @@
                   <input type="datetime-local" v-model="selectedBug.deadline" class="form-control" />
                 </div>
               </div>
-              <div
-                :class="{ 'description': true, 'ml-2': true, 'col-md-5': selectedBug.photos.length === 0, 'col-md-4': selectedBug.photos.length > 0, }">
+              <div :class="{
+                description: true,
+                'ml-2':true,
+              'col-md-6': selectedBug.photos.length === 0,
+              'col-md-12 my-4': selectedBug.photos.length > 0 && isLandscape,
+              'col-md-4': selectedBug.photos.length > 0 && !isLandscape
+                }">
                 <p><strong>Hiba leírása:</strong></p>
                 <div class="description-content">{{ selectedBug.description }}</div>
               </div>
-              <div class="col-md-4 photo_box">
+              <div :class="{
+                photo_box: true,
+              'col-md-12 my-4': isLandscape,
+              'col-md-4':  !isLandscape
+                }">
                 <div class="photo-grid">
                   <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
                     <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
@@ -252,7 +264,7 @@
             <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo && !isEditing" class="dropdown"
               style="cursor: pointer;">
 
-              <button ref="dropdownButton" class="btn btn-primary dropdown-toggle fixed-width" v-bind:class="isMobile ? 'phoneViewButton' : 'my-2'" type="button"
+              <button ref="dropdownButton" class="btn btn-primary dropdown-toggle " v-bind:class="isMobile ? 'phoneViewButton' : 'my-2 fixed-width'" type="button"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 {{ selectedUser || 'Feladat kiosztása' }}
               </button>
@@ -449,6 +461,8 @@ export default {
       isEditing: false,
       iscommmentonly: false,
       isMobile: false,
+      isLandscape: false,
+      isPortrait: window.matchMedia("(orientation: portrait)").matches, // Tracks the current orientation
     };
   },
   computed: {
@@ -551,11 +565,37 @@ export default {
 
   },
 
+  
+  created() {
+    // Set up a listener to detect orientation or screen size changes
+    this.orientationOrResizeListener = () => {
+      this.isMobile = window.matchMedia("(max-width: 600px)").matches;
+    };
+    this.viewChange = () => {
+      this.isLandscape = window.matchMedia("(max-height: 600px) and (max-width: 900px)").matches;
+
+    };
+
+    // Add listeners for resize and orientation change
+    window.addEventListener("resize", this.orientationOrResizeListener);
+    window.matchMedia("(orientation: portrait)").addEventListener("change", this.orientationOrResizeListener);
+
+    window.addEventListener("resize", this.viewChange);
+    window.matchMedia("(orientation: landscape)").addEventListener("change", this.viewChange);
+  },
+  beforeDestroy() {
+    // Clean up the event listeners
+    window.removeEventListener("resize", this.orientationOrResizeListener);
+    window.matchMedia("(orientation: portrait)").removeEventListener("change", this.orientationOrResizeListener);
+
+    window.removeEventListener("resize", this.viewChange);
+    window.matchMedia("(orientation: landscape)").removeEventListener("change", this.viewChange);
+  },
+
 
   methods: {
     checkMobileView() {
-      // Change breakpoint as necessary (e.g., 768px for tablets)
-      if (window.innerWidth <= 768) {
+      if (window.innerWidth <= 600) {
         this.isMobile = true;
       } else {  
         this.isMobile = false;
@@ -1489,7 +1529,7 @@ export default {
 }
 
 /* Media query for smaller screens */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 600px) {
   .filters-wrapper {
     flex-direction: column;
     align-items: stretch;
@@ -1734,6 +1774,14 @@ export default {
     align-items: flex-end !important; /* Align to the right */
     margin-block-end: auto !important;
   }
+  .info-row
+  {
+    margin-bottom: 2rem;
+  }
+  .description
+  {
+    margin-bottom: 2rem;
+  }
   .phoneViewButton
   {
     margin: 1vw !important; /* Add some margin to the button */ 
@@ -1768,6 +1816,8 @@ export default {
     max-height: 90vh; /* Adjust this value as needed */
   overflow-y: auto; /* Enable scrolling if the content exceeds the max-height */
   border-radius: 2vh;
+  flex-direction: column !important;
+
   }
   .Commentmodal-content {
     max-width: 200vw !important; /* Set nearly full width */
@@ -1784,6 +1834,7 @@ export default {
   }
   
 }
+
 
 /* Style for making buttons of equal length */
 .equal-width {

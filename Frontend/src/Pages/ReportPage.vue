@@ -15,16 +15,7 @@
       <div v-if="showImageLimitPopup" class="alert alert-danger" role="alert">
         Maximum 4 képet tölthet fel!
       </div>
-<!-- Pop-Up Message for Confirm Reset -->
-<div v-if="showResetPopup" class="alert alert-warning d-flex justify-content-between" role="alert">
-  Biztosan törölni szeretnéd az összes adatot?
-  <button class="btn btn-light btn-sm px-2" @click="resetData">Igen</button>
-  <button class="btn btn-light btn-sm ml-2 px-2" @click="cancelReset">Nem</button>
-</div>
-<!-- Success Message after Data Reset -->
-<div v-if="showSuccessResetPopup" class="alert alert-success" role="alert">
-  Adatok sikeresen törölve!
-</div>
+
 
       <div class="mb-3 position-relative">
         <label for="bugName" class="form-label">
@@ -55,7 +46,7 @@
         <div class="col-md-6">
           <!-- Location Dropdown -->
           <div class="dropdown mb-2">
-            <button :class="['btn dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" type="button"
+            <button :class="['btn btn-colorless dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" type="button"
               id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
               {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
             </button>
@@ -77,7 +68,7 @@
 
           <!-- Label Dropdown -->
           <div class="dropdown mb-2">
-            <button :class="['btn dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" type="button"
+            <button :class="['btn btn-colorless dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" type="button"
               id="labelDropdown" data-bs-toggle="dropdown" aria-expanded="false">
               {{ label || 'Címkék' }} <span class="text-danger" v-if="!label">*</span>
             </button>
@@ -124,7 +115,18 @@
 
         </div>
       </div>
-
+<!-- Pop-Up Message for Confirm Reset -->
+<div v-if="showResetPopup" class="alert alert-warning d-flex justify-content-between align-items-center" role="alert">
+  <div>Biztosan törölni szeretné az összes adatot?</div>
+  <div class="d-flex">
+    <button class="btn btn-colorless  mx-4" @click="resetData">Igen</button>
+    <button class="btn btn-colorless  ml-2" @click="cancelReset">Nem</button>
+  </div>
+</div>
+<!-- Success Message after Data Reset -->
+<div v-if="showSuccessResetPopup" class="alert alert-success" role="alert">
+  Adatok sikeresen törölve!
+</div>
 
       <div class="d-grid gap-2 d-flex justify-content-center my-3">
         <button type="button" class="btn btn-secondary w-100" @click="confirmReset">Adatok törlése</button>
@@ -364,11 +366,7 @@ export default {
   margin-bottom: 0;
   max-height: fit-content;
 }
-.alert-warning {
-  background-color: #4285f4; /* Kék háttér */
-  color: white; /* Sárga szöveg */
-  border-width: 0;
-}
+
 .image-preview-container {
   margin-left: 3rem;
   display: flex;
@@ -407,6 +405,12 @@ export default {
   padding: 2px 4px;
   font-size: 10px;
 }
+
+.btn-colorless{
+  border: gray 1px solid;
+  background-color: white;
+}
+
 
 .pictureUploadButton {
   margin-top: 0.5rem;
@@ -493,5 +497,10 @@ export default {
 .text-white {
   color: #dcdcdc !important;
   /* Dark mode-hoz fehér szín */
+}
+.btn-colorless:hover {
+  background-color: gray;
+  border-color: unset;
+  color: white;
 }
 </style>
