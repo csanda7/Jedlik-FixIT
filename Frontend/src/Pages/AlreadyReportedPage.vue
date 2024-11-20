@@ -1308,10 +1308,7 @@ async saveEdit() {
 
 /* General */
 
-.dark-mode {
-  background-color: #444;
-  color: white;
-}
+
 
 /* Buttons */
 
