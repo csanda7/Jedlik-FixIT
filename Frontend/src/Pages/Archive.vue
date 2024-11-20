@@ -563,28 +563,5 @@ export default {
 
 <style scoped>
 
-.badge-failed {
-  background-color: red;
-  color: #ffffff;
-}
 
-.badge-done {
-  background-color: #35b821;
-  color: #ffffff;
-}
-
-.dark-mode .badge-failed {
-  background-color: red;
-  color: #ffffff;
-}
-
-.dark-mode .badge-done {
-  background-color: #35b821;
-  color: #ffffff;
-}
-
-.btn-reassign {
-  background-color: #007bff; /* kék háttérszín */
-  color: #ffffff; /* fehér szöveg */
-}
 </style>
