@@ -244,7 +244,7 @@
 
 
             <!-- Eseménynapló megnyitása -->
-            <button v-if="!isEditing" type="button" class="btn btn-secondary" v-bind:class="isMobile ? 'phoneViewButton' : 'me-auto'" @click="openLogModal(selectedBugId)">
+            <button v-if="!isEditing" type="button" class="btn btn-primary" v-bind:class="isMobile ? 'phoneViewButton' : 'me-auto'" @click="openLogModal(selectedBugId)">
               Eseménynapló
             </button>
 
@@ -284,23 +284,16 @@
                   Állapot frissítése
                 </button>
                 <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
-                  <!-- Kész option -->
                   <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
                     <a class="dropdown-item" @click="openCommentModal(Done, { status: 'Kész' })">Kész</a>
                   </li>
-
-                  <!-- Meghiúsult option -->
                   <li v-if="!['Meghiúsult', 'Kész', 'Bejelentve'].includes(status)">
                     <a class="dropdown-item" @click="openCommentModal(Failed, { status: 'Meghiúsult' })">Meghiúsult</a>
                   </li>
-
-                  <!-- Beszerzés szükséges option, only when status is 'Folyamatban' -->
                   <li v-if="status === 'Folyamatban'">
                     <a class="dropdown-item"
                       @click="openCommentModal(Supply, { status: 'Beszerzés szükséges' })">Beszerzés szükséges</a>
                   </li>
-
-                  <!-- Folyamatban option, only when status is 'Beszerzésre vár' -->
                   <li v-if="status === 'Beszerzésre vár'">
                     <a class="dropdown-item"
                       @click="openCommentModal(InProgress, { status: 'Folyamatban' })">Folyamatban</a>
@@ -346,8 +339,11 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
-                  <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
+                  <div class="d-flex justify-content-center flex-wrap">
+  <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
+  <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
+</div>
+
                 </div>
               </div>
             </div>
@@ -355,14 +351,13 @@
 
 
           <!-- Log Modal -->
-          <div v-if="showLogModal" class="logmodal-overlay" @click="closeLogModal">
+          <div v-if="showLogModal" class="logmodal-overlay" @click="closeLogModal" >
             <div class="bg logmodal-bg" @click.stop :class="{ 'dark-mode': isDarkMode }">
               <div class="logmodal-content" :class="{ 'dark-mode': isDarkMode }">
                 <div class="logmodal-header">
                   <h3 class="logmodal-title">Eseménynapló</h3>
                 </div>
                 <div class="logmodal-body">
-                  <!-- Displaying log entries in rows without headers, sorted by updated_at -->
                   <div v-if="logEntries.length > 0">
                     <div v-for="log in sortedLogEntries" :key="log.logid" class="logmodal-entry">
                       <div class="logmodal-row">
@@ -453,16 +448,16 @@ export default {
       assignedTo: '',
       deadline: '',
       status: '',
-      loggedInUser: sessionStorage.getItem('username') || '', // Get the logged-in user's username from sessionStorage
-      actionToConfirm: null,   // Holds the action to confirm
-      actionData: null, // To hold the action-specific data
+      loggedInUser: sessionStorage.getItem('username') || '',
+      actionToConfirm: null,
+      actionData: null,
       komment: '',
-      logEntries: [], // Property to hold log entries
+      logEntries: [], 
       isEditing: false,
       iscommmentonly: false,
       isMobile: false,
       isLandscape: false,
-      isPortrait: window.matchMedia("(orientation: portrait)").matches, // Tracks the current orientation
+      isPortrait: window.matchMedia("(orientation: portrait)").matches,
     };
   },
   computed: {
@@ -497,15 +492,10 @@ export default {
     },
 
     filteredBugs() {
-
-
       let filtered = this.bugs.filter(bug => {
-        // Apply text search
         const searchTermLower = this.searchTerm.toLowerCase();
         const matchesSearch = bug.name.toLowerCase().includes(searchTermLower);
 
-
-        // Apply filters
         const matchesPriority = !this.selectedPriorities.length || this.selectedPriorities.includes(bug.priority);
         const matchesLabel = !this.selectedLabels.length || this.selectedLabels.includes(bug.label);
         const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
@@ -514,15 +504,8 @@ export default {
         const statusNotCompletedOrFailed = bug.status !== "Kész" && bug.status !== "Meghiúsult";
 
         return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom && statusNotCompletedOrFailed;
-
-
       });
 
-
-
-
-
-      // Sorting logic based on sortKey and sortOrder
       return filtered.sort((a, b) => {
         let compareA, compareB;
 
@@ -547,12 +530,11 @@ export default {
             return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
 
           default:
-            return 0; // Default sorting if no key is selected
+            return 0;
         }
       });
     }
   },
- 
 
   mounted() {
     this.fetchBugs();
@@ -562,12 +544,9 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('theme-changed', this.updateTheme);
-
   },
-
-  
+ 
   created() {
-    // Set up a listener to detect orientation or screen size changes
     this.orientationOrResizeListener = () => {
       this.isMobile = window.matchMedia("(max-width: 600px)").matches;
     };
@@ -576,7 +555,6 @@ export default {
 
     };
 
-    // Add listeners for resize and orientation change
     window.addEventListener("resize", this.orientationOrResizeListener);
     window.matchMedia("(orientation: portrait)").addEventListener("change", this.orientationOrResizeListener);
 
@@ -584,7 +562,6 @@ export default {
     window.matchMedia("(orientation: landscape)").addEventListener("change", this.viewChange);
   },
   beforeDestroy() {
-    // Clean up the event listeners
     window.removeEventListener("resize", this.orientationOrResizeListener);
     window.matchMedia("(orientation: portrait)").removeEventListener("change", this.orientationOrResizeListener);
 
@@ -592,17 +569,24 @@ export default {
     window.matchMedia("(orientation: landscape)").removeEventListener("change", this.viewChange);
   },
 
-
   methods: {
-    checkMobileView() {
-      if (window.innerWidth <= 600) {
-        this.isMobile = true;
-      } else {  
-        this.isMobile = false;
-      } 
-    },
-    async fetchBugs() {
-      console.log(this.userRole)
+    /* Lifecycle Methods */
+
+checkMobileView() {
+  if (window.innerWidth <= 600) {
+    this.isMobile = true;
+  } else {
+    this.isMobile = false;
+  }
+},
+updateTheme() {
+  this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+},
+
+/* Fetch and Data Management */
+
+async fetchBugs() {
+  console.log(this.userRole)
       try {
         const response = await fetch('http://localhost:4500/api/hibakKiir');
         if (!response.ok) throw new Error('Network response was not ok');
@@ -636,227 +620,99 @@ export default {
       } catch (error) {
         console.error('Error fetching bug data:', error);
       }
+},
+async fetchUsersWithRoles() {
+  try {
+    const response = await fetch('http://localhost:4500/api/usersWithRoles');
+    if (!response.ok) throw new Error('Failed to fetch users');
 
-    },
-    resetFilters() {
-      this.selectedPriorities = [];
-      this.selectedLabels = [];
-      this.selectedStatuses = [];
-      this.selectedRooms = [];
-    },
+    this.usersWithRoles = await response.json();
+  } catch (error) {
+    console.error('Error fetching users:', error);
+  }
+},
+async fetchLogEntries() {
+  try {
+    const response = await fetch(`http://localhost:4500/api/logs/${this.selectedBug.id}`);
+    if (!response.ok) throw new Error('Failed to fetch log entries');
 
-    // Method to open photo modal and set selected photo
-    openPhoto(photo, index) {
-      this.showPhotoModal = true;
-      this.selectedPhoto = photo;
-      this.selectedPhotoIndex = index;
-    },
-    // Close the photo modal
-    closePhotoModal() {
-      this.showPhotoModal = false;
-      this.selectedPhoto = null;
-    },
-    // Navigate to the previous photo
-    prevPhoto() {
-      if (this.selectedPhotoIndex > 0) {
-        this.selectedPhotoIndex--;
-      } else {
-        this.selectedPhotoIndex = this.selectedBug.photos.length - 1; // Loop to the last photo
-      }
-      this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
-    },
-    // Navigate to the next photo
-    nextPhoto() {
-      if (this.selectedPhotoIndex < this.selectedBug.photos.length - 1) {
-        this.selectedPhotoIndex++;
-      } else {
-        this.selectedPhotoIndex = 0; // Loop to the first photo
-      }
-      this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
-    },
-    async fetchUsersWithRoles() {
-      try {
-        const response = await fetch('http://localhost:4500/api/usersWithRoles');
-        if (!response.ok) throw new Error('Failed to fetch users');
+    const logData = await response.json();
+    this.logEntries = logData.map(log => ({
+      logid: log.ID,
+      logStatus: log.Status,
+      logKomment: log.Komment,
+      logUpdated_at: log.Updated_at,
+      logmodosito: log.modosito,
+      logassignedTo: log.assignedTo,
+      logdeadLine: log.deadLine,
+      logpriority: log.priority
+    }));
 
-        this.usersWithRoles = await response.json();
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    },
-    selectUser(userName) {
-      this.selectedUser = userName;
+  } catch (error) {
+    console.error('Error fetching log entries:', error);
+  }
+},
 
-      const dropdownElement = this.$refs.dropdownButton;
-      const dropdown = bootstrap.Dropdown.getInstance(dropdownElement) || new bootstrap.Dropdown(dropdownElement);
+/* Filter and Sort */
 
-      dropdown.hide();
-    },
+resetFilters() {
+  this.selectedPriorities = [];
+  this.selectedLabels = [];
+  this.selectedStatuses = [];
+  this.selectedRooms = [];
+},
+toggleFilterVisibility() {
+  this.showFilters = !this.showFilters;
+},
+sortBy(key) {
+  if (this.sortKey === key) {
+    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+  } else {
+    this.sortKey = key;
+    this.sortOrder = 'asc';
+  }
+},
 
-    toggleFilterVisibility() {
-      this.showFilters = !this.showFilters;
-    },
+/* Status Updates */
 
-    sortBy(key) {
-      if (this.sortKey === key) {
-        // If the same column is clicked, toggle the sort order
-        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-      } else {
-        // If a new column is clicked, set it as the sorting key and default to ascending
-        this.sortKey = key;
-        this.sortOrder = 'asc';
-      }
-    },
-    getPriorityColor(priority) {
-      switch (priority) {
-        case 1: return 'darkgreen';
-        case 2: return 'lightgreen';
-        case 3: return 'yellow';
-        case 4: return 'orange';
-        case 5: return 'red';
-        default: return '';
-      }
-    },
-    getBadgeClass(status) {
-      switch (status) {
-        case 'Bejelentve':
-          return 'badge-reported';  // You can customize the class to suit your needs
-        case 'Folyamatban':
-          return 'badge-progress';
-        case 'Beszerzésre vár':
-          return 'badge-supply';
-        case 'Újból kiosztva':
-          return 'badge-resent';
-        case 'Kész':
-          return 'badge-done';
-        case 'Meghiúsult':
-          return 'badge-failed' // Default class for undefined status
-      }
-    },
-    updateTheme() {
-      this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
-    },
-    openModal(bug) {
-      this.selectedBug = bug;
-      this.showModal = true;
-      this.assignedTo = this.selectedBug.assignedTo
-      this.status = this.selectedBug.status
-      document.body.style.overflow = 'hidden'
-      this.checkMobileView();
+async Done() {
+  await this.updateStatus('Kész');
+},
+async Failed() {
+  await this.updateStatus('Meghiúsult');
+},
+async Supply() {
+  await this.updateStatus('Beszerzésre vár');
+},
+async InProgress() {
+  await this.updateStatus('Folyamatban');
+},
+async updateStatus(status) {
+  try {
+    const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status, komment: this.komment, modosito: this.loggedInUser }),
+    });
 
-    },
-    closeModal() {
-      this.showModal = false;
-      this.selectedUser = null;
-      this.isEditing = false;
-      document.body.style.overflow = '';  // Re-enable scrolling
-    },
-    openCommentModal(action, data) {
-      this.showCommentModal = true; // Show the Comment modal
-      this.actionToConfirm = action; // Store the action to confirm
-      this.actionData = data; // Store any additional data needed for the action
-      this.komment = ''; // Clear any previous comment
-    },
+    if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
 
-    openCommentModal(action, data) {
-      this.showCommentModal = true; // Show the Comment modal
-      this.actionToConfirm = action; // Store the action to confirm
-      this.actionData = data; // Store any additional data needed for the action
+    this.selectedBug.status = status;
+    this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
 
-    },
-    closeCommentModal() {
-      this.showCommentModal = false; // Close the Comment modal
-      this.actionData = null; // Clear the action data
-      this.komment = '';
-      this.iscommmentonly = false;
-    },
-    async openLogModal() {
-      this.showLogModal = true;
-      await this.fetchLogEntries(); // Fetch log entries from the backend
-    },
-    closeLogModal() {
-      this.showLogModal = false;
-    },
-    async confirmAction() {
-      if (this.actionToConfirm) {
-        try {
-          await this.actionToConfirm(this.actionData);
-        } catch (error) {
-          console.error('Error executing action:', error);
-          alert('There was an error executing the action.');
-        }
-      }
-      this.closeCommentModal();
-      this.closeModal();
-      this.openModal(this.selectedBug);
-    },
-    async Komment() {
-      // Check if the komment textbox is empty
-      if (!this.komment || this.komment.trim() === '') {
-        alert('Please enter a comment before submitting.');
-        return; // Exit the method if the comment is empty
-      }
+    this.fetchBugs();
+  } catch (error) {
+    console.error(`Error updating status to "${status}":`, error);
+    alert(`Failed to update the status to "${status}".`);
+  }
+},
 
-      try {
-        const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ komment: this.komment, modosito: this.loggedInUser }),
-        });
+/* Task Assignment */
 
-        if (!response.ok) throw new Error('Failed to update log');
-
-        console.log('Comment added:', this.komment);
-        this.fetchBugs(); // Refresh the list to reflect the updated comment
-      } catch (error) {
-        console.error('Error updating log:', error);
-        alert('Failed to update the log.');
-      }
-    },
-
-    async Done() {
-      await this.updateStatus('Kész');
-    },
-
-    async Failed() {
-      await this.updateStatus('Meghiúsult');
-    },
-
-    async Supply() {
-      await this.updateStatus('Beszerzésre vár');
-    },
-
-    async InProgress() {
-      await this.updateStatus('Folyamatban');
-    },
-
-    async updateStatus(status) {
-      try {
-        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status, komment: this.komment, modosito: this.loggedInUser }),
-        });
-
-        if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
-
-        this.selectedBug.status = status;
-        //alert(`Status successfully updated to "${status}".`);
-        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
-
-        this.fetchBugs();
-      } catch (error) {
-        console.error(`Error updating status to "${status}":`, error);
-        alert(`Failed to update the status to "${status}".`);
-      }
-    },
-
-    async takeTask() {
-      const username = sessionStorage.getItem('username');
+async takeTask() {
+  const username = sessionStorage.getItem('username');
 
       if (!username) {
         alert('No user logged in');
@@ -875,7 +731,6 @@ export default {
         if (!response.ok) throw new Error('Failed to assign the task');
 
         this.selectedBug.assignedTo = username;
-        //alert('Task successfully assigned to you.');
         this.komment = '';
         this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
@@ -885,97 +740,199 @@ export default {
         console.error('Error assigning task:', error);
         alert('Failed to assign the task.');
       }
-    },
-    async assignTaskTo(user) {
-      try {
-        const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ assignedTo: user, komment: this.komment, modosito: this.loggedInUser }),
-        });
+},
+async assignTaskTo(user) {
+  try {
+    const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ assignedTo: user, komment: this.komment, modosito: this.loggedInUser }),
+    });
 
-        if (!response.ok) throw new Error('Failed to assign task');
+    if (!response.ok) throw new Error('Failed to assign task');
 
-        this.selectedBug.assignedTo = user;
-        this.komment = '';
-        this.selectedBug.status = 'Folyamatban'
-        //alert(`Task assigned to ${user}`);
-        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
-        this.fetchBugs();
-        this.closeModal();
-        this.openModal(this.selectedBug);
-
-      } catch (error) {
-        console.error('Error assigning task:', error);
-        alert('Failed to assign the task.');
-      }
-    },
-    async fetchLogEntries() {
-      try {
-        const response = await fetch(`http://localhost:4500/api/logs/${this.selectedBug.id}`);
-        if (!response.ok) throw new Error('Failed to fetch log entries');
-
-        const logData = await response.json();
-        this.logEntries = logData.map(log => ({
-          logid: log.ID,
-          logStatus: log.Status,
-          logKomment: log.Komment,
-          logUpdated_at: log.Updated_at,
-          logmodosito: log.modosito,
-          logassignedTo: log.assignedTo,
-          logdeadLine: log.deadLine,
-          logpriority: log.priority
-        }));
-
-      } catch (error) {
-        console.error('Error fetching log entries:', error);
-      }
-    },
-
-
-    toggleEditMode() {
-      this.isEditing = !this.isEditing;
-      this.originalBug = JSON.parse(JSON.stringify(this.selectedBug)); // Deep copy
-    },
-    async saveEdit() {
-  // Check if each field has changed; if not, set it to null
-  const updatedData = {
-     priority: this.selectedBug.priority !== this.originalBug.priority ? this.selectedBug.priority : this.originalBug.priority,
-  assignedTo: this.selectedBug.assignedTo !== this.originalBug.assignedTo ? this.selectedBug.assignedTo : this.originalBug.assignedTo,
-  deadline: this.selectedBug.deadline !== this.originalBug.deadline ? this.selectedBug.deadline : this.originalBug.deadline,
-    modosito: this.loggedInUser // Always send the modifying user
-  };
-
-      // Remove any fields that are null to avoid sending unnecessary data
-      Object.keys(updatedData).forEach(key => {
-        if (updatedData[key] === null) delete updatedData[key];
-      });
-
-      try {
-        // Send the PUT request to the backend
-        const response = await fetch(`http://localhost:4500/api/editBug/${this.selectedBug.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedData),
-        });
-
-    this.isEditing = !this.isEditing;
-    this.fetchBugs(); // Refresh the list to reflect the updated bug
+    this.selectedBug.assignedTo = user;
+    this.komment = '';
+    this.selectedBug.status = 'Folyamatban'
+    this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
+    this.fetchBugs();
     this.closeModal();
     this.openModal(this.selectedBug);
-    this.selectedBug.priorityColor = this.getPriorityColor(this.selectedBug.priority);
 
+  } catch (error) {
+    console.error('Error assigning task:', error);
+    alert('Failed to assign the task.');
+  }
+},
+
+/* Bug editing */
+
+toggleEditMode() {
+  this.isEditing = !this.isEditing;
+  this.originalBug = JSON.parse(JSON.stringify(this.selectedBug)); // Deep copy
+},
+async saveEdit() {
+  const updatedData = {
+    priority: this.selectedBug.priority !== this.originalBug.priority ? this.selectedBug.priority : this.originalBug.priority,
+ assignedTo: this.selectedBug.assignedTo !== this.originalBug.assignedTo ? this.selectedBug.assignedTo : this.originalBug.assignedTo,
+ deadline: this.selectedBug.deadline !== this.originalBug.deadline ? this.selectedBug.deadline : this.originalBug.deadline,
+   modosito: this.loggedInUser
+ };
+
+     Object.keys(updatedData).forEach(key => {
+       if (updatedData[key] === null) delete updatedData[key];
+     });
+
+     try {
+       const response = await fetch(`http://localhost:4500/api/editBug/${this.selectedBug.id}`, {
+         method: 'PUT',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(updatedData),
+       });
+
+   this.isEditing = !this.isEditing;
+   this.fetchBugs(); // Refresh the list to reflect the updated bug
+   this.closeModal();
+   this.openModal(this.selectedBug);
+   this.selectedBug.priorityColor = this.getPriorityColor(this.selectedBug.priority);
+
+     } catch (error) {
+       console.error('Error updating bug:', error);
+     }
+   },
+
+   /* Main modal */
+
+   openModal(bug) {
+    this.selectedBug = bug;
+    this.showModal = true;
+    this.assignedTo = this.selectedBug.assignedTo;
+    this.status = this.selectedBug.status;
+    document.body.style.overflow = 'hidden';
+    this.checkMobileView();
+  },
+  closeModal() {
+    this.showModal = false;
+    this.selectedUser = null;
+    this.isEditing = false;
+    document.body.style.overflow = '';
+  },
+  closeLogModal() {
+    this.showLogModal = false;
+  },
+
+  handleButtonClick() {
+    this.iscommmentonly = true;
+    this.openCommentModal(this.Komment);
+  },
+
+  /* Comment modal */
+
+  openCommentModal(action, data) {
+    this.showCommentModal = true;
+    this.actionToConfirm = action;
+    this.actionData = data;
+  },
+  closeCommentModal() {
+    this.showCommentModal = false;
+    this.actionData = null;
+    this.komment = '';
+    this.iscommmentonly = false;
+  },
+  async confirmAction() {
+    if (this.actionToConfirm) {
+      try {
+        await this.actionToConfirm(this.actionData);
       } catch (error) {
-        console.error('Error updating bug:', error);
+        console.error('Error executing action:', error);
+        alert('There was an error executing the action.');
       }
-    },
-    handleButtonClick() {
-      this.iscommmentonly = true;  // Change the state
-      this.openCommentModal(this.Komment);  // Open the modal
-    },
+    }
+    this.closeCommentModal();
+    this.closeModal();
+    this.openModal(this.selectedBug);
+  },
+  async Komment() {
+    if (!this.komment || this.komment.trim() === '') {
+      alert('Please enter a comment before submitting.');
+      return;
+    }
+  },
+  
+  /* Log modal */
 
+  async openLogModal() {
+    this.showLogModal = true;
+    await this.fetchLogEntries(); // Fetch log entries from the backend
+  },
+  closeLogModal() {
+    this.showLogModal = false;
+  },
+
+  /* Photo modal */
+
+  openPhoto(photo, index) {
+    this.showPhotoModal = true;
+    this.selectedPhoto = photo;
+    this.selectedPhotoIndex = index;
+  },
+  closePhotoModal() {
+    this.showPhotoModal = false;
+    this.selectedPhoto = null;
+  },
+  prevPhoto() {
+    if (this.selectedPhotoIndex > 0) {
+      this.selectedPhotoIndex--;
+    } else {
+      this.selectedPhotoIndex = this.selectedBug.photos.length - 1;
+    }
+    this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
+  },
+  nextPhoto() {
+    if (this.selectedPhotoIndex < this.selectedBug.photos.length - 1) {
+      this.selectedPhotoIndex++;
+    } else {
+      this.selectedPhotoIndex = 0;
+    }
+    this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
+  },
+
+  /* Utility */
+  
+  getPriorityColor(priority) {
+    switch (priority) {
+      case 1: return 'darkgreen';
+      case 2: return 'lightgreen';
+      case 3: return 'yellow';
+      case 4: return 'orange';
+      case 5: return 'red';
+      default: return '';
+    }
+  },
+  getBadgeClass(status) {
+    switch (status) {
+      case 'Bejelentve':
+        return 'badge-reported';
+      case 'Folyamatban':
+        return 'badge-progress';
+      case 'Beszerzésre vár':
+        return 'badge-supply';
+      case 'Újból kiosztva':
+        return 'badge-resent';
+      case 'Kész':
+        return 'badge-done';
+      case 'Meghiúsult':
+        return 'badge-failed';
+    }
+  },
+  selectUser(userName) {
+    this.selectedUser = userName;
+    const dropdownElement = this.$refs.dropdownButton;
+    const dropdown = bootstrap.Dropdown.getInstance(dropdownElement) || new bootstrap.Dropdown(dropdownElement);
+    dropdown.hide();
+  },
   },
 
 };
@@ -983,9 +940,40 @@ export default {
 
 
 <style>
+/* General */
+
+
 .reported-bugs-container {
   max-width: 900px;
   margin: 0 auto;
+}
+
+.filters-container {
+  width: 100%;
+  padding: 1rem;
+}
+
+.filters-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.filter-icon {
+  font-size: 1.5rem;
+  color: #4285f4;
+}
+
+.filter-dropdown {
+  margin: 0;
+}
+
+#FilterDropDown {
+  width: 7vw;
+  min-width: 100px;
+  padding: 0.5rem;
+  white-space: nowrap;
 }
 
 .search-input {
@@ -993,10 +981,11 @@ export default {
   border: solid 2px #4285f4;
 }
 
-.filter-icon {
-  font-size: 1.5rem;
-  color: #4285f4;
+.search-input::placeholder {
+  color: #555;
 }
+
+/* Tables */
 
 .table thead th {
   background-color: #f8f9fa;
@@ -1009,6 +998,13 @@ export default {
   padding-left: 2em;
   text-align: left;
 }
+
+.table tbody td.status-column {
+  width: 150px;
+  text-align: center;
+}
+
+/* Priority bars */
 
 .priority-container {
   display: flex;
@@ -1041,6 +1037,8 @@ export default {
 .priority-bar.red {
   background-color: red;
 }
+
+/* Badges */
 
 .badge {
   display: inline-block;
@@ -1087,27 +1085,23 @@ export default {
   color: #ffffff;
 }
 
+/* Modal styles */
 
-
-.table tbody td.status-column {
-  width: 150px;
-  text-align: center;
-}
-
-.modal-overlay {
+.modal-overlay,
+.Commentmodal-overlay,
+.carousel-modal-overlay,
+.logmodal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  max-width: 100%;
   background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
-
 .modal-content {
   background: white !important;
   padding: 2rem;
@@ -1118,34 +1112,31 @@ export default {
   z-index: 1000;
 }
 
-/* Modal Overlay */
-.Commentmodal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  max-width: 100%;
-  background: rgba(0, 0, 0, 0.6);
+.logmodal-content {
+  background: white !important;
+  padding: 2rem;
+  border-radius: 2vh !important;
+  width: 100%;
+  max-width: 80vw;
+  min-width: 50vw;
+  z-index: 1500;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+  flex-direction: column;
+  max-height: 60vh;
+  overflow: hidden;
 }
 
-/* Modal Content Base */
 .Commentmodal-content {
   padding: 1.5rem;
   background-color: white;
   color: black;
   border-radius: 2vh;
-  max-width: 50vw; /* Increase max-width for a wider modal */
-  min-width: 40vw; /* Increase min-width for consistency */
-  max-height: 70vh; /* Set a max-height for a taller modal */
-  min-height: 10vh !important; /* Ensure a taller minimum height */
+  max-width: 50vw;
+  min-width: 40vw;
+  max-height: 70vh;
+  min-height: 10vh !important;
   width: 100%;
   overflow-y: auto;
-  /* Add scrolling if content overflows */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1153,174 +1144,78 @@ export default {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Modal Body */
-.Commentmodal-body {
-  flex-grow: 1;
-  margin-top: 0rem; /* Brings the label closer to the top */
-  margin-bottom: 1rem;
-  max-height: 12rem;
-  
+.carousel-modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
 }
 
-
-
-
-/* Dark Mode */
-.Commentmodal-content.dark-mode {
-  background-color: #444;
-  color: white;
-}
-
-/* Dark Mode for Textbox */
-.form-control.dark-textbox {
-  background-color: #333;
-  color: white;
-  border: 1px solid #666;
-}
-
-/* Dark Mode Textbox Focus */
-.form-control.dark-textbox:focus {
-  background-color: #555;
-  color: white;
-  outline: none;
-  border-color: #888;
-}
-
-/* Dark Mode - Footer Styles */
-.dark-mode .modal-footer {
-  background-color: #333;
-  color: white;
-}
-
-/* Dark Mode - Modal Body */
-.dark-mode .Commentmodal-body {
-  background-color: #444;
-  color: white;
-}
-
-
-
-
-.drown-kioszt {
-  min-width: 100px !important;
-}
-
-.description {
-  max-width: 100%;
-  /* Ensure it takes full width of the column */
-  height: auto;
-  /* Let it grow automatically */
-  overflow: hidden;
-  /* Prevent overflow */
-  word-wrap: break-word !important;
-  /* Break long words if necessary */
-  flex: 1;
-  grid-column: span 2;
-
-}
-
-.description-content {
-
-  /* Add some padding for aesthetics */
-  white-space: normal;
-  /* Allow text to wrap onto new lines */
-}
-
-
-.photo-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  /* Two columns */
-  gap: 10px;
-  /* Space between photos */
-
-  margin-bottom: 2rem;
-}
-
-.photo-item {
-  cursor: pointer;
-  /* Indicate that the item is clickable */
-}
-
-.photo-item img {
-  width: 120px;
-  /* Make the image take the full width of the item */
-  height: 120px;
-  /* Maintain aspect ratio */
-  border-radius: 0.5rem;
-  /* Optional: Rounded corners */
-}
-
-.image-thumbnail {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border: none !important;
-  /* Remove the border */
-  box-shadow: none !important;
-  /* Remove any shadow */
-  padding: 0 !important;
-  /* Ensure no padding */
-  margin: 0;
-  /* Make sure there is no margin */
-  background-color: transparent;
-  /* Remove background color */
-}
-
-
-.photo_box {
+.logmodal-row {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
-.carousel-item {
-  max-width: fit-content;
-  max-height: fit-content;
-  margin: 2%;
-  object-fit: contain;
-  /* Maintain aspect ratio and contain within the box */
-  width: 100%;
-  /* Take full width */
-  height: 25vh;
-  /* Fixed height */
+.logmodal-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: auto;
+  min-width: 150px;
 }
 
-.modal-title {
-  padding-bottom: 1em;
+.logmodal-item strong {
+  margin-bottom: 5px;
 }
 
+.logmodal-item p {
+  margin: 0;
+  word-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
+}
 
-.modal-header {
+.logmodal-header {
+  padding-bottom: 1.5vw;
+}
+
+/* Modal header & footer */
+
+.modal-header,
+.logmodal-header,
+.Commentmodal-header {
+  padding-bottom: 1.5vw;
   display: flex;
   justify-content: space-between;
 }
 
-.modal-footer {
+.modal-footer,
+.logmodal-footer {
+  padding-top: 1.5vw;
   text-align: right;
 }
 
-.fixed-width {
-  width: 10rem;
-  /* Set to the desired width for the button */
+.modal-title,
+.logmodal-title {
+  margin: 0;
 }
 
+/* Modal body & items */
 
-#done {
-  background-color: #35b821;
-  border: none;
+.logmodal-body {
+  flex-grow: 1; 
+  padding-right: 1rem;
+  gap: 20px;
 }
 
-#failed {
-  background-color: red;
-  border: none;
+.Commentmodal-body {
+  flex-grow: 1;
+  margin-top: 0rem; 
+  margin-bottom: 1rem;
+  max-height: 12rem;
 }
 
-#supply {
-  background-color: brown;
-  border: none;
-}
+/* Photos */
 
 .info-row {
   display: grid;
@@ -1337,42 +1232,186 @@ export default {
 .info-row strong {
   margin-right: 10px;
 }
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 2rem;
+}
 
+.photo-item {
+  cursor: pointer;
+}
+
+.photo-item img {
+  width: 120px;
+  height: 120px;
+  border-radius: 0.5rem;
+}
+
+.image-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0;
+  background-color: transparent;
+}
+
+.carousel-item {
+  max-width: fit-content;
+  max-height: fit-content;
+  margin: 2%;
+  object-fit: contain;
+  width: 100%;
+  height: 25vh;
+}
+
+.carousel-prev,
+.carousel-next {
+  position: absolute;
+  top: 50%;
+  font-size: 32px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  padding: 12px;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+/* Buttons */
+
+#done {
+  background-color: #35b821;
+  border: none;
+}
+
+#failed {
+  background-color: red;
+  border: none;
+}
+
+#supply {
+  background-color: brown;
+  border: none;
+}
+
+.btn-reassign {
+  background-color: #007bff;
+  color: #ffffff;
+}
 
 /* DARK MODE */
 
+/* General */
+
+
+
+/* Buttons */
+
+.dark-mode .btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.dark-mode .btn-secondary {
+  background-color: #636363;
+  color: white;
+}
+
+.dark-mode .btn-secondary:hover {
+  background-color: #4285f4;
+  color: white;
+}
+
+/* Modals */
+
+.dark-mode .modal-content,
+.dark-mode .logmodal-content,
+.dark-mode .Commentmodal-content {
+  background-color: #444 !important;
+  color: white;
+  border-radius: 2vh !important;
+  overflow: hidden !important;
+}
+
+.dark-mode .modal-header,
+.dark-mode .logmodal-header,
+.dark-mode .Commentmodal-header {
+  background-color: #444;
+  color: white;
+  padding-bottom: 1.5vw;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dark-mode .modal-footer,
+.dark-mode .logmodal-footer {
+  background-color: #444;
+  color: white; 
+}
+
+.dark-mode .Commentmodal-body {
+  background-color: #444;
+  color: white;
+}
+.dark-mode .logmodal-body {
+  flex-grow: 1;
+  padding-right: 1rem;
+  gap: 20px;
+  border-radius: 2vh !important;
+}
+
+/* Tables */
 
 .dark-mode .table {
   background-color: #222;
-  /* Set table background to dark gray */
   color: white;
-  /* Default text color for the table */
 }
 
 .dark-mode .table thead th {
   background-color: #444;
-  /* Table header background for dark mode */
   color: white;
-  /* Text color for table header */
+  border-bottom: 1px solid grey;
 }
 
 .dark-mode .table tbody {
   background-color: #222;
-  /* Set tbody background color for dark mode */
 }
 
 .dark-mode .table tbody td {
   background-color: #222;
-  /* Set table cell background color for dark mode */
   color: white;
-  /* Text color for table cells */
 }
+
+.dark-mode .table tbody tr {
+  border-color: grey;
+}
+
+.dark-mode .table tbody tr:hover {
+  background-color: #444;
+}
+
+/* Badges */
 
 .dark-mode .badge {
   background-color: #555;
-  /* Badge background color for dark mode */
   color: white;
-  /* Badge text color for dark mode */
+}
+
+.dark-mode .badge-failed {
+  background-color: red;
+  border: none;
+  color: #ffffff;
+}
+
+.dark-mode .badge-done {
+  background-color: #35b821;
+  border: none;
+  color: #ffffff;
 }
 
 .dark-mode .badge-reported {
@@ -1400,462 +1439,221 @@ export default {
   color: #ffffff;
 }
 
-/* Adjust hover effect for table rows in dark mode */
-.dark-mode .table tbody tr:hover {
-  background-color: #444;
-  /* Change hover background color for dark mode */
-}
+/* Form inputs */
 
-/* Adjust hover effect for table rows in dark mode */
-.dark-mode .table tbody tr {
-  border-bottom: 1px solid grey;
-  /* Set row borders to grey in dark mode */
-}
-
-/* Ensure that the table rows have a grey border in dark mode */
-.dark-mode .table tbody tr {
-  border-color: grey;
-  /* Change the color of the border between rows */
-}
-
-/* Modal styles for dark mode */
-.dark-mode .modal-content {
-  background-color: #444 !important;
-  /* Dark background for modal */
-  color: white;
-  /* Text color for modal */
-  border-radius: 2vh;
-}
-
-.dark-mode .modal-header {
-  background-color: #444;
-  /* Header background for modal */
-  color: white;
-  /* Text color for modal header */
-}
-
-.dark-mode .Commentmodal-header {
-  background-color: #444;
-  /* Header background for modal */
-  color: white;
-  /* Text color for modal header */
-}
-
-.dark-mode .modal-footer {
+.form-control.dark-textbox {
   background-color: #444;
   color: white;
-
+  border: 1px solid #666;
 }
 
-
-/* Change the line between the data and the headers to grey in dark mode */
-.dark-mode .table thead th {
-  border-bottom: 1px solid grey;
-  /* Grey border for the header */
-}
-
-/* Change the border color of the table rows in dark mode */
-.dark-mode .table tbody tr {
-  border-color: grey;
-  /* Change the color of the border between rows */
-}
-
-/* Ensure that the table rows have a grey border in dark mode */
-.dark-mode .table tbody tr {
-  border-color: grey;
-  /* Change the color of the border between rows */
-}
-
-
-/* Change the line between the data and the headers to grey in dark mode */
-.dark-mode .table thead th {
-  border-bottom: 1px solid grey;
-  /* Grey border for the header */
+.form-control.dark-textbox:focus {
+  background-color: #555;
+  color: white;
+  outline: none;
+  border-color: #888;
 }
 
 .dark-mode .search-input {
   background-color: #A9A9A9;
-  /* Light gray background */
   color: white;
-  /* White text */
   border-color: black;
-  /* Keep the same blue border */
 }
 
 .dark-mode .search-input::placeholder {
   color: white;
-  /* Make placeholder text white as well */
 }
 
-.dark-mode .badge-done {
-  background-color: #35b821;
-  border: none;
+/* Specific Components */
+
+.dark-mode .card {
+  background-color: #444;
+  color: white;
 }
 
-.dark-mode .badge-failed {
-  background-color: red;
-  border: none;
-}
 
-.dark-mode #supply {
-  background-color: brown;
-  border: none;
-}
+/* PHONE VIEW */
 
-.filters-container {
-  width: 100%;
-  padding: 1rem;
-}
-
-.filters-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: flex-end;
-}
-
-.filter-dropdown {
-  margin: 0;
-  /* Remove default margin */
-}
-
-/* Update FilterDropDown styling */
-#FilterDropDown {
-  width: 7vw;
-  min-width: 100px;
-  /* Ensure minimum width on small screens */
-  padding: 0.5rem;
-  white-space: nowrap;
-}
-
-/* Media query for smaller screens */
 @media screen and (max-width: 600px) {
   .filters-wrapper {
     flex-direction: column;
     align-items: stretch;
   }
-
-  .filter-dropdown {
-    width: 100%;
-  }
-
-  #FilterDropDown {
-    width: 100%;
-    /* Full width on mobile */
-  }
-
-  /* Adjust dropdown menu position on mobile */
-  .dropdown-menu {
-    width: 100%;
-    /* Full width dropdowns on mobile */
-  }
 }
-
-@media screen and (max-width: 768px) {
-  .hide-mobile {
-    display: none !important;
-  }
-
-  .table thead th,
-  .table tbody td {
-    padding-left: 1em;
-    padding-right: 1em;
-  }
-
-  .priority-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    white-space: nowrap;
-  }
-
-  .priority-bar {
-    width: 30px;
-    /* Slightly smaller on mobile */
-  }
-
-  /* Ensure the table takes full width on mobile */
-  .table-responsive {
-    width: 100%;
-    margin-bottom: 0;
-  }
-
-  /* Adjust the container padding for mobile */
-  .reported-bugs-container {
-    padding: 0 10px;
-  }
-
-  /* Ensure the "No results" message spans correct number of columns */
-  tr:last-child td[colspan="7"] {
-    column-span: 2;
-  }
-}
-
-
-/* Styles for photo carousel */
-.carousel-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1050;
-}
-
-.carousel-modal-content {
-  position: relative;
-  max-width: 90%;
-  max-height: 90%;
-}
-
-.carousel-photo {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
-
-.carousel-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  color: #fff;
-  cursor: pointer;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 8px;
-  border-radius: 100%;
-}
-
-.carousel-prev,
-.carousel-next {
-  position: absolute;
-  top: 50%;
-  font-size: 32px;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.5);
-  border: none;
-  padding: 12px;
-  cursor: pointer;
-  transform: translateY(-50%);
-}
-
-.carousel-prev {
-  left: 10px;
-  border-radius: 50% 0 0 50%;
-}
-
-.carousel-next {
-  right: 10px;
-  border-radius: 50% 50% 50% 50%;
-}
-
-
-
-.logmodal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-
-}
-
-.logmodal-content {
-  background: white !important;
-  padding: 2rem;
-  border-radius: 2vh !important;
-  width: 100%;
-  /* Ensures the modal takes up full width available */
-  max-width: 80vw;
-  /* Set max width for modal */
-  min-width: 50vw;
-  /* Set min width for modal */
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  max-height: 60vh;
-  /* Ensure the modal height is limited, to avoid overflow */
-  overflow: hidden;
-}
-
-.logmodal-body {
-  flex-grow: 1; /* Allow it to grow */
-  max-height: 5vh !important; /* Set a maximum height for the body */
-  padding-right: 1rem;
-  gap: 20px; /* Optional gap between columns */
+@media screen and (max-width: 600px) {
+    .filters-wrapper {
+      flex-direction: column;
+      align-items: stretch;
+    }
   
+    .filter-dropdown {
+      width: 100%;
+    }
   
-}
-
-.logmodal-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.logmodal-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: auto;
-  /* Allow dynamic width */
-  min-width: 150px;
-  /* Set a minimum width for consistency */
-}
-
-.logmodal-item strong {
-  margin-bottom: 5px;
-  /* Space between the label and data */
-}
-
-.logmodal-item p {
-  margin: 0;
-  word-wrap: break-word;
-  /* Allow long words to break and wrap properly */
-  white-space: normal;
-  /* Ensure long lines wrap instead of overflowing */
-  max-width: 100%;
-}
-
-.logmodal-header {
-  padding-bottom: 1.5vw;
-}
-
-.logmodal-title {
-  margin: 0;
-}
-
-.logmodal-footer {
-  padding-top: 1.5vw;
-  text-align: right;
-}
-
-.dark-mode .logmodal-content {
-  background-color: #444 !important;
-  /* Dark background for modal */
-  color: white;
-  /* Text color for modal */
-  border-radius: 2vh;
-}
-
-.dark-mode .logmodal-header {
-  background-color: #444;
-  /* Header background for modal */
-  color: white;
-  /* Text color for modal header */
-}
-
-
-.dark-mode .logmodal-footer {
-  background-color: #444;
-  color: white;
-
-}
-
-@media (max-width: 600px) {
-  .modal-content {
-    max-width: 100vw !important; /* Set nearly full width */
-    max-height: 90vh; /* Adjust this value as needed */
-  overflow-y: auto; /* Enable scrolling if the content exceeds the max-height */
-  border-radius: 2vh;
+    #FilterDropDown {
+      width: 100%;
+    }
+  
+    .dropdown-menu {
+      width: 100%;
+    }
   }
-  .modal-footer {
-    display: flex !important;
+  
+  @media screen and (max-width: 768px) {
+    .hide-mobile {
+      display: none !important;
+    }
+  
+    .table thead th,
+    .table tbody td {
+      padding-left: 1em;
+      padding-right: 1em;
+    }
+  
+    .priority-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      white-space: nowrap;
+    }
+  
+    .priority-bar {
+      width: 30px;
+    }
+  
+    .table-responsive {
+      width: 100%;
+      margin-bottom: 0;
+    }
+  
+    .reported-bugs-container {
+      padding: 0 10px;
+    }
+  
+    tr:last-child td[colspan="7"] {
+      column-span: 2;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .modal-content {
+      max-width: 100vw !important;
+      max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 2vh;
+    }
+    .modal-footer {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-end !important;
+      margin-block-end: auto !important;
+    }
+    .info-row
+    {
+      margin-bottom: 2rem;
+    }
+    .description
+    {
+      margin-bottom: 2rem;
+    }
+    .phoneViewButton
+    {
+      margin: 1vw !important;
+      margin-right: 0 !important; 
+      width: 12rem ; 
+    }
+    .carousel-photo {
+      width: 100%;
+      height: auto;
+    }
+    .logmodal-content {
+      min-width : 80vw !important;
+    }
+    .logmodal-body {
+      min-height: 90vw !important;
+    }
+  
+    .logmodal-row {
+      flex-direction: column;
+    }
+    .Commentmodal-content {
+    min-width: 80vw !important; 
+      
+    }
+  }
+  @media (max-height: 600px){
+    .modal-content {
+      max-width: 100vw !important;
+      max-height: 90vh;
+    overflow-y: auto; 
+    border-radius: 2vh;
     flex-direction: column !important;
-    align-items: flex-end !important; /* Align to the right */
-    margin-block-end: auto !important;
+    }
+    .Commentmodal-content {
+      max-width: 200vw !important;
+      min-width: 70vw !important;
+      max-height: 80vh !important;
+      min-height: 60vh !important;
+    }
+    .logmodal-content {
+      min-height: 40vw !important;
+    }
+    .logmodal-body {
+      max-height: 90vw !important;
+    }  
   }
-  .info-row
-  {
-    margin-bottom: 2rem;
-  }
-  .description
-  {
-    margin-bottom: 2rem;
-  }
-  .phoneViewButton
-  {
-    margin: 1vw !important; /* Add some margin to the button */ 
-    margin-right: 0 !important; /* Remove the margin from the right */
-    width: 12rem ; /* Set the width of the button */
-  }
-  .carousel-photo {
-    width: 100%;
-    height: auto;
-  }
-  .logmodal-content {
-    min-width : 80vw !important; /* Ensure the modal doesn't exceed the width */
-  }
-  .logmodal-body {
-    min-height: 90vw !important; /* Ensure the modal doesn't exceed the height */
-
-  }
-
-  .logmodal-row {
-    flex-direction: column;
-    /* Stack items vertically on phone */
-  }
-  .Commentmodal-content {
-  min-width: 80vw !important; /* Ensure it stays wide */
-    
-  }
-
-}
-@media (max-height: 600px){
-  .modal-content {
-    max-width: 100vw !important; /* Set nearly full width */
-    max-height: 90vh; /* Adjust this value as needed */
-  overflow-y: auto; /* Enable scrolling if the content exceeds the max-height */
-  border-radius: 2vh;
-  flex-direction: column !important;
-
-  }
-  .Commentmodal-content {
-    max-width: 200vw !important; /* Set nearly full width */
-    min-width: 70vw !important; /* Ensure it stays wide */
-    max-height: 80vh !important; /* Use more of the screen height */
-    min-height: 60vh !important;
-  }
-  .logmodal-content {
-    min-height: 40vw !important; /* Ensure the modal doesn't exceed the height */
-  }
-  .logmodal-body {
-    max-height: 90vw !important; /* Ensure the modal doesn't exceed the height */
-
-  }
+  @media screen and (max-width: 768px) {
+    .hide-mobile {
+      display: none !important;
+    }
   
-}
+    .table thead th,
+    .table tbody td {
+      padding-left: 1em;
+      padding-right: 1em;
+    }
+  
+    .priority-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      white-space: nowrap;
+    }
+  
+    .priority-bar {
+      width: 30px;
+    }
+  
+    .table-responsive {
+      width: 100%;
+      margin-bottom: 0;
+    }
+  
+    .reported-bugs-container {
+      padding: 0 10px;
+    }
+  
+    tr:last-child td[colspan="7"] {
+      column-span: 2;
+    }
+  }
 
+  .equal-width {
+    width: 100%;
+    max-width: 110px;
+    text-align: center;
+  }
 
-/* Style for making buttons of equal length */
-.equal-width {
-  width: 100%;
-  /* Set the width of the button to be 100% of the available space */
-  max-width: 110px;
-  /* Optional: Limit the max-width to avoid very large buttons */
-  text-align: center;
-  /* Align text in the center */
-}
+  .edit.equal-width {
+    max-width: 100px;
+  }
 
-.edit.equal-width {
-  max-width: 100px;
-}
+  .edit-div {
+    max-width: 200px;
+  }
 
-.edit-div {
-  max-width: 220px;
-}
+  .edit-width {
+    width: 100%;
+  }
 
-.edit-width {
-  width: 100%;
-  /* Ensures the container spans the full width */
-}
 </style>
