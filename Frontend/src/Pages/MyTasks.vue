@@ -338,7 +338,7 @@
                             log.logStatus }}</span>
                         </div>
                         <div v-if="log.logassignedTo" class="logmodal-item">
-                          <strong>Feladatfelelős</strong>
+                          <strong>Megbízott</strong>
                           <p>{{ log.logassignedTo }}</p>
                         </div>
                         <div v-if="log.logdeadLine" class="logmodal-item">
@@ -426,7 +426,7 @@ export default {
       return [...new Set(this.bugs.map(bug => bug.label))];
     },
     uniqueStatuses() {
-      const exactStatuses = ["Bejelentve", "Folyamatban", "Beszerzésre vár", "Újból kiosztva"]
+      const exactStatuses = ["Folyamatban", "Beszerzésre vár"]
       return [...new Set(this.bugs.map(bug => bug.status))].filter(status => exactStatuses.includes(status));
     },
     uniqueRooms() {
