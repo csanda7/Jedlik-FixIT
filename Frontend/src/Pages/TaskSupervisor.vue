@@ -1809,17 +1809,17 @@ export default {
 }
 
 .usernameDisplay {
-    color: rgb(33, 55, 97) !important;
+    color: rgb(53, 53, 53) !important;
     font-weight: bolder;
     font-size: 25px;
-    background-color: #adcdff !important;
+    background-color: #dadada !important;
 }
 
 .dark-mode .usernameDisplay {
     color: white !important;
     font-weight: bolder;
     font-size: 25px;
-    background-color: rgb(19, 19, 19) !important;
+    background-color: #2f2f2f !important;
 }
 
 .dark-mode .errorNumberDisplayforUser {
@@ -1833,7 +1833,7 @@ export default {
     font-weight: normal !important;
     font-size: medium;
     vertical-align: auto;
-    color: rgb(32, 83, 179);
+    color: #212121;
 }
 
 .arrow:hover {
