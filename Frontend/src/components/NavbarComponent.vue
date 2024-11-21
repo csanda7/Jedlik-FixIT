@@ -200,6 +200,10 @@ export default {
   border-radius: 5px;
 }
 
+.nav-item:hover .nav-link.active-link {
+  background-color: #e2d8d8;
+}
+
 .btn-outline-light {
   color: white;
   border-color: white;

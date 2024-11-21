@@ -503,4 +503,8 @@ export default {
   border-color: unset;
   color: white;
 }
+
+textarea{
+  overflow: hidden;
+}
 </style>
