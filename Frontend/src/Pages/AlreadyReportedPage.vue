@@ -1562,7 +1562,7 @@ async saveEdit() {
     .modal-footer {
       display: flex !important;
       flex-direction: column !important;
-      align-items: flex-end !important;
+      align-items: center !important;
       margin-block-end: auto !important;
     }
     .info-row

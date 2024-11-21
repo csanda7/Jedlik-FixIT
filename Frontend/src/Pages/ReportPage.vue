@@ -99,8 +99,6 @@
 
         <!-- Right Column: Picture Upload Button aligned with Location -->
         <div class="col-md-6">
-          <!-- Picture Upload Button -->
-          <!-- Picture Upload Button -->
           <div>
             <label for="photo" class="btn btn-primary pictureUploadButton w-100 ">Kép feltöltése</label>
             <input type="file" class="form-control" id="photo" @change="onFileChange" accept=".png, .jpg, .jpeg, .heic"
@@ -142,8 +140,7 @@
 
 <script>
 import axios from 'axios';
-import CryptoJS from 'crypto-js'; // Import the crypto-js library
-import moment from 'moment-timezone';
+import CryptoJS from 'crypto-js';
 
 export default {
   data() {
@@ -157,7 +154,7 @@ export default {
       label: this.getCookie('label') || '',
       showOtherLocation: false,
       otherLocation: this.getCookie('otherLocation') || '',
-      showPopup: false, // State for the popup message
+      showPopup: false, 
       showSuccessPopup: false,
       showSuccessResetPopup: false,
       showResetPopup: false,
@@ -196,42 +193,38 @@ export default {
     onFileChange(event) {
       const files = event.target.files;
       if (files.length + this.photos.length > 4) {
-        this.showImageLimitPopup = true; // Show the popup
+        this.showImageLimitPopup = true; 
 
         event.target.value = "";
 
         setTimeout(() => {
           this.showImageLimitPopup = false;
-        }, 5000); // Hide popup after 5 seconds
+        }, 5000);
         return;
       }
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
 
+        const hashedName = CryptoJS.MD5(file.name).toString();
 
-        // Hash the filename
-        const hashedName = CryptoJS.MD5(file.name).toString(); // Create a hash of the filename
-
-        // Create a new file with the hashed name and the same type
         const newFile = new File([file], hashedName + '.' + file.name.split('.').pop(), {
           type: file.type,
         });
 
-        this.photos.push(newFile); // Add the new file to the photos array
+        this.photos.push(newFile);
 
-        // Create a FileReader to generate preview
         const reader = new FileReader();
         reader.onload = (e) => {
           this.photoPreviews.push(e.target.result);
         };
-        reader.readAsDataURL(file); // Read file as data URL to display it as an image
+        reader.readAsDataURL(file);
       }
     },
 
     removePhoto(index) {
-      this.photos.splice(index, 1); // Remove photo from the photos array
-      this.photoPreviews.splice(index, 1); // Remove the preview as well
+      this.photos.splice(index, 1);
+      this.photoPreviews.splice(index, 1);
     },
     reset() {
       this.bugName = '';
@@ -243,9 +236,8 @@ export default {
       this.label = '';
       this.showOtherLocation = false;
       this.otherLocation = '';
-      this.showPopup = false; // Reset the popup on reset
+      this.showPopup = false; 
 
-      // Clear cookies
       this.setCookie('bugName', '');
       this.setCookie('priority', '0');
       this.setCookie('bugDescription', '');
@@ -258,8 +250,8 @@ export default {
     },
     adjustTextareaHeight(event) {
       const textarea = event.target;
-      textarea.style.height = 'auto'; // Reset height to auto to correctly calculate the new height
-      textarea.style.height = `${textarea.scrollHeight}px`; // Set height based on scroll height
+      textarea.style.height = 'auto'; 
+      textarea.style.height = `${textarea.scrollHeight}px`; 
     },
     selectLocation(selectedLocation) {
       this.location = selectedLocation;
@@ -272,10 +264,10 @@ export default {
     },
     bekuldes() {
       if (!this.bugName || !this.bugDescription || !this.location || !this.label || this.location === 'Egyéb' && !this.otherLocation) {
-        this.showPopup = true; // Kötelező mezők kitöltése
+        this.showPopup = true; 
         setTimeout(() => {
           this.showPopup = false;
-        }, 5000); // 5 másodperc eltűnés
+        }, 5000);
         return;
       }
 
@@ -301,14 +293,12 @@ export default {
       })
         .then((res) => {
           if (res.data.msg === "Validation Failed") {
-            // Hibakezelés az űrlap hibáira
-            // ...
           } else {
-            this.showSuccessPopup = true; // Sikeres beküldés üzenet
+            this.showSuccessPopup = true;
             setTimeout(() => {
               this.showSuccessPopup = false;
-            }, 5000); // 5 másodperc eltűnés
-            this.reset(); // Űrlap törlése
+            }, 5000);
+            this.reset(); 
           }
         })
         .catch((error) => {
@@ -316,11 +306,9 @@ export default {
           alert('Error: Unable to submit bug report.');
         });
     },
-    // Megerősítő popup megjelenítése a törléshez
     confirmReset() {
       this.showResetPopup = true;
     },
-    // Adatok törlésének végrehajtása (igen gomb)
     resetData() {
       this.bugName = '';
       this.priority = '0';
@@ -332,7 +320,6 @@ export default {
       this.showOtherLocation = false;
       this.otherLocation = '';
       
-      // Sütik törlése
       this.setCookie('bugName', '');
       this.setCookie('priority', '0');
       this.setCookie('bugDescription', '');
@@ -341,26 +328,24 @@ export default {
       this.setCookie('otherLocation', '');
       console.log('Adatok törölve!');
       
-      this.showResetPopup = false; // Megerősítő üzenet eltüntetése
-      this.showSuccessResetPopup = true; // Sikerüzenet megjelenítése
-      
-      // Az üzenet automatikusan eltűnik 5 másodperc után
+      this.showResetPopup = false; 
+      this.showSuccessResetPopup = true; 
+
       setTimeout(() => {
         this.showSuccessResetPopup = false;
       }, 5000);
     },
 
-    // Törlés megszakítása (nem gomb)
     cancelReset() {
-      this.showResetPopup = false; // Megerősítő popup eltüntetése
+      this.showResetPopup = false; 
   }},
   }
 </script>
 
 <style scoped>
 .alert-success {
-  background-color: #d4edda; /* Zöld háttér */
-  color: #155724; /* Zöld szöveg */
+  background-color: #d4edda; 
+  color: #155724;
   border-color: #c3e6cb;
   margin-top: 0;
   margin-bottom: 0;
@@ -377,9 +362,7 @@ export default {
 .image-preview {
   position: relative;
   width: 85px;
-  /* Set a smaller fixed width */
   height: 85px;
-  /* Set a smaller fixed height */
 }
 
 .img-thumbnail {
@@ -387,15 +370,10 @@ export default {
   height: 100%;
   object-fit: cover;
   border: none !important;
-  /* Remove the border */
   box-shadow: none !important;
-  /* Remove any shadow */
   padding: 0 !important;
-  /* Ensure no padding */
   margin: 0;
-  /* Make sure there is no margin */
   background-color: transparent;
-  /* Remove background color */
 }
 
 .btn-danger {
@@ -443,19 +421,12 @@ export default {
 
 .dropdown-toggle {
   border: 1px solid black;
-  /* Black border for dropdown button in light mode */
 }
 
 .dropdown-menu {
   border: 1px solid black;
-  /* Black border for dropdown menu */
 }
 
-
-/* General dark mode styles */
-
-
-/* Dark mode dropdown */
 .dark-dropdown {
   background-color: #444;
   color: white;
@@ -466,7 +437,6 @@ export default {
   background-color: #555;
 }
 
-/* Dark mode textbox */
 .dark-textbox {
   background-color: #444;
   color: white;
@@ -491,12 +461,10 @@ export default {
 
 .text-muted {
   color: #6c757d !important;
-  /* Világos módhoz halvány szín */
 }
 
 .text-white {
   color: #dcdcdc !important;
-  /* Dark mode-hoz fehér szín */
 }
 .btn-colorless:hover {
   background-color: gray;
