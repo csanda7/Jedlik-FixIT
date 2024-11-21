@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const bugController = require('../controllers/hibaFelvetelController');
+const bugController = require('../controllers/assignTaskController');
 const statusUpdateController = require('../controllers/statusUpdateController');
-const kommentController = require('../controllers/kommentController');
-const ujrakiosztController = require('../controllers/ujrakiosztController');
+const kommentController = require('../controllers/commentController');
+const ujrakiosztController = require('../controllers/reAssignTaskController');
 const editBugController = require('../controllers/editBugController');
 
 // Route to get all bugs

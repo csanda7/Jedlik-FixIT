@@ -9,8 +9,8 @@ const app = express();
 const { jsonParser } = require('./middlewares/bodyParser');
 const authRoutes = require('./routes/authRoutes');
 const bugReportController = require('./controllers/bugReportController');
-const hibakKiirRoutes = require('./routes/hibaKiirRoutes');
-const hibaModositasRountes = require('./routes/hibaModositasRoutes');
+const hibakKiirRoutes = require('./routes/fetchBugsRoutes');
+const hibaModositasRountes = require('./routes/taskModificationRoutes');
 const usersWithRolesRoutes = require('./routes/usersWithRolesRoutes');
 const logRoutes = require('./routes/logRoutes');
 

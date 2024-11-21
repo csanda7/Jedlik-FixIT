@@ -108,9 +108,9 @@
                   <i v-if="sortKey === 'room'"
                     :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
                 </th>
-                <th class="hide-mobile" @click="sortBy('reportedBy')" style="cursor: pointer;">
-                  Bejelentette
-                  <i v-if="sortKey === 'reportedBy'"
+                <th class="hide-mobile" @click="sortBy('deadline')" style="cursor: pointer;">
+                  Határidő
+                  <i v-if="sortKey === 'deadline'"
                     :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
                 </th>
                 <th class="hide-mobile" @click="sortBy('reportedAt')" style="cursor: pointer;">
@@ -135,7 +135,7 @@
                   <span :class="['badge', bug.badgeClass, { 'dark-mode': isDarkMode }]">{{ bug.status }}</span>
                 </td>
                 <td class="hide-mobile">{{ bug.room }}</td>
-                <td class="hide-mobile">{{ bug.reportedBy }}</td>
+                <td class="hide-mobile">{{ bug.deadline }}</td>
                 <td class="hide-mobile">{{ bug.reportedAt }}</td>
               </tr>
               <tr v-if="filteredBugs.length === 0">
@@ -481,17 +481,24 @@ return filtered.sort((a, b) => {
   switch (this.sortKey) {
     case 'name':
     case 'room':
-    case 'reportedBy':
-      compareA = a[this.sortKey].toLowerCase();
-      compareB = b[this.sortKey].toLowerCase();
-      if (compareA < compareB) return this.sortOrder === 'asc' ? -1 : 1;
-      if (compareA > compareB) return this.sortOrder === 'asc' ? 1 : -1;
-      return 0;
 
     case 'priority':
       compareA = a.priority;
       compareB = b.priority;
       return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+      case 'deadline':
+  // Convert deadlines to Date objects, and handle null or invalid dates
+  compareA = a.deadline && !isNaN(new Date(a.deadline).getTime()) 
+    ? new Date(a.deadline) 
+    : (this.sortOrder === 'asc' ? Infinity : -Infinity);
+  
+  compareB = b.deadline && !isNaN(new Date(b.deadline).getTime()) 
+    ? new Date(b.deadline) 
+    : (this.sortOrder === 'asc' ? Infinity : -Infinity);
+
+  return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
 
     case 'reportedAt':
       compareA = new Date(a.reportedAt);
@@ -579,7 +586,9 @@ async fetchBugs() {
           reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
           assignedTo: bug['assignedTo'],
           description: bug['Hiba leírása'],
-          deadline: bug['Határidő'],
+          deadline: bug['Határidő'] && !isNaN(new Date(bug['Határidő']).getTime()) 
+           ? new Date(bug['Határidő']).toLocaleString([], { 
+            year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : "Nincs határidő",
           photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format,
 
         }));
