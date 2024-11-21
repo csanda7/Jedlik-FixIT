@@ -188,7 +188,7 @@
                 <p class="info-row"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
                 <p class="info-row"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
                 <div class="info-row" v-if="selectedBug.assignedTo">
-                  <strong>Feladatot elvállalta:</strong>
+                  <strong>Feladatfelelős:</strong>
                   <p v-if="!isEditing && selectedBug.assignedTo" class="my-1">{{ selectedBug.assignedTo }}</p>
                   <div v-if="isEditing && selectedBug.assignedTo != null">
                     <select v-model="selectedBug.assignedTo" class="form-select my-1">
