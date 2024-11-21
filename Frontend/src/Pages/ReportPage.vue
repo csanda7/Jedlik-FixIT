@@ -426,10 +426,10 @@ export default {
 }
 
 .alert {
-  margin-top: 0;
+  margin-top: 10px;
   margin-bottom: 0;
   max-height: fit-content;
-}
+} 
 
 .search-input {
   width: 200px;

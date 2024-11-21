@@ -1652,4 +1652,22 @@ async saveEdit() {
     }
   }
 
+  .equal-width {
+    width: 100%;
+    max-width: 110px;
+    text-align: center;
+  }
+
+  .edit.equal-width {
+    max-width: 100px;
+  }
+
+  .edit-div {
+    max-width: 200px;
+  }
+
+  .edit-width {
+    width: 100%;
+  }
+
 </style>
