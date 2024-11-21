@@ -251,6 +251,12 @@
               Megjegyzés
             </button>
 
+            <!-- Hiba újból kiosztása -->
+            <button v-if="!['Újból kiosztva'].includes(status)  && role === 'muszakivezeto'" type="button" class="btn btn-primary " 
+            v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 equal-width'" @click="openCommentModal(reAssign, {status: 'Újrakiosztás' })">
+              Újrakiosztás
+            </button>
+
 
 
 
@@ -549,9 +555,7 @@ async fetchBugs() {
           priorityColor: this.getPriorityColor(bug['Prioritás']),
           label: bug['Címke'],
           status: bug['Státusz'],
-          badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
-            bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
-              bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' :
+          badgeClass:
                 bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' :
                   bug['Státusz'] === 'Kész' ? 'badge-done' :
                     bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' : '',
@@ -621,12 +625,13 @@ sortBy(key) {
   }
 },
 
-    // Method to reassign the bug
+/* Status Update */
+
+
     async reAssign() {
       await this.updateStatus('Újból kiosztva');
     },
 
-    // Method to update the bug's status
     async updateStatus(status) {
       try {
         const response = await fetch(`http://localhost:4500/api/updateStatusandAssigndTo/${this.selectedBug.id}`, {
@@ -640,11 +645,11 @@ sortBy(key) {
         if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
 
         this.selectedBug.status = status;
-        alert(`Status successfully updated to "${status}".`);
         this.fetchBugs();
+        this.closeModal();
+        this.openModals(this.selectedBug);
       } catch (error) {
         console.error(`Error updating status to "${status}":`, error);
-        alert(`Failed to update the status to "${status}".`);
       }
     },
     /* Main modal */
@@ -695,6 +700,7 @@ sortBy(key) {
       }
     }
     this.closeCommentModal();
+    this.fetchBugs(); // Refresh the list to reflect the updated status
     this.closeModal();
     this.openModal(this.selectedBug);
   },
@@ -774,12 +780,6 @@ sortBy(key) {
   },
   getBadgeClass(status) {
     switch (status) {
-      case 'Bejelentve':
-        return 'badge-reported';
-      case 'Folyamatban':
-        return 'badge-progress';
-      case 'Beszerzésre vár':
-        return 'badge-supply';
       case 'Újból kiosztva':
         return 'badge-resent';
       case 'Kész':

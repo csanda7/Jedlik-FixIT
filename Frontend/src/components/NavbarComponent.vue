@@ -18,7 +18,7 @@
       </button>
       <div class="collapse navbar-collapse mx-3 row" id="navbarNav">
         <ul class="navbar-nav col-lg-10 col-md-9">
-          <li class="nav-item" v-if="isAuthenticated && RGAccess || MVAccess">
+          <li class="nav-item" v-if="isAuthenticated && (RGAccess || MVAccess)">
             <router-link 
               class="nav-link" 
               :class="{'active-link': $route.path === '/report'}" 
@@ -26,7 +26,7 @@
               HIBA BEJELENTÉSE
             </router-link>
           </li>
-          <li class="nav-item" v-if="isAuthenticated && RGAccess || MVAccess">
+          <li class="nav-item" v-if="isAuthenticated && (RGAccess || MVAccess)">
             <router-link 
               class="nav-link" 
               :class="{'active-link': $route.path === '/reported'}" 
@@ -50,7 +50,7 @@
               MEGBÍZÁSOK
             </router-link>
           </li> 
-          <li class="nav-item" v-if="isAuthenticated && RGAccess || MVAccess">
+          <li class="nav-item" v-if="isAuthenticated && (RGAccess || MVAccess)">
             <router-link 
               class="nav-link" 
               :class="{'active-link': $route.path === '/archive'}" 
