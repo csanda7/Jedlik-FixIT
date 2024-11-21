@@ -383,5 +383,14 @@ export default {
   }
 }
 
+@media (max-width: 992px) { /* Csak mobilnézetre alkalmazzuk */
+  .navbar-collapse {
+    max-height: 70vh; /* A navigáció maximális magassága */
+    overflow-y: auto; /* Görgethetőség engedélyezése függőlegesen */
+  }
+  .navbar {
+    overflow: visible; /* Biztosítsuk, hogy a navbar maga ne korlátozza a tartalmat */
+  }
+}
 
 </style>

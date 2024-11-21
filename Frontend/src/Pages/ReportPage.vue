@@ -50,7 +50,7 @@
               id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
               {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
             </button>
-            <ul class="dropdown-menu w-100" aria-labelledby="locationDropdown">
+            <ul class="dropdown-menu w-100 scrollable-dropdown" aria-labelledby="locationDropdown">
               <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Első terem')">Első terem</a>
               </li>
               <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 2')">Másik terem
@@ -505,6 +505,11 @@ export default {
 }
 
 textarea{
-  overflow: hidden;
+  overflow: hidden; 
+}
+
+.scrollable-dropdown {
+  max-height: 200px;
+  overflow-y: auto;
 }
 </style>

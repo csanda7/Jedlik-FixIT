@@ -859,6 +859,23 @@ async saveEdit() {
       alert('Please enter a comment before submitting.');
       return;
     }
+    try {
+      const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ komment: this.komment, modosito: this.loggedInUser }),
+        });
+
+        if (!response.ok) throw new Error('Failed to update log');
+
+        console.log('Comment added:', this.komment);
+        this.fetchBugs(); // Refresh the list to reflect the updated comment
+      } catch (error) {
+        console.error('Error updating log:', error);
+        alert('Failed to update the log.');
+      }
   },
   
   /* Log modal */
@@ -941,6 +958,7 @@ async saveEdit() {
 
 <style>
 /* General */
+
 
 
 .reported-bugs-container {
@@ -1306,10 +1324,6 @@ async saveEdit() {
 
 /* DARK MODE */
 
-/* General */
-
-
-
 /* Buttons */
 
 .dark-mode .btn-primary {
@@ -1335,7 +1349,7 @@ async saveEdit() {
   background-color: #444 !important;
   color: white;
   border-radius: 2vh !important;
-  overflow: hidden !important;
+  overflow: auto !important;
 }
 
 .dark-mode .modal-header,
@@ -1585,7 +1599,7 @@ async saveEdit() {
     .modal-content {
       max-width: 100vw !important;
       max-height: 90vh;
-    overflow-y: auto; 
+    overflow-y: auto !important; 
     border-radius: 2vh;
     flex-direction: column !important;
     }

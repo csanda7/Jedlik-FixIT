@@ -23,9 +23,15 @@ const editBug = (req, res) => {
     const originalBug = originalResults[0];
 
     // Ensure we safely check and compare the values
-    const updatedPriority = priority !== undefined && priority !== originalBug.priority ? priority : null;
-    const updatedAssignedTo = assignedTo !== undefined && assignedTo !== originalBug.assignedTo ? assignedTo : null;
-    const updatedDeadline = deadline !== undefined && deadline !== originalBug.deadline ? deadline : null;
+    const updatedPriority =
+      priority !== undefined && priority !== originalBug.priority ? priority : null;
+    const updatedAssignedTo =
+      assignedTo !== undefined && assignedTo !== originalBug.assignedTo ? assignedTo : null;
+    const updatedDeadline =
+      deadline !== undefined &&
+      new Date(deadline).toISOString() !== new Date(originalBug.deadline).toISOString()
+        ? deadline
+        : null;
 
     // Debugging the output to see the values
 
@@ -57,14 +63,18 @@ const editBug = (req, res) => {
           INSERT INTO Log (ID, modosito, updated_at, priority, assignedTo, deadline) 
           VALUES (?, ?, NOW(), ?, ?, ?)
         `;
-        connection.query(logQuery, [id, modosito, updatedPriority, updatedAssignedTo, updatedDeadline], (logError) => {
-          if (logError) {
-            console.error('Error logging status update:', logError);
-            res.status(500).json({ message: 'Status updated, but log entry failed' });
-            return;
+        connection.query(
+          logQuery,
+          [id, modosito, updatedPriority, updatedAssignedTo, updatedDeadline],
+          (logError) => {
+            if (logError) {
+              console.error('Error logging status update:', logError);
+              res.status(500).json({ message: 'Status updated, but log entry failed' });
+              return;
+            }
+            res.status(200).json({ message: 'Status updated and logged successfully' });
           }
-          res.status(200).json({ message: 'Status updated and logged successfully' });
-        });
+        );
       }
     });
   });
