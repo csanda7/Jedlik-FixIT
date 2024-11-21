@@ -5,7 +5,7 @@
                 :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
                 <h2 class="my-2 h2">Megbízások</h2>
                 <div class="user-actions d-flex">
-                    <input type="text" class="form-control search-input me-3" placeholder="Keresés..."
+                    <input type="text" class="form-control search-input me-3 me-3 d-none d-md-block" placeholder="Keresés..."
                         v-model="searchTerm" />
                     <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
                         <i class="bi bi-funnel-fill"></i>
@@ -18,6 +18,10 @@
             <!-- Updated filters section with responsive design -->
             <div v-if="showFilters" class="filters-container">
                 <div class="filters-wrapper">
+                    <!-- Keresés -->
+           <div class="filter-dropdown">
+            <input type="text" class="form-control search-input me-3 d-md-none" placeholder="Keresés..." v-model="searchTerm" />
+          </div>
                     <!-- Priority Filter -->
                     <div class="filter-dropdown">
                         <button class="btn btn-secondary dropdown-toggle" id="FilterDropDown" type="button"
