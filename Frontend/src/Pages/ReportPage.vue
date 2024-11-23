@@ -51,14 +51,10 @@
               {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
             </button>
             <ul class="dropdown-menu w-100 scrollable-dropdown" aria-labelledby="locationDropdown">
-              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Első terem')">Első terem</a>
-              </li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 2')">Másik terem
-                  2</a></li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Másik terem 3')">Másik terem
-                  3</a></li>
-              <li><a class="dropdown-item text-center" href="#" @click="selectLocation('Egyéb')">Egyéb</a></li>
-            </ul>
+      <li v-for="loc in locations" :key="loc">
+        <a class="dropdown-item text-center" href="#" @click="selectLocation(loc)">{{ loc }}</a>
+      </li>
+    </ul>
           </div>
           <div v-if="showOtherLocation" class="my-3 mt-0">
             <input type="text" :class="['form-control border-secondary', isDarkMode ? 'dark-textbox' : '']"
@@ -141,6 +137,7 @@
 <script>
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import locations from '../assets/termek.json'; 
 
 export default {
   data() {
@@ -160,13 +157,18 @@ export default {
       showResetPopup: false,
       isDarkMode: false,
       showImageLimitPopup: false,
+      locations: locations,
 
     };
   },
 
   mounted() {
-    this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+    this.isDarkMode = localStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
+    if (this.location === 'Egyéb') {
+    this.showOtherLocation = true; 
+    this.otherLocation = this.getCookie('otherLocation') || '';
+  }
   },
   beforeDestroy() {
     window.removeEventListener('theme-changed', this.updateTheme);
@@ -188,7 +190,6 @@ export default {
       }
       return '';
     },
-
 
     onFileChange(event) {
       const files = event.target.files;
@@ -227,37 +228,42 @@ export default {
       this.photoPreviews.splice(index, 1);
     },
     reset() {
-      this.bugName = '';
-      this.priority = '0';
-      this.bugDescription = '';
-      this.photos = [];
-      this.photoPreviews = [];
-      this.location = '';
-      this.label = '';
-      this.showOtherLocation = false;
-      this.otherLocation = '';
-      this.showPopup = false; 
+  this.bugName = '';
+  this.priority = '0';
+  this.bugDescription = '';
+  this.photos = [];
+  this.photoPreviews = [];
+  this.location = '';
+  this.label = '';
+  this.showOtherLocation = false;
+  this.otherLocation = '';
+  this.showPopup = false; 
 
-      this.setCookie('bugName', '');
-      this.setCookie('priority', '0');
-      this.setCookie('bugDescription', '');
-      this.setCookie('location', '');
-      this.setCookie('label', '');
-      this.setCookie('otherLocation', '');
-    },
+  this.setCookie('bugName', '');
+  this.setCookie('priority', '0');
+  this.setCookie('bugDescription', '');
+  this.setCookie('location', '');
+  this.setCookie('label', '');
+  this.setCookie('otherLocation', '');
+},
+
     updateTheme() {
-      this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+      this.isDarkMode = localStorage.getItem('theme') === 'dark';
     },
     adjustTextareaHeight(event) {
       const textarea = event.target;
       textarea.style.height = 'auto'; 
       textarea.style.height = `${textarea.scrollHeight}px`; 
     },
-    selectLocation(selectedLocation) {
-      this.location = selectedLocation;
-      this.showOtherLocation = selectedLocation === 'Egyéb';
-      this.setCookie('location', selectedLocation);
-    },
+    selectLocation(loc) {
+  this.location = loc;
+  this.showOtherLocation = loc === 'Egyéb';
+  this.setCookie('location', loc);
+
+  if (loc === 'Egyéb' && this.otherLocation) {
+    this.setCookie('otherLocation', this.otherLocation);
+  }
+},
     selectlabel(selectedlabel) {
       this.label = selectedlabel;
       this.setCookie('label', selectedlabel);
@@ -310,31 +316,31 @@ export default {
       this.showResetPopup = true;
     },
     resetData() {
-      this.bugName = '';
-      this.priority = '0';
-      this.bugDescription = '';
-      this.photos = [];
-      this.photoPreviews = [];
-      this.location = '';
-      this.label = '';
-      this.showOtherLocation = false;
-      this.otherLocation = '';
-      
-      this.setCookie('bugName', '');
-      this.setCookie('priority', '0');
-      this.setCookie('bugDescription', '');
-      this.setCookie('location', '');
-      this.setCookie('label', '');
-      this.setCookie('otherLocation', '');
-      console.log('Adatok törölve!');
-      
-      this.showResetPopup = false; 
-      this.showSuccessResetPopup = true; 
+  this.bugName = '';
+  this.priority = '0';
+  this.bugDescription = '';
+  this.photos = [];
+  this.photoPreviews = [];
+  this.location = '';
+  this.label = '';
+  this.showOtherLocation = false;
+  this.otherLocation = '';
+  
+  this.setCookie('bugName', '');
+  this.setCookie('priority', '0');
+  this.setCookie('bugDescription', '');
+  this.setCookie('location', ''); 
+  this.setCookie('label', '');
+  this.setCookie('otherLocation', ''); 
+  
+  this.showResetPopup = false; 
+  this.showSuccessResetPopup = true; 
 
-      setTimeout(() => {
-        this.showSuccessResetPopup = false;
-      }, 5000);
-    },
+  setTimeout(() => {
+    this.showSuccessResetPopup = false;
+  }, 5000);
+},
+
 
     cancelReset() {
       this.showResetPopup = false; 

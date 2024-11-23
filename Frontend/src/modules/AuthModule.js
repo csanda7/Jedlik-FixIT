@@ -82,7 +82,7 @@ export const useAuthStore = defineStore('auth', {
     // },
     // loadTheme() {
     //   // Load the theme from the store or fallback to light
-    //   const savedTheme = sessionStorage.getItem('theme');
+    //   const savedTheme = localStorage.getItem('theme');
     //   this.theme = savedTheme || 'light'; // Default to light if no saved theme
     // },
   },

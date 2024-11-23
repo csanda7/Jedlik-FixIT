@@ -613,7 +613,7 @@ export default {
     mounted() {
         this.fetchBugs();
         this.fetchUsersWithRoles();
-        this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+        this.isDarkMode = localStorage.getItem('theme') === 'dark';
         window.addEventListener('theme-changed', this.updateTheme);
     },
     beforeDestroy() {
@@ -789,7 +789,7 @@ export default {
             }
         },
         updateTheme() {
-            this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+            this.isDarkMode = localStorage.getItem('theme') === 'dark';
         },
         openModal(bug) {
             this.selectedBug = bug;

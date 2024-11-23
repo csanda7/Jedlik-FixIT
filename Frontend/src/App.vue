@@ -21,7 +21,7 @@ export default {
     };
   },
   mounted() {
-    this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+    this.isDarkMode = localStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
   },
   beforeDestroy() {
@@ -32,13 +32,13 @@ export default {
       // Toggle the dark mode state
       this.isDarkMode = !this.isDarkMode;
       // Update the session storage and the document attribute
-      sessionStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+      localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light');
       // Dispatch the event for theme changes
       window.dispatchEvent(new Event('theme-changed'));
     },
     updateTheme() {
-      this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+      this.isDarkMode = localStorage.getItem('theme') === 'dark';
     },
   },
 };  

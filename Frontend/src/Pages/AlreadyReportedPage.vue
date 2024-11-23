@@ -542,7 +542,7 @@ export default {
   mounted() {
     this.fetchBugs();
     this.fetchUsersWithRoles();
-    this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+    this.isDarkMode = localStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
   },
   beforeDestroy() {
@@ -583,7 +583,7 @@ checkMobileView() {
   }
 },
 updateTheme() {
-  this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+  this.isDarkMode = localStorage.getItem('theme') === 'dark';
 },
 
 /* Fetch and Data Management */

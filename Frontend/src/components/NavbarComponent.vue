@@ -103,7 +103,7 @@ export default {
   data() {
     return {
       // Use a reactive property to hold the dark mode state
-      darkMode: sessionStorage.getItem('theme') === 'dark',
+      darkMode: localStorage.getItem('theme') === 'dark',
     };
   },
   computed: {
@@ -145,12 +145,12 @@ export default {
     toggleDarkMode() {
       // Toggle the theme
       this.darkMode = !this.darkMode; // Update darkMode state
-      sessionStorage.setItem('theme', this.darkMode ? 'dark' : 'light'); // Update session storage
+      localStorage.setItem('theme', this.darkMode ? 'dark' : 'light'); // Update session storage
       document.documentElement.setAttribute('data-theme', this.darkMode ? 'dark' : 'light'); // Set the document theme
       window.dispatchEvent(new Event('theme-changed')); // Dispatch a custom event
     },
     updateTheme() {
-      this.darkMode = sessionStorage.getItem('theme') === 'dark'; // Update theme based on session storage
+      this.darkMode = localStorage.getItem('theme') === 'dark'; // Update theme based on session storage
     },
   },
   created() {

@@ -514,7 +514,7 @@ return filtered.sort((a, b) => {
   mounted() {
     this.fetchBugs();
     this.fetchUsersWithRoles();
-    this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+    this.isDarkMode = localStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
   },
   beforeDestroy() {
@@ -553,7 +553,7 @@ return filtered.sort((a, b) => {
   }
 },
 updateTheme() {
-  this.isDarkMode = sessionStorage.getItem('theme') === 'dark';
+  this.isDarkMode = localStorage.getItem('theme') === 'dark';
 },
 
 /* Fetch and Data Management */
