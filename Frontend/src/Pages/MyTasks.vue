@@ -182,7 +182,7 @@
                     selectedBug.status }}</span>
                 </div>
                 <p class="info-row"><strong>Terem:</strong> {{ selectedBug.room }}</p>
-                <p class="info-row"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+                <p class="info-row"><strong>Hibabejelentő:</strong> {{ selectedBug.reportedBy }}</p>
                 <p class="info-row"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
                 
                 <p v-if="selectedBug.deadline != null && !isEditing" class="info-row">

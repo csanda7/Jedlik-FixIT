@@ -71,6 +71,7 @@
             <ul class="dropdown-menu w-100" aria-labelledby="labelDropdown">
               <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Hardver')">Hardver</a></li>
               <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Szoftver')">Szoftver</a></li>
+              <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Hálózati')">Hálózati</a></li>
               <li><a class="dropdown-item text-center" href="#" @click="selectlabel('Egyéb')">Egyéb</a></li>
             </ul>
           </div>

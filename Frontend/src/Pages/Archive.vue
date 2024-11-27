@@ -109,7 +109,7 @@
                     :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
                 </th>
                 <th class="hide-mobile" @click="sortBy('reportedBy')" style="cursor: pointer;">
-                  Bejelentette
+                  Hibabejelentő
                   <i v-if="sortKey === 'reportedBy'"
                     :class="['ms-2', sortOrder === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down']"></i>
                 </th>
@@ -182,7 +182,7 @@
                     selectedBug.status }}</span>
                 </div>
                 <p class="info-row"><strong>Terem:</strong> {{ selectedBug.room }}</p>
-                <p class="info-row"><strong>Bejelentette:</strong> {{ selectedBug.reportedBy }}</p>
+                <p class="info-row"><strong>Hibabejelentő:</strong> {{ selectedBug.reportedBy }}</p>
                 <p class="info-row"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
                 <div class="info-row" v-if="selectedBug.assignedTo">
                   <strong>Megbízott:</strong>
