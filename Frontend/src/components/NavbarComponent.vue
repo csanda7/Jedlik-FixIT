@@ -50,7 +50,7 @@
               MEGBÍZÁSOK
             </router-link>
           </li> 
-          <li class="nav-item" v-if="isAuthenticated && (RGAccess || MVAccess)">
+          <li class="nav-item" v-if="isAuthenticated && MVAccess">
             <router-link 
               class="nav-link" 
               :class="{'active-link': $route.path === '/archive'}" 
