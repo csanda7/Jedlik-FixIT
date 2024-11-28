@@ -44,23 +44,29 @@
       <div class="row">
         <!-- Left Column: Location, Label, and Priority -->
         <div class="col-md-6">
-          <!-- Location Dropdown -->
-          <div class="dropdown mb-2">
-            <button :class="['btn btn-colorless dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" type="button"
-              id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
-            </button>
-            <ul class="dropdown-menu w-100 scrollable-dropdown" aria-labelledby="locationDropdown">
-      <li v-for="loc in locations" :key="loc">
-        <a class="dropdown-item text-center" href="#" @click="selectLocation(loc)">{{ loc }}</a>
-      </li>
-    </ul>
-          </div>
-          <div v-if="showOtherLocation" class="my-3 mt-0">
-            <input type="text" :class="['form-control border-secondary', isDarkMode ? 'dark-textbox' : '']"
-              id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt"
-              @input="setCookie('otherLocation', otherLocation)">
-          </div>
+           <!-- Location Dropdown -->
+      <!-- Location Dropdown -->
+<div class="dropdown mb-2">
+  <button :class="['btn btn-colorless dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" type="button"
+    id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    {{ location.terem ||  'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
+  </button>
+  <ul class="dropdown-menu w-100 scrollable-dropdown" aria-labelledby="locationDropdown">
+    <li v-for="(loc, index) in locations" :key="index">
+      <a class="dropdown-item text-center" href="#" @click="selectLocation(loc)">
+        {{ loc.terem }}
+      </a>
+    </li>
+  </ul>
+</div>
+
+<!-- Other Location Input -->
+<div v-if="showOtherLocation" class="my-3 mt-0">
+  <input type="text" :class="['form-control border-secondary', isDarkMode ? 'dark-textbox' : '']"
+    id="otherLocation" v-model="otherLocation" placeholder="Adja meg a helyszínt"
+    @input="setCookie('otherLocation', otherLocation)">
+</div>
+
 
           <!-- Label Dropdown -->
           <div class="dropdown mb-2">
@@ -138,7 +144,6 @@
 <script>
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
-import locations from '../assets/termek.json'; 
 
 export default {
   data() {
@@ -148,8 +153,7 @@ export default {
       bugDescription: this.getCookie('bugDescription') || '',
       photos: [],
       photoPreviews: [],
-      location: this.getCookie('location') || '',
-      label: this.getCookie('label') || '',
+      label: this.getCookie('label') || null,
       showOtherLocation: false,
       otherLocation: this.getCookie('otherLocation') || '',
       showPopup: false, 
@@ -158,12 +162,15 @@ export default {
       showResetPopup: false,
       isDarkMode: false,
       showImageLimitPopup: false,
-      locations: locations,
+      locations: [],
+      location: this.getCookie('location') || null,
+
 
     };
   },
 
   mounted() {
+    this.fetchLocations();
     this.isDarkMode = localStorage.getItem('theme') === 'dark';
     window.addEventListener('theme-changed', this.updateTheme);
     if (this.location === 'Egyéb') {
@@ -256,19 +263,42 @@ export default {
       textarea.style.height = 'auto'; 
       textarea.style.height = `${textarea.scrollHeight}px`; 
     },
-    selectLocation(loc) {
-  this.location = loc;
-  this.showOtherLocation = loc === 'Egyéb';
-  this.setCookie('location', loc);
-
-  if (loc === 'Egyéb' && this.otherLocation) {
-    this.setCookie('otherLocation', this.otherLocation);
-  }
-},
     selectlabel(selectedlabel) {
       this.label = selectedlabel;
       this.setCookie('label', selectedlabel);
     },
+
+    async fetchLocations() {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await axios.get('http://localhost:4500/api/locations');
+        this.locations = response.data;
+        
+      } catch (err) {
+        this.error = 'Failed to load locations. Please try again later.';
+        console.error(err);
+      } finally {
+        this.loading = false;
+      }
+    },
+    selectLocation(loc) {
+      this.location = loc; // Set the selected location
+      this.otherLocation = ''; // Clear any manually entered location
+      if (this.location.terem === 'Egyéb') {
+        this.showOtherLocation = true; // Show the other location input
+      }
+      else {
+        this.showOtherLocation = false; // Hide the other location input
+      }
+
+      if (location.terem === 'Egyéb' && this.otherLocation) {
+    this.setCookie('otherLocation', this.otherLocation);
+  }
+    },
+    
+
     bekuldes() {
       if (!this.bugName || !this.bugDescription || !this.location || !this.label || this.location === 'Egyéb' && !this.otherLocation) {
         this.showPopup = true; 

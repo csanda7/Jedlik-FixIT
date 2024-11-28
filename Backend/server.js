@@ -13,6 +13,7 @@ const hibakKiirRoutes = require('./routes/fetchBugsRoutes');
 const hibaModositasRountes = require('./routes/taskModificationRoutes');
 const usersWithRolesRoutes = require('./routes/usersWithRolesRoutes');
 const logRoutes = require('./routes/logRoutes');
+const getLocations = require('./routes/locationRoutes');
 
 const corsOptions = {
   origin: 'http://localhost:5173',
@@ -49,6 +50,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api', bugReportController);
 app.use('/api/usersWithRoles', usersWithRolesRoutes);
 app.use('/api/logs', logRoutes);
+app.use('/api/locations', getLocations)
 
 // Start the server
 const PORT = 4500;
