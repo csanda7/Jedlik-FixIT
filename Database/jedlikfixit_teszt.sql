@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Nov 28. 10:59
--- Kiszolgáló verziója: 10.4.21-MariaDB
--- PHP verzió: 8.0.12
+-- Létrehozás ideje: 2024. Nov 28. 12:18
+-- Kiszolgáló verziója: 10.4.32-MariaDB
+-- PHP verzió: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -40,7 +40,7 @@ CREATE TABLE `hibabejelentesek` (
   `Label` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci DEFAULT NULL,
   `assignedTo` varchar(50) DEFAULT NULL,
   `deadLine` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `hibabejelentesek`
@@ -86,7 +86,8 @@ INSERT INTO `hibabejelentesek` (`ID`, `Title`, `Description`, `Reported_by`, `Lo
 (116, 'sdafasd', 'asdfasd', 'kovacs.bela', 'Másik terem 2', '2024-11-14 10:31:07', '2024-11-14 10:55:41', 3, 'Folyamatban', 'Szoftver', 'kovacs.bela', NULL),
 (117, 'asdfasfa', 'sdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfasdfasdsdfadasfas', 'kovacs.bela', 'Másik terem 2', '2024-11-14 10:31:38', '2024-11-14 10:31:38', 2, 'Bejelentve', 'Hardver', NULL, NULL),
 (118, 'dfasdf', 'asdfs', 'kovacs.bela', 'Másik terem 2', '2024-11-14 10:34:56', '2024-11-14 10:34:56', 2, 'Bejelentve', 'Szoftver', NULL, NULL),
-(119, 'dafsdf', 'dascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvyc', 'kovacs.bela', 'Másik terem 2', '2024-11-14 11:27:06', '2024-11-14 11:27:06', 3, 'Bejelentve', 'Szoftver', NULL, NULL);
+(119, 'dafsdf', 'dascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvycdascvcyvyc', 'kovacs.bela', 'Másik terem 2', '2024-11-14 11:27:06', '2024-11-14 11:27:06', 3, 'Bejelentve', 'Szoftver', NULL, NULL),
+(120, 'sdf', 'sdfs', 'kovacs.bela', '21 - Anyagvizsgáló és hidraulika labor', '2024-11-28 11:13:56', '2024-11-28 11:13:56', 0, 'Bejelentve', 'Szoftver', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -98,7 +99,7 @@ CREATE TABLE `kepek` (
   `ID` int(11) NOT NULL,
   `kep` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci NOT NULL,
   `kep_id` tinyint(4) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `kepek`
@@ -149,10 +150,10 @@ INSERT INTO `kepek` (`ID`, `kep`, `kep_id`) VALUES
 CREATE TABLE `log` (
   `ID` int(11) NOT NULL,
   `Status` varchar(50) CHARACTER SET utf16 COLLATE utf16_hungarian_ci NOT NULL,
-  `Komment` varchar(300) COLLATE utf8mb4_hungarian_ci NOT NULL,
+  `Komment` varchar(300) NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `modosito` varchar(50) COLLATE utf8mb4_hungarian_ci DEFAULT NULL,
-  `assignedTo` varchar(50) COLLATE utf8mb4_hungarian_ci DEFAULT NULL,
+  `modosito` varchar(50) DEFAULT NULL,
+  `assignedTo` varchar(50) DEFAULT NULL,
   `deadLine` timestamp NULL DEFAULT NULL,
   `priority` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
@@ -312,7 +313,7 @@ INSERT INTO `log` (`ID`, `Status`, `Komment`, `updated_at`, `modosito`, `assigne
 
 CREATE TABLE `termek` (
   `terem` varchar(38) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- A tábla adatainak kiíratása `termek`
@@ -369,7 +370,7 @@ INSERT INTO `termek` (`terem`) VALUES
 ('207'),
 ('208'),
 ('209'),
-('21 - Anyagvizsgáló és hidraulika labor'),
+('21 - Anyagvizsgáló labor'),
 ('210'),
 ('211 - humán tanári'),
 ('212'),
@@ -480,7 +481,7 @@ ALTER TABLE `log`
 -- AUTO_INCREMENT a táblához `hibabejelentesek`
 --
 ALTER TABLE `hibabejelentesek`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
 
 --
 -- Megkötések a kiírt táblákhoz
