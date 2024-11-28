@@ -48,15 +48,18 @@ export default {
     async handleLogin() {
       try {
         const authStore = useAuthStore();
-        const session = await authStore.login(
-          this.username,
-          this.password,
-        );
+        const session = await authStore.login(this.username, this.password);
 
         if (session) { // Now checks for success
           authStore.isAuthenticated = true;
-          this.$router.push('/report'); // Navigate to the report page
-        } else {
+          const userRole = sessionStorage.getItem('role'); // Get role from session storage
+          if (userRole === 'muszakivezeto') {
+            this.$router.push('/tasksupervisor'); // Redirect to Task Supervisor if the role is admin
+          } else if (userRole === 'tanar') {
+            this.$router.push('/report'); // Redirect to Report page if the role is user
+          } else if (userRole === 'rendszergazda') {
+            this.$router.push('/mytasks'); // Fallback page for other roles
+          }        } else {
           this.loginError = true; // Handles unsuccessful logins
         }
       } catch (error) {
