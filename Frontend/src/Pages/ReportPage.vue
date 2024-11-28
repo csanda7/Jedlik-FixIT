@@ -46,15 +46,15 @@
         <div class="col-md-6">
            <!-- Location Dropdown -->
       <!-- Location Dropdown -->
-<div class="dropdown mb-2">
+      <div class="dropdown mb-2">
   <button :class="['btn btn-colorless dropdown-toggle w-100 my-2', isDarkMode ? 'dark-dropdown' : '']" type="button"
     id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-    {{ location.terem ||  'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
+    {{ location || 'Helyszín' }} <span class="text-danger" v-if="!location">*</span>
   </button>
   <ul class="dropdown-menu w-100 scrollable-dropdown" aria-labelledby="locationDropdown">
-    <li v-for="(loc, index) in locations" :key="index">
-      <a class="dropdown-item text-center" href="#" @click="selectLocation(loc)">
-        {{ loc.terem }}
+    <li v-for="loc in locations" :key="loc">
+      <a class="dropdown-item text-center" href="#" @click="selectLocation(loc.terem)">
+        {{ loc.terem}}
       </a>
     </li>
   </ul>
@@ -286,14 +286,14 @@ export default {
     selectLocation(loc) {
       this.location = loc; // Set the selected location
       this.otherLocation = ''; // Clear any manually entered location
-      if (this.location.terem === 'Egyéb') {
+      if (this.location === 'Egyéb') {
         this.showOtherLocation = true; // Show the other location input
       }
       else {
         this.showOtherLocation = false; // Hide the other location input
       }
 
-      if (location.terem === 'Egyéb' && this.otherLocation) {
+      if (location === 'Egyéb' && this.otherLocation) {
     this.setCookie('otherLocation', this.otherLocation);
   }
     },
