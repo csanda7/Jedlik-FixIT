@@ -251,6 +251,7 @@ export default {
   this.setCookie('priority', '0');
   this.setCookie('bugDescription', '');
   this.setCookie('location', '');
+  this.setCookie('loc', '');
   this.setCookie('label', '');
   this.setCookie('otherLocation', '');
 },
@@ -285,6 +286,7 @@ export default {
     },
     selectLocation(loc) {
       this.location = loc; // Set the selected location
+      this.setCookie('location', loc); // Set the selected location in cookie
       this.otherLocation = ''; // Clear any manually entered location
       if (this.location === 'Egyéb') {
         this.showOtherLocation = true; // Show the other location input
@@ -361,6 +363,7 @@ export default {
   this.setCookie('priority', '0');
   this.setCookie('bugDescription', '');
   this.setCookie('location', ''); 
+  this.setCookie('loc', '');
   this.setCookie('label', '');
   this.setCookie('otherLocation', ''); 
   
