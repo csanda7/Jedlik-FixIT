@@ -5,7 +5,8 @@
         :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
         <h2 class="my-2 h2">Bejelentett hibák</h2>
         <div class="user-actions d-flex">
-          <input type="text" class="form-control search-input me-3 d-none d-md-block" placeholder="Keresés..." v-model="searchTerm" />          <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
+          <input type="text" class="form-control search-input me-3 d-none d-md-block" placeholder="Keresés..."
+            v-model="searchTerm" /> <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
             <i class="bi bi-funnel-fill"></i>
           </button>
           <button v-if="areFiltersApplied" class="btn btn-danger ms-3" @click="resetFilters">
@@ -18,7 +19,8 @@
         <div class="filters-wrapper">
           <!-- Keresés -->
           <div class="filter-dropdown">
-            <input type="text" class="form-control search-input me-3 d-md-none" placeholder="Keresés..." v-model="searchTerm" />
+            <input type="text" class="form-control search-input me-3 d-md-none" placeholder="Keresés..."
+              v-model="searchTerm" />
           </div>
           <!-- Priority Filter -->
           <div class="filter-dropdown">
@@ -148,8 +150,8 @@
 
     <!-- Modal -->
     <div v-if="showModal" class="modal-overlay" @click="closeModal">
-      <div class="bg" @click.stop>       
-        <div class="modal-content"  s>
+      <div class="bg" @click.stop>
+        <div class="modal-content" s>
           <div class="modal-header">
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
             <button v-if="!isEditing" type="button" class="btn btn-outline-secondary mb-3" @click="toggleEditMode">
@@ -163,9 +165,9 @@
           <div class="modal-body">
             <div class="row">
               <div :class="{
-              'col-md-6': selectedBug.photos.length === 0,
-              'col-md-4': selectedBug.photos.length > 0
-                }">
+                'col-md-6': selectedBug.photos.length === 0,
+                'col-md-4': selectedBug.photos.length > 0
+              }">
                 <div class="info-row">
                   <strong>Prioritás: </strong>
                   <div v-if="!isEditing">
@@ -202,7 +204,8 @@
                 <p v-if="selectedBug.deadline != null && !isEditing" class="info-row">
                   <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString([], {
                     year: 'numeric',
-                    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) }}
+                    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+                  }) }}
                 </p>
                 <div v-if="isEditing" class="info-row">
                   <label><strong>Határidő:</strong></label>
@@ -211,19 +214,19 @@
               </div>
               <div :class="{
                 description: true,
-                'ml-2':true,
-              'col-md-6': selectedBug.photos.length === 0,
-              'col-md-12 my-4': selectedBug.photos.length > 0 && isLandscape,
-              'col-md-4': selectedBug.photos.length > 0 && !isLandscape
-                }">
+                'ml-2': true,
+                'col-md-6': selectedBug.photos.length === 0,
+                'col-md-12 my-4': selectedBug.photos.length > 0 && isLandscape,
+                'col-md-4': selectedBug.photos.length > 0 && !isLandscape
+              }">
                 <p><strong>Hiba leírása:</strong></p>
                 <div class="description-content">{{ selectedBug.description }}</div>
               </div>
               <div :class="{
                 photo_box: true,
-              'col-md-12 my-4': isLandscape,
-              'col-md-4':  !isLandscape
-                }">
+                'col-md-12 my-4': isLandscape,
+                'col-md-4': !isLandscape
+              }">
                 <div class="photo-grid">
                   <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
                     <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
@@ -244,22 +247,23 @@
 
           <div class="modal-footer">
 
-
-
             <!-- Eseménynapló megnyitása -->
-            <button v-if="!isEditing" type="button" class="btn btn-primary" v-bind:class="isMobile ? 'phoneViewButton' : 'me-auto'" @click="openLogModal(selectedBugId)">
+            <button v-if="!isEditing" type="button" class="btn btn-primary"
+              v-bind:class="isMobile ? 'phoneViewButton' : 'me-auto'" @click="openLogModal(selectedBugId)">
               Eseménynapló
             </button>
 
 
             <!-- Komment írása -->
-            <button v-if="!isEditing" type="button" class="btn btn-primary   " v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 equal-width'" @click="handleButtonClick">
+            <button v-if="!isEditing" type="button" class="btn btn-primary   "
+              v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 equal-width'" @click="handleButtonClick">
               Megjegyzés
             </button>
 
             <!-- Feladat elvállalása -->
-            <button type="button" class="btn btn-primary" v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1'" 
-              v-if="role === 'rendszergazda' && !selectedBug.assignedTo && !isEditing" @click="openCommentModal(takeTask)">
+            <button type="button" class="btn btn-primary" v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1'"
+              v-if="role === 'rendszergazda' && !selectedBug.assignedTo && !isEditing"
+              @click="openCommentModal(takeTask)">
               Elvállalom
             </button>
 
@@ -267,8 +271,9 @@
             <div v-else-if="role === 'muszakivezeto' && !selectedBug.assignedTo && !isEditing" class="dropdown"
               style="cursor: pointer;">
 
-              <button ref="dropdownButton" class="btn btn-primary dropdown-toggle " v-bind:class="isMobile ? 'phoneViewButton' : 'my-2 fixed-width'" type="button"
-                data-bs-toggle="dropdown" aria-expanded="false">
+              <button ref="dropdownButton" class="btn btn-primary dropdown-toggle "
+                v-bind:class="isMobile ? 'phoneViewButton' : 'my-2 fixed-width'" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
                 {{ selectedUser || 'Feladat kiosztása' }}
               </button>
 
@@ -280,10 +285,11 @@
             </div>
 
             <!-- Dropdown Menu for Task Status Update -->
-            <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) && !isEditing">
+            <div
+              v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) && !isEditing">
               <div class="dropdown " style="cursor: pointer;">
-                <button class="btn btn-primary dropdown-toggle " v-bind:class="isMobile ? 'phoneViewButton' : 'px-4'" type="button" id="statusDropdown"
-                  data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-primary dropdown-toggle " v-bind:class="isMobile ? 'phoneViewButton' : 'px-4'"
+                  type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                   Állapot frissítése
                 </button>
                 <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
@@ -304,16 +310,9 @@
                 </ul>
               </div>
             </div>
-
-
-
-            <button v-if="!isEditing" type="button" class="btn btn-secondary" v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 my-2 equal-width'" @click="closeModal">Bezárás</button>
+            <button v-if="!isEditing" type="button" class="btn btn-secondary"
+              v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 my-2 equal-width'" @click="closeModal">Bezárás</button>
           </div>
-        
-
-
-
-
           <!-- Comment Modal -->
           <div v-if="showCommentModal" class="Commentmodal-overlay">
             <div class="bg" @click.stop>
@@ -338,23 +337,20 @@
                     </label>
                     <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="komment" v-model="komment"
                       rows="6" maxlength="300" @input="updateCharacterCount">
-          </textarea>
+                    </textarea>
                   </div>
                 </div>
                 <div class="modal-footer">
                   <div class="d-flex justify-content-center flex-wrap">
-  <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
-  <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
-</div>
-
+                    <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
+                    <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-
           <!-- Log Modal -->
-          <div v-if="showLogModal" class="logmodal-overlay" @click="closeLogModal" >
+          <div v-if="showLogModal" class="logmodal-overlay" @click="closeLogModal">
             <div class="bg logmodal-bg" @click.stop :class="{ 'dark-mode': isDarkMode }">
               <div class="logmodal-content" :class="{ 'dark-mode': isDarkMode }">
                 <div class="logmodal-header">
@@ -368,7 +364,8 @@
                           <strong>Frissítve</strong>
                           <p>{{ new Date(log.logUpdated_at).toLocaleString([], {
                             year: 'numeric', month: '2-digit', day:
-                              '2-digit', hour: '2-digit', minute: '2-digit' }) }}</p>
+                              '2-digit', hour: '2-digit', minute: '2-digit'
+                          }) }}</p>
 
                         </div>
                         <div v-if="log.logmodosito" class="logmodal-item">
@@ -388,7 +385,8 @@
                           <strong>Határidő</strong>
                           <p>{{ new Date(log.logdeadLine).toLocaleString([], {
                             year: 'numeric', month: '2-digit', day:
-                              '2-digit', hour: '2-digit', minute: '2-digit' }) }}</p>
+                              '2-digit', hour: '2-digit', minute: '2-digit'
+                          }) }}</p>
                         </div>
                         <div v-if="log.logpriority" class="logmodal-item">
                           <strong>Prioritás</strong>
@@ -397,7 +395,7 @@
                             <span class="priority-text">{{ log.logpriority }}</span>
                           </div>
                         </div>
-                        <div v-if="log.logKomment" class="description">
+                        <div v-if="log.logKomment" class="description logmodal-item">
                           <strong>Hozzászólás</strong>
                           <p class="description-content">{{ log.logKomment }}</p>
                         </div>
@@ -405,7 +403,7 @@
                       <hr v-if="logEntries.length > 1" />
                     </div>
                   </div>
-                  <p v-else>Nincsenek elérhető események.</p>
+                  <p class="logmodal-empty" v-else>Nincsenek elérhető események.</p>
                 </div>
                 <div class="logmodal-footer">
                   <button type="button" class="btn btn-secondary" @click="closeLogModal">Bezárás</button>
@@ -413,10 +411,6 @@
               </div>
             </div>
           </div>
-
-
-
-
         </div>
       </div>
     </div>
@@ -455,7 +449,7 @@ export default {
       actionToConfirm: null,
       actionData: null,
       komment: '',
-      logEntries: [], 
+      logEntries: [],
       isEditing: false,
       iscommmentonly: false,
       isMobile: false,
@@ -548,7 +542,7 @@ export default {
   beforeDestroy() {
     window.removeEventListener('theme-changed', this.updateTheme);
   },
- 
+
   created() {
     this.orientationOrResizeListener = () => {
       this.isMobile = window.matchMedia("(max-width: 600px)").matches;
@@ -575,21 +569,21 @@ export default {
   methods: {
     /* Lifecycle Methods */
 
-checkMobileView() {
-  if (window.innerWidth <= 600) {
-    this.isMobile = true;
-  } else {
-    this.isMobile = false;
-  }
-},
-updateTheme() {
-  this.isDarkMode = localStorage.getItem('theme') === 'dark';
-},
+    checkMobileView() {
+      if (window.innerWidth <= 600) {
+        this.isMobile = true;
+      } else {
+        this.isMobile = false;
+      }
+    },
+    updateTheme() {
+      this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    },
 
-/* Fetch and Data Management */
+    /* Fetch and Data Management */
 
-async fetchBugs() {
-  console.log(this.userRole)
+    async fetchBugs() {
+      console.log(this.userRole)
       try {
         const response = await fetch('http://localhost:4500/api/hibakKiir');
         if (!response.ok) throw new Error('Network response was not ok');
@@ -623,99 +617,99 @@ async fetchBugs() {
       } catch (error) {
         console.error('Error fetching bug data:', error);
       }
-},
-async fetchUsersWithRoles() {
-  try {
-    const response = await fetch('http://localhost:4500/api/usersWithRoles');
-    if (!response.ok) throw new Error('Failed to fetch users');
+    },
+    async fetchUsersWithRoles() {
+      try {
+        const response = await fetch('http://localhost:4500/api/usersWithRoles');
+        if (!response.ok) throw new Error('Failed to fetch users');
 
-    this.usersWithRoles = await response.json();
-  } catch (error) {
-    console.error('Error fetching users:', error);
-  }
-},
-async fetchLogEntries() {
-  try {
-    const response = await fetch(`http://localhost:4500/api/logs/${this.selectedBug.id}`);
-    if (!response.ok) throw new Error('Failed to fetch log entries');
+        this.usersWithRoles = await response.json();
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    },
+    async fetchLogEntries() {
+      try {
+        const response = await fetch(`http://localhost:4500/api/logs/${this.selectedBug.id}`);
+        if (!response.ok) throw new Error('Failed to fetch log entries');
 
-    const logData = await response.json();
-    this.logEntries = logData.map(log => ({
-      logid: log.ID,
-      logStatus: log.Status,
-      logKomment: log.Komment,
-      logUpdated_at: log.Updated_at,
-      logmodosito: log.modosito,
-      logassignedTo: log.assignedTo,
-      logdeadLine: log.deadLine,
-      logpriority: log.priority
-    }));
+        const logData = await response.json();
+        this.logEntries = logData.map(log => ({
+          logid: log.ID,
+          logStatus: log.Status,
+          logKomment: log.Komment,
+          logUpdated_at: log.Updated_at,
+          logmodosito: log.modosito,
+          logassignedTo: log.assignedTo,
+          logdeadLine: log.deadLine,
+          logpriority: log.priority
+        }));
 
-  } catch (error) {
-    console.error('Error fetching log entries:', error);
-  }
-},
+      } catch (error) {
+        console.error('Error fetching log entries:', error);
+      }
+    },
 
-/* Filter and Sort */
+    /* Filter and Sort */
 
-resetFilters() {
-  this.selectedPriorities = [];
-  this.selectedLabels = [];
-  this.selectedStatuses = [];
-  this.selectedRooms = [];
-},
-toggleFilterVisibility() {
-  this.showFilters = !this.showFilters;
-},
-sortBy(key) {
-  if (this.sortKey === key) {
-    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-  } else {
-    this.sortKey = key;
-    this.sortOrder = 'asc';
-  }
-},
+    resetFilters() {
+      this.selectedPriorities = [];
+      this.selectedLabels = [];
+      this.selectedStatuses = [];
+      this.selectedRooms = [];
+    },
+    toggleFilterVisibility() {
+      this.showFilters = !this.showFilters;
+    },
+    sortBy(key) {
+      if (this.sortKey === key) {
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortKey = key;
+        this.sortOrder = 'asc';
+      }
+    },
 
-/* Status Updates */
+    /* Status Updates */
 
-async Done() {
-  await this.updateStatus('Kész');
-},
-async Failed() {
-  await this.updateStatus('Meghiúsult');
-},
-async Supply() {
-  await this.updateStatus('Beszerzésre vár');
-},
-async InProgress() {
-  await this.updateStatus('Folyamatban');
-},
-async updateStatus(status) {
-  try {
-    const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status, komment: this.komment, modosito: this.loggedInUser }),
-    });
+    async Done() {
+      await this.updateStatus('Kész');
+    },
+    async Failed() {
+      await this.updateStatus('Meghiúsult');
+    },
+    async Supply() {
+      await this.updateStatus('Beszerzésre vár');
+    },
+    async InProgress() {
+      await this.updateStatus('Folyamatban');
+    },
+    async updateStatus(status) {
+      try {
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status, komment: this.komment, modosito: this.loggedInUser }),
+        });
 
-    if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
+        if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
 
-    this.selectedBug.status = status;
-    this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
+        this.selectedBug.status = status;
+        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
 
-    this.fetchBugs();
-  } catch (error) {
-    console.error(`Error updating status to "${status}":`, error);
-    alert(`Failed to update the status to "${status}".`);
-  }
-},
+        this.fetchBugs();
+      } catch (error) {
+        console.error(`Error updating status to "${status}":`, error);
+        alert(`Failed to update the status to "${status}".`);
+      }
+    },
 
-/* Task Assignment */
+    /* Task Assignment */
 
-async takeTask() {
-  const username = sessionStorage.getItem('username');
+    async takeTask() {
+      const username = sessionStorage.getItem('username');
 
       if (!username) {
         alert('No user logged in');
@@ -743,127 +737,127 @@ async takeTask() {
         console.error('Error assigning task:', error);
         alert('Failed to assign the task.');
       }
-},
-async assignTaskTo(user) {
-  try {
-    const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ assignedTo: user, komment: this.komment, modosito: this.loggedInUser }),
-    });
-
-    if (!response.ok) throw new Error('Failed to assign task');
-
-    this.selectedBug.assignedTo = user;
-    this.komment = '';
-    this.selectedBug.status = 'Folyamatban'
-    this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
-    this.fetchBugs();
-    this.closeModal();
-    this.openModal(this.selectedBug);
-
-  } catch (error) {
-    console.error('Error assigning task:', error);
-    alert('Failed to assign the task.');
-  }
-},
-
-/* Bug editing */
-
-toggleEditMode() {
-  this.isEditing = !this.isEditing;
-  this.originalBug = JSON.parse(JSON.stringify(this.selectedBug)); // Deep copy
-},
-async saveEdit() {
-  const updatedData = {
-    priority: this.selectedBug.priority !== this.originalBug.priority ? this.selectedBug.priority : this.originalBug.priority,
- assignedTo: this.selectedBug.assignedTo !== this.originalBug.assignedTo ? this.selectedBug.assignedTo : this.originalBug.assignedTo,
- deadline: this.selectedBug.deadline !== this.originalBug.deadline ? this.selectedBug.deadline : this.originalBug.deadline,
-   modosito: this.loggedInUser
- };
-
-     Object.keys(updatedData).forEach(key => {
-       if (updatedData[key] === null) delete updatedData[key];
-     });
-
-     try {
-       const response = await fetch(`http://localhost:4500/api/editBug/${this.selectedBug.id}`, {
-         method: 'PUT',
-         headers: {
-           'Content-Type': 'application/json',
-         },
-         body: JSON.stringify(updatedData),
-       });
-
-   this.isEditing = !this.isEditing;
-   this.fetchBugs(); // Refresh the list to reflect the updated bug
-   this.closeModal();
-   this.openModal(this.selectedBug);
-   this.selectedBug.priorityColor = this.getPriorityColor(this.selectedBug.priority);
-
-     } catch (error) {
-       console.error('Error updating bug:', error);
-     }
-   },
-
-   /* Main modal */
-
-   openModal(bug) {
-    this.selectedBug = bug;
-    this.showModal = true;
-    this.assignedTo = this.selectedBug.assignedTo;
-    this.status = this.selectedBug.status;
-    document.body.style.overflow = 'hidden';
-    this.checkMobileView();
-  },
-  closeModal() {
-    this.showModal = false;
-    this.selectedUser = null;
-    this.isEditing = false;
-    document.body.style.overflow = '';
-  },
-  closeLogModal() {
-    this.showLogModal = false;
-  },
-
-  handleButtonClick() {
-    this.iscommmentonly = true;
-    this.openCommentModal(this.Komment);
-  },
-
-  /* Comment modal */
-
-  openCommentModal(action, data) {
-    this.showCommentModal = true;
-    this.actionToConfirm = action;
-    this.actionData = data;
-  },
-  closeCommentModal() {
-    this.showCommentModal = false;
-    this.actionData = null;
-    this.komment = '';
-    this.iscommmentonly = false;
-  },
-  async confirmAction() {
-    if (this.actionToConfirm) {
+    },
+    async assignTaskTo(user) {
       try {
-        await this.actionToConfirm(this.actionData);
+        const response = await fetch(`http://localhost:4500/api/updateAssignedTo/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ assignedTo: user, komment: this.komment, modosito: this.loggedInUser }),
+        });
+
+        if (!response.ok) throw new Error('Failed to assign task');
+
+        this.selectedBug.assignedTo = user;
+        this.komment = '';
+        this.selectedBug.status = 'Folyamatban'
+        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
+        this.fetchBugs();
+        this.closeModal();
+        this.openModal(this.selectedBug);
+
       } catch (error) {
-        console.error('Error executing action:', error);
-        alert('There was an error executing the action.');
+        console.error('Error assigning task:', error);
+        alert('Failed to assign the task.');
       }
-    }
-    this.closeCommentModal();
-    this.closeModal();
-    this.openModal(this.selectedBug);
-  },
-  async Komment() {
-    if (!this.komment || this.komment.trim() === '') {
-      alert('Please enter a comment before submitting.');
-      return;
-    }
-    try {
-      const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
+    },
+
+    /* Bug editing */
+
+    toggleEditMode() {
+      this.isEditing = !this.isEditing;
+      this.originalBug = JSON.parse(JSON.stringify(this.selectedBug)); // Deep copy
+    },
+    async saveEdit() {
+      const updatedData = {
+        priority: this.selectedBug.priority !== this.originalBug.priority ? this.selectedBug.priority : this.originalBug.priority,
+        assignedTo: this.selectedBug.assignedTo !== this.originalBug.assignedTo ? this.selectedBug.assignedTo : this.originalBug.assignedTo,
+        deadline: this.selectedBug.deadline !== this.originalBug.deadline ? this.selectedBug.deadline : this.originalBug.deadline,
+        modosito: this.loggedInUser
+      };
+
+      Object.keys(updatedData).forEach(key => {
+        if (updatedData[key] === null) delete updatedData[key];
+      });
+
+      try {
+        const response = await fetch(`http://localhost:4500/api/editBug/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedData),
+        });
+
+        this.isEditing = !this.isEditing;
+        this.fetchBugs(); // Refresh the list to reflect the updated bug
+        this.closeModal();
+        this.openModal(this.selectedBug);
+        this.selectedBug.priorityColor = this.getPriorityColor(this.selectedBug.priority);
+
+      } catch (error) {
+        console.error('Error updating bug:', error);
+      }
+    },
+
+    /* Main modal */
+
+    openModal(bug) {
+      this.selectedBug = bug;
+      this.showModal = true;
+      this.assignedTo = this.selectedBug.assignedTo;
+      this.status = this.selectedBug.status;
+      document.body.style.overflow = 'hidden';
+      this.checkMobileView();
+    },
+    closeModal() {
+      this.showModal = false;
+      this.selectedUser = null;
+      this.isEditing = false;
+      document.body.style.overflow = '';
+    },
+    closeLogModal() {
+      this.showLogModal = false;
+    },
+
+    handleButtonClick() {
+      this.iscommmentonly = true;
+      this.openCommentModal(this.Komment);
+    },
+
+    /* Comment modal */
+
+    openCommentModal(action, data) {
+      this.showCommentModal = true;
+      this.actionToConfirm = action;
+      this.actionData = data;
+    },
+    closeCommentModal() {
+      this.showCommentModal = false;
+      this.actionData = null;
+      this.komment = '';
+      this.iscommmentonly = false;
+    },
+    async confirmAction() {
+      if (this.actionToConfirm) {
+        try {
+          await this.actionToConfirm(this.actionData);
+        } catch (error) {
+          console.error('Error executing action:', error);
+          alert('There was an error executing the action.');
+        }
+      }
+      this.closeCommentModal();
+      this.closeModal();
+      this.openModal(this.selectedBug);
+    },
+    async Komment() {
+      if (!this.komment || this.komment.trim() === '') {
+        alert('Please enter a comment before submitting.');
+        return;
+      }
+      try {
+        const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -879,80 +873,80 @@ async saveEdit() {
         console.error('Error updating log:', error);
         alert('Failed to update the log.');
       }
-  },
-  
-  /* Log modal */
+    },
 
-  async openLogModal() {
-    this.showLogModal = true;
-    await this.fetchLogEntries(); // Fetch log entries from the backend
-  },
-  closeLogModal() {
-    this.showLogModal = false;
-  },
+    /* Log modal */
 
-  /* Photo modal */
+    async openLogModal() {
+      this.showLogModal = true;
+      await this.fetchLogEntries(); // Fetch log entries from the backend
+    },
+    closeLogModal() {
+      this.showLogModal = false;
+    },
 
-  openPhoto(photo, index) {
-    this.showPhotoModal = true;
-    this.selectedPhoto = photo;
-    this.selectedPhotoIndex = index;
-  },
-  closePhotoModal() {
-    this.showPhotoModal = false;
-    this.selectedPhoto = null;
-  },
-  prevPhoto() {
-    if (this.selectedPhotoIndex > 0) {
-      this.selectedPhotoIndex--;
-    } else {
-      this.selectedPhotoIndex = this.selectedBug.photos.length - 1;
-    }
-    this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
-  },
-  nextPhoto() {
-    if (this.selectedPhotoIndex < this.selectedBug.photos.length - 1) {
-      this.selectedPhotoIndex++;
-    } else {
-      this.selectedPhotoIndex = 0;
-    }
-    this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
-  },
+    /* Photo modal */
 
-  /* Utility */
-  
-  getPriorityColor(priority) {
-    switch (priority) {
-      case 1: return 'darkgreen';
-      case 2: return 'lightgreen';
-      case 3: return 'yellow';
-      case 4: return 'orange';
-      case 5: return 'red';
-      default: return '';
-    }
-  },
-  getBadgeClass(status) {
-    switch (status) {
-      case 'Bejelentve':
-        return 'badge-reported';
-      case 'Folyamatban':
-        return 'badge-progress';
-      case 'Beszerzésre vár':
-        return 'badge-supply';
-      case 'Újból kiosztva':
-        return 'badge-resent';
-      case 'Kész':
-        return 'badge-done';
-      case 'Meghiúsult':
-        return 'badge-failed';
-    }
-  },
-  selectUser(userName) {
-    this.selectedUser = userName;
-    const dropdownElement = this.$refs.dropdownButton;
-    const dropdown = bootstrap.Dropdown.getInstance(dropdownElement) || new bootstrap.Dropdown(dropdownElement);
-    dropdown.hide();
-  },
+    openPhoto(photo, index) {
+      this.showPhotoModal = true;
+      this.selectedPhoto = photo;
+      this.selectedPhotoIndex = index;
+    },
+    closePhotoModal() {
+      this.showPhotoModal = false;
+      this.selectedPhoto = null;
+    },
+    prevPhoto() {
+      if (this.selectedPhotoIndex > 0) {
+        this.selectedPhotoIndex--;
+      } else {
+        this.selectedPhotoIndex = this.selectedBug.photos.length - 1;
+      }
+      this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
+    },
+    nextPhoto() {
+      if (this.selectedPhotoIndex < this.selectedBug.photos.length - 1) {
+        this.selectedPhotoIndex++;
+      } else {
+        this.selectedPhotoIndex = 0;
+      }
+      this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
+    },
+
+    /* Utility */
+
+    getPriorityColor(priority) {
+      switch (priority) {
+        case 1: return 'darkgreen';
+        case 2: return 'lightgreen';
+        case 3: return 'yellow';
+        case 4: return 'orange';
+        case 5: return 'red';
+        default: return '';
+      }
+    },
+    getBadgeClass(status) {
+      switch (status) {
+        case 'Bejelentve':
+          return 'badge-reported';
+        case 'Folyamatban':
+          return 'badge-progress';
+        case 'Beszerzésre vár':
+          return 'badge-supply';
+        case 'Újból kiosztva':
+          return 'badge-resent';
+        case 'Kész':
+          return 'badge-done';
+        case 'Meghiúsult':
+          return 'badge-failed';
+      }
+    },
+    selectUser(userName) {
+      this.selectedUser = userName;
+      const dropdownElement = this.$refs.dropdownButton;
+      const dropdown = bootstrap.Dropdown.getInstance(dropdownElement) || new bootstrap.Dropdown(dropdownElement);
+      dropdown.hide();
+    },
   },
 
 };
@@ -1123,6 +1117,7 @@ async saveEdit() {
   align-items: center;
   z-index: 1000;
 }
+
 .modal-content {
   background: white !important;
   padding: 2rem;
@@ -1183,9 +1178,14 @@ async saveEdit() {
   align-items: flex-start;
   width: auto;
   min-width: 150px;
+  margin-top: 2%;
+}
+.logmodal-empty{
+  margin-top: 2%;
 }
 
 .logmodal-item strong {
+  margin-top: 5px;
   margin-bottom: 5px;
 }
 
@@ -1224,14 +1224,14 @@ async saveEdit() {
 /* Modal body & items */
 
 .logmodal-body {
-  flex-grow: 1; 
+  flex-grow: 1;
   padding-right: 1rem;
   gap: 20px;
 }
 
 .Commentmodal-body {
   flex-grow: 1;
-  margin-top: 0rem; 
+  margin-top: 0rem;
   margin-bottom: 1rem;
   max-height: 12rem;
 }
@@ -1253,6 +1253,7 @@ async saveEdit() {
 .info-row strong {
   margin-right: 10px;
 }
+
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1368,13 +1369,14 @@ async saveEdit() {
 .dark-mode .modal-footer,
 .dark-mode .logmodal-footer {
   background-color: #444;
-  color: white; 
+  color: white;
 }
 
 .dark-mode .Commentmodal-body {
   background-color: #444;
   color: white;
 }
+
 .dark-mode .logmodal-body {
   flex-grow: 1;
   padding-right: 1rem;
@@ -1457,7 +1459,9 @@ async saveEdit() {
 }
 
 /* Form inputs */
-
+.form-control{
+  max-height: 160px;
+}
 .form-control.dark-textbox {
   background-color: #444;
   color: white;
@@ -1497,180 +1501,193 @@ async saveEdit() {
     align-items: stretch;
   }
 }
+
 @media screen and (max-width: 600px) {
-    .filters-wrapper {
-      flex-direction: column;
-      align-items: stretch;
-    }
-  
-    .filter-dropdown {
-      width: 100%;
-    }
-  
-    #FilterDropDown {
-      width: 100%;
-    }
-  
-    .dropdown-menu {
-      width: 100%;
-    }
-  }
-  
-  @media screen and (max-width: 768px) {
-    .hide-mobile {
-      display: none !important;
-    }
-  
-    .table thead th,
-    .table tbody td {
-      padding-left: 1em;
-      padding-right: 1em;
-    }
-  
-    .priority-container {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      white-space: nowrap;
-    }
-  
-    .priority-bar {
-      width: 30px;
-    }
-  
-    .table-responsive {
-      width: 100%;
-      margin-bottom: 0;
-    }
-  
-    .reported-bugs-container {
-      padding: 0 10px;
-    }
-  
-    tr:last-child td[colspan="7"] {
-      column-span: 2;
-    }
+  .filters-wrapper {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  @media (max-width: 600px) {
-    .modal-content {
-      max-width: 100vw !important;
-      max-height: 90vh;
+  .filter-dropdown {
+    width: 100%;
+  }
+
+  #FilterDropDown {
+    width: 100%;
+  }
+
+  .dropdown-menu {
+    width: 100%;
+  }
+  .dropdown-menu.show {
+    width: 75%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+
+  .table thead th,
+  .table tbody td {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+
+  .priority-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    white-space: nowrap;
+  }
+
+  .priority-bar {
+    width: 30px;
+  }
+
+  .table-responsive {
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .reported-bugs-container {
+    padding: 0 10px;
+  }
+
+  tr:last-child td[colspan="7"] {
+    column-span: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .modal-content {
+    max-width: 100vw !important;
+    max-height: 90vh;
     overflow-y: auto;
     border-radius: 2vh;
-    }
-    .modal-footer {
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      margin-block-end: auto !important;
-    }
-    .info-row
-    {
-      margin-bottom: 2rem;
-    }
-    .description
-    {
-      margin-bottom: 2rem;
-    }
-    .phoneViewButton
-    {
-      margin: 1vw !important;
-      margin-right: 0 !important; 
-      width: 12rem ; 
-    }
-    .carousel-photo {
-      width: 100%;
-      height: auto;
-    }
-    .logmodal-content {
-      min-width : 80vw !important;
-    }
-    .logmodal-body {
-      min-height: 90vw !important;
-    }
-  
-    .logmodal-row {
-      flex-direction: column;
-    }
-    .Commentmodal-content {
-    min-width: 80vw !important; 
-      
-    }
   }
-  @media (max-height: 600px){
-    .modal-content {
-      max-width: 100vw !important;
-      max-height: 90vh;
-    overflow-y: auto !important; 
+
+  .modal-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    margin-block-end: auto !important;
+  }
+
+  .info-row {
+    margin-bottom: 2rem;
+  }
+
+  .description {
+    margin-bottom: 2rem;
+  }
+
+  .phoneViewButton {
+    margin: 1vw !important;
+    margin-right: 0 !important;
+    width: 12rem;
+  }
+
+  .carousel-photo {
+    width: 100%;
+    height: auto;
+  }
+
+  .logmodal-content {
+    min-width: 80vw !important;
+  }
+
+  .logmodal-body {
+    min-height: 90vw !important;
+  }
+
+  .logmodal-row {
+    flex-direction: column;
+  }
+
+  .Commentmodal-content {
+    min-width: 80vw !important;
+
+  }
+}
+
+@media (max-height: 600px) {
+  .modal-content {
+    max-width: 100vw !important;
+    max-height: 90vh;
+    overflow-y: auto !important;
     border-radius: 2vh;
     flex-direction: column !important;
-    }
-    .Commentmodal-content {
-      max-width: 200vw !important;
-      min-width: 70vw !important;
-      max-height: 80vh !important;
-      min-height: 60vh !important;
-    }
-    .logmodal-content {
-      min-height: 40vw !important;
-    }
-    .logmodal-body {
-      max-height: 90vw !important;
-    }  
-  }
-  @media screen and (max-width: 768px) {
-    .hide-mobile {
-      display: none !important;
-    }
-  
-    .table thead th,
-    .table tbody td {
-      padding-left: 1em;
-      padding-right: 1em;
-    }
-  
-    .priority-container {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      white-space: nowrap;
-    }
-  
-    .priority-bar {
-      width: 30px;
-    }
-  
-    .table-responsive {
-      width: 100%;
-      margin-bottom: 0;
-    }
-  
-    .reported-bugs-container {
-      padding: 0 10px;
-    }
-  
-    tr:last-child td[colspan="7"] {
-      column-span: 2;
-    }
   }
 
-  .equal-width {
+  .Commentmodal-content {
+    max-width: 200vw !important;
+    min-width: 70vw !important;
+    max-height: 80vh !important;
+    min-height: 60vh !important;
+  }
+
+  .logmodal-content {
+    min-height: 40vw !important;
+  }
+
+  .logmodal-body {
+    max-height: 90vw !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+
+  .table thead th,
+  .table tbody td {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+
+  .priority-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    white-space: nowrap;
+  }
+
+  .priority-bar {
+    width: 30px;
+  }
+
+  .table-responsive {
     width: 100%;
-    max-width: 110px;
-    text-align: center;
+    margin-bottom: 0;
   }
 
-  .edit.equal-width {
-    max-width: 100px;
+  .reported-bugs-container {
+    padding: 0 10px;
   }
 
-  .edit-div {
-    max-width: 200px;
+  tr:last-child td[colspan="7"] {
+    column-span: 2;
   }
+}
 
-  .edit-width {
-    width: 100%;
-  }
+.equal-width {
+  width: 100%;
+  max-width: 110px;
+  text-align: center;
+}
 
+.edit.equal-width {
+  max-width: 100px;
+}
+
+.edit-div {
+  max-width: 200px;
+}
+
+.edit-width {
+  width: 100%;
+}
 </style>

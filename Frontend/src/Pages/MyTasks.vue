@@ -5,7 +5,8 @@
         :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
         <h2 class="my-2 h2">Bejelentett hibák</h2>
         <div class="user-actions d-flex">
-          <input type="text" class="form-control search-input me-3 d-none d-md-block" placeholder="Keresés..." v-model="searchTerm" />
+          <input type="text" class="form-control search-input me-3 d-none d-md-block" placeholder="Keresés..."
+            v-model="searchTerm" />
           <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
             <i class="bi bi-funnel-fill"></i>
           </button>
@@ -19,7 +20,8 @@
         <div class="filters-wrapper">
           <!-- Keresés -->
           <div class="filter-dropdown">
-            <input type="text" class="form-control search-input me-3 d-md-none" placeholder="Keresés..." v-model="searchTerm" />
+            <input type="text" class="form-control search-input me-3 d-md-none" placeholder="Keresés..."
+              v-model="searchTerm" />
           </div>
           <!-- Priority Filter -->
           <div class="filter-dropdown">
@@ -147,19 +149,19 @@
       </div>
     </div>
 
-      <!-- Modal -->
+    <!-- Modal -->
     <div v-if="showModal" class="modal-overlay" @click="closeModal">
-      <div class="bg" @click.stop>       
-        <div class="modal-content"  s>
+      <div class="bg" @click.stop>
+        <div class="modal-content" s>
           <div class="modal-header">
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
           </div>
           <div class="modal-body">
             <div class="row">
               <div :class="{
-              'col-md-6': selectedBug.photos.length === 0,
-              'col-md-4': selectedBug.photos.length > 0
-                }">
+                'col-md-6': selectedBug.photos.length === 0,
+                'col-md-4': selectedBug.photos.length > 0
+              }">
                 <div class="info-row">
                   <strong>Prioritás: </strong>
                   <div v-if="!isEditing">
@@ -184,11 +186,12 @@
                 <p class="info-row"><strong>Terem:</strong> {{ selectedBug.room }}</p>
                 <p class="info-row"><strong>Hibabejelentő:</strong> {{ selectedBug.reportedBy }}</p>
                 <p class="info-row"><strong>Bejelentés ideje:</strong> {{ selectedBug.reportedAt }}</p>
-                
+
                 <p v-if="selectedBug.deadline != null && !isEditing" class="info-row">
                   <strong>Határidő:</strong> {{ new Date(selectedBug.deadline).toLocaleString([], {
                     year: 'numeric',
-                    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) }}
+                    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+                  }) }}
                 </p>
                 <div v-if="isEditing" class="info-row">
                   <label><strong>Határidő:</strong></label>
@@ -197,19 +200,19 @@
               </div>
               <div :class="{
                 description: true,
-                'ml-2':true,
-              'col-md-6': selectedBug.photos.length === 0,
-              'col-md-12 my-4': selectedBug.photos.length > 0 && isLandscape,
-              'col-md-4': selectedBug.photos.length > 0 && !isLandscape
-                }">
+                'ml-2': true,
+                'col-md-6': selectedBug.photos.length === 0,
+                'col-md-12 my-4': selectedBug.photos.length > 0 && isLandscape,
+                'col-md-4': selectedBug.photos.length > 0 && !isLandscape
+              }">
                 <p><strong>Hiba leírása:</strong></p>
                 <div class="description-content">{{ selectedBug.description }}</div>
               </div>
               <div :class="{
                 photo_box: true,
-              'col-md-12 my-4': isLandscape,
-              'col-md-4':  !isLandscape
-                }">
+                'col-md-12 my-4': isLandscape,
+                'col-md-4': !isLandscape
+              }">
                 <div class="photo-grid">
                   <div v-for="(photo, index) in selectedBug.photos" :key="index" class="photo-item">
                     <img :src="photo" class="image-thumbnail" :alt="'Bug photo ' + index" @click="openPhoto(photo)" />
@@ -230,25 +233,24 @@
 
           <div class="modal-footer">
 
-
-
             <!-- Eseménynapló megnyitása -->
-            <button v-if="!isEditing" type="button" class="btn btn-primary" v-bind:class="isMobile ? 'phoneViewButton' : 'me-auto'" @click="openLogModal(selectedBugId)">
+            <button v-if="!isEditing" type="button" class="btn btn-primary"
+              v-bind:class="isMobile ? 'phoneViewButton' : 'me-auto'" @click="openLogModal(selectedBugId)">
               Eseménynapló
             </button>
 
-
             <!-- Komment írása -->
-            <button v-if="!isEditing" type="button" class="btn btn-primary   " v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 equal-width'" @click="handleButtonClick">
+            <button v-if="!isEditing" type="button" class="btn btn-primary   "
+              v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 equal-width'" @click="handleButtonClick">
               Megjegyzés
             </button>
 
-
             <!-- Dropdown Menu for Task Status Update -->
-            <div v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) && !isEditing">
+            <div
+              v-if="loggedInUser === assignedTo && !['Meghiúsult', 'Kész', 'Bejelentve'].includes(status) && !isEditing">
               <div class="dropdown " style="cursor: pointer;">
-                <button class="btn btn-primary dropdown-toggle " v-bind:class="isMobile ? 'phoneViewButton' : 'px-4'" type="button" id="statusDropdown"
-                  data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-primary dropdown-toggle " v-bind:class="isMobile ? 'phoneViewButton' : 'px-4'"
+                  type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                   Állapot frissítése
                 </button>
                 <ul class="dropdown-menu text-center w-100" aria-labelledby="statusDropdown">
@@ -269,10 +271,8 @@
                 </ul>
               </div>
             </div>
-
-
-
-            <button v-if="!isEditing" type="button" class="btn btn-secondary" v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 my-2 equal-width'" @click="closeModal">Bezárás</button>
+            <button v-if="!isEditing" type="button" class="btn btn-secondary"
+              v-bind:class="isMobile ? 'phoneViewButton' : 'mx-1 my-2 equal-width'" @click="closeModal">Bezárás</button>
           </div>
 
           <!-- Comment Modal -->
@@ -299,15 +299,14 @@
                     </label>
                     <textarea :class="['form-control', isDarkMode ? 'dark-textbox' : '']" id="komment" v-model="komment"
                       rows="6" maxlength="300" @input="updateCharacterCount">
-          </textarea>
+                    </textarea>
                   </div>
                 </div>
                 <div class="modal-footer">
                   <div class="d-flex justify-content-center flex-wrap">
-  <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
-  <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
-</div>
-
+                    <button type="button" class="btn btn-primary mx-1" @click="confirmAction">Küldés</button>
+                    <button type="button" class="btn btn-secondary mx-1" @click="closeCommentModal">Mégse</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -315,7 +314,7 @@
 
 
           <!-- Log Modal -->
-          <div v-if="showLogModal" class="logmodal-overlay" @click="closeLogModal" >
+          <div v-if="showLogModal" class="logmodal-overlay" @click="closeLogModal">
             <div class="bg logmodal-bg" @click.stop :class="{ 'dark-mode': isDarkMode }">
               <div class="logmodal-content" :class="{ 'dark-mode': isDarkMode }">
                 <div class="logmodal-header">
@@ -329,7 +328,10 @@
                           <strong>Frissítve</strong>
                           <p>{{ new Date(log.logUpdated_at).toLocaleString([], {
                             year: 'numeric', month: '2-digit', day:
-                              '2-digit', hour: '2-digit', minute: '2-digit' }) }}</p>
+                              '2-digit', hour: '2-digit', minute: '2-digit'
+                              }) 
+                            }}
+                          </p>
 
                         </div>
                         <div v-if="log.logmodosito" class="logmodal-item">
@@ -349,7 +351,8 @@
                           <strong>Határidő</strong>
                           <p>{{ new Date(log.logdeadLine).toLocaleString([], {
                             year: 'numeric', month: '2-digit', day:
-                              '2-digit', hour: '2-digit', minute: '2-digit' }) }}</p>
+                              '2-digit', hour: '2-digit', minute: '2-digit'
+                          }) }}</p>
                         </div>
                         <div v-if="log.logpriority" class="logmodal-item">
                           <strong>Prioritás</strong>
@@ -374,9 +377,6 @@
               </div>
             </div>
           </div>
-
-
-
         </div>
       </div>
     </div>
@@ -414,7 +414,7 @@ export default {
       actionToConfirm: null,
       actionData: null,
       komment: '',
-      logEntries: [], 
+      logEntries: [],
       isEditing: false,
       iscommmentonly: false,
       isMobile: false,
@@ -454,62 +454,61 @@ export default {
     },
     filteredBugs() {
 
-      
-let filtered = this.bugs.filter(bug => {
-  // Apply text search
-  const searchTermLower = this.searchTerm.toLowerCase();
-  const matchesSearch = bug.name.toLowerCase().includes(searchTermLower);
+
+      let filtered = this.bugs.filter(bug => {
+        // Apply text search
+        const searchTermLower = this.searchTerm.toLowerCase();
+        const matchesSearch = bug.name.toLowerCase().includes(searchTermLower);
 
 
-  // Apply filters
-  const matchesPriority = !this.selectedPriorities.length || this.selectedPriorities.includes(bug.priority);
-  const matchesLabel = !this.selectedLabels.length || this.selectedLabels.includes(bug.label);
-  const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
-  const matchesRoom = !this.selectedRooms.length || this.selectedRooms.includes(bug.room);
+        // Apply filters
+        const matchesPriority = !this.selectedPriorities.length || this.selectedPriorities.includes(bug.priority);
+        const matchesLabel = !this.selectedLabels.length || this.selectedLabels.includes(bug.label);
+        const matchesStatus = !this.selectedStatuses.length || this.selectedStatuses.includes(bug.status);
+        const matchesRoom = !this.selectedRooms.length || this.selectedRooms.includes(bug.room);
 
-  const statusNotCompletedOrFailed = (bug.status === "Folyamatban" || bug.status === "Beszerzésre vár") && bug.assignedTo === this.loggedInUser;
+        const statusNotCompletedOrFailed = (bug.status === "Folyamatban" || bug.status === "Beszerzésre vár") && bug.assignedTo === this.loggedInUser;
 
-  return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom && statusNotCompletedOrFailed;
-
-  
-});
-
-// Sorting logic based on sortKey and sortOrder
-return filtered.sort((a, b) => {
-  let compareA, compareB;
-
-  switch (this.sortKey) {
-    case 'name':
-    case 'room':
-
-    case 'priority':
-      compareA = a.priority;
-      compareB = b.priority;
-      return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
-
-      case 'deadline':
-  // Convert deadlines to Date objects, and handle null or invalid dates
-  compareA = a.deadline && !isNaN(new Date(a.deadline).getTime()) 
-    ? new Date(a.deadline) 
-    : (this.sortOrder === 'asc' ? Infinity : -Infinity);
-  
-  compareB = b.deadline && !isNaN(new Date(b.deadline).getTime()) 
-    ? new Date(b.deadline) 
-    : (this.sortOrder === 'asc' ? Infinity : -Infinity);
-
-  return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+        return matchesSearch && matchesPriority && matchesLabel && matchesStatus && matchesRoom && statusNotCompletedOrFailed;
 
 
-    case 'reportedAt':
-      compareA = new Date(a.reportedAt);
-      compareB = new Date(b.reportedAt);
-      return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+      });
 
-    default:
-      return 0; // Default sorting if no key is selected
-  }
-});
-}
+      // Sorting logic based on sortKey and sortOrder
+      return filtered.sort((a, b) => {
+        let compareA, compareB;
+
+        switch (this.sortKey) {
+          case 'name':
+          case 'room':
+          case 'priority':
+            compareA = a.priority;
+            compareB = b.priority;
+            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+          case 'deadline':
+            // Convert deadlines to Date objects, and handle null or invalid dates
+            compareA = a.deadline && !isNaN(new Date(a.deadline).getTime())
+              ? new Date(a.deadline)
+              : (this.sortOrder === 'asc' ? Infinity : -Infinity);
+
+            compareB = b.deadline && !isNaN(new Date(b.deadline).getTime())
+              ? new Date(b.deadline)
+              : (this.sortOrder === 'asc' ? Infinity : -Infinity);
+
+            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+
+          case 'reportedAt':
+            compareA = new Date(a.reportedAt);
+            compareB = new Date(b.reportedAt);
+            return this.sortOrder === 'asc' ? compareA - compareB : compareB - compareA;
+
+          default:
+            return 0; // Default sorting if no key is selected
+        }
+      });
+    }
   },
   mounted() {
     this.fetchBugs();
@@ -520,7 +519,7 @@ return filtered.sort((a, b) => {
   beforeDestroy() {
     window.removeEventListener('theme-changed', this.updateTheme);
   },
- 
+
   created() {
     this.orientationOrResizeListener = () => {
       this.isMobile = window.matchMedia("(max-width: 600px)").matches;
@@ -546,20 +545,20 @@ return filtered.sort((a, b) => {
 
   methods: {
     checkMobileView() {
-  if (window.innerWidth <= 600) {
-    this.isMobile = true;
-  } else {
-    this.isMobile = false;
-  }
-},
-updateTheme() {
-  this.isDarkMode = localStorage.getItem('theme') === 'dark';
-},
+      if (window.innerWidth <= 600) {
+        this.isMobile = true;
+      } else {
+        this.isMobile = false;
+      }
+    },
+    updateTheme() {
+      this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    },
 
-/* Fetch and Data Management */
+    /* Fetch and Data Management */
 
-async fetchBugs() {
-  console.log(this.userRole)
+    async fetchBugs() {
+      console.log(this.userRole)
       try {
         const response = await fetch('http://localhost:4500/api/hibakKiir');
         if (!response.ok) throw new Error('Network response was not ok');
@@ -586,161 +585,162 @@ async fetchBugs() {
           reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
           assignedTo: bug['assignedTo'],
           description: bug['Hiba leírása'],
-          deadline: bug['Határidő'] && !isNaN(new Date(bug['Határidő']).getTime()) 
-           ? new Date(bug['Határidő']).toLocaleString([], { 
-            year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : "Nincs határidő",
+          deadline: bug['Határidő'] && !isNaN(new Date(bug['Határidő']).getTime())
+            ? new Date(bug['Határidő']).toLocaleString([], {
+              year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+            }) : "Nincs határidő",
           photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format,
 
         }));
       } catch (error) {
         console.error('Error fetching bug data:', error);
       }
-},
-async fetchUsersWithRoles() {
-  try {
-    const response = await fetch('http://localhost:4500/api/usersWithRoles');
-    if (!response.ok) throw new Error('Failed to fetch users');
-
-    this.usersWithRoles = await response.json();
-  } catch (error) {
-    console.error('Error fetching users:', error);
-  }
-},
-async fetchLogEntries() {
-  try {
-    const response = await fetch(`http://localhost:4500/api/logs/${this.selectedBug.id}`);
-    if (!response.ok) throw new Error('Failed to fetch log entries');
-
-    const logData = await response.json();
-    this.logEntries = logData.map(log => ({
-      logid: log.ID,
-      logStatus: log.Status,
-      logKomment: log.Komment,
-      logUpdated_at: log.Updated_at,
-      logmodosito: log.modosito,
-      logassignedTo: log.assignedTo,
-      logdeadLine: log.deadLine,
-      logpriority: log.priority
-    }));
-
-  } catch (error) {
-    console.error('Error fetching log entries:', error);
-  }
-},
-
-/* Filter and Sort */
-
-resetFilters() {
-  this.selectedPriorities = [];
-  this.selectedLabels = [];
-  this.selectedStatuses = [];
-  this.selectedRooms = [];
-},
-toggleFilterVisibility() {
-  this.showFilters = !this.showFilters;
-},
-sortBy(key) {
-  if (this.sortKey === key) {
-    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-  } else {
-    this.sortKey = key;
-    this.sortOrder = 'asc';
-  }
-},
-
-/* Status Updates */
-
-async Done() {
-  await this.updateStatus('Kész');
-},
-async Failed() {
-  await this.updateStatus('Meghiúsult');
-},
-async Supply() {
-  await this.updateStatus('Beszerzésre vár');
-},
-async InProgress() {
-  await this.updateStatus('Folyamatban');
-},
-async updateStatus(status) {
-  try {
-    const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status, komment: this.komment, modosito: this.loggedInUser }),
-    });
-
-    if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
-
-    this.selectedBug.status = status;
-    this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
-
-    this.fetchBugs();
-  } catch (error) {
-    console.error(`Error updating status to "${status}":`, error);
-    alert(`Failed to update the status to "${status}".`);
-  }
-},
- /* Main modal */
-
- openModal(bug) {
-    this.selectedBug = bug;
-    this.showModal = true;
-    this.assignedTo = this.selectedBug.assignedTo;
-    this.status = this.selectedBug.status;
-    document.body.style.overflow = 'hidden';
-    this.checkMobileView();
-  },
-  closeModal() {
-    this.showModal = false;
-    this.selectedUser = null;
-    this.isEditing = false;
-    document.body.style.overflow = '';
-  },
-  closeLogModal() {
-    this.showLogModal = false;
-  },
-
-  handleButtonClick() {
-    this.iscommmentonly = true;
-    this.openCommentModal(this.Komment);
-  },
-
-  /* Comment modal */
-
-  openCommentModal(action, data) {
-    this.showCommentModal = true;
-    this.actionToConfirm = action;
-    this.actionData = data;
-  },
-  closeCommentModal() {
-    this.showCommentModal = false;
-    this.actionData = null;
-    this.komment = '';
-    this.iscommmentonly = false;
-  },
-  async confirmAction() {
-    if (this.actionToConfirm) {
+    },
+    async fetchUsersWithRoles() {
       try {
-        await this.actionToConfirm(this.actionData);
+        const response = await fetch('http://localhost:4500/api/usersWithRoles');
+        if (!response.ok) throw new Error('Failed to fetch users');
+
+        this.usersWithRoles = await response.json();
       } catch (error) {
-        console.error('Error executing action:', error);
-        alert('There was an error executing the action.');
+        console.error('Error fetching users:', error);
       }
-    }
-    this.closeCommentModal();
-    this.closeModal();
-    this.openModal(this.selectedBug);
-  },
-  async Komment() {
-    if (!this.komment || this.komment.trim() === '') {
-      alert('Please enter a comment before submitting.');
-      return;
-    }
-    try {
-      const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
+    },
+    async fetchLogEntries() {
+      try {
+        const response = await fetch(`http://localhost:4500/api/logs/${this.selectedBug.id}`);
+        if (!response.ok) throw new Error('Failed to fetch log entries');
+
+        const logData = await response.json();
+        this.logEntries = logData.map(log => ({
+          logid: log.ID,
+          logStatus: log.Status,
+          logKomment: log.Komment,
+          logUpdated_at: log.Updated_at,
+          logmodosito: log.modosito,
+          logassignedTo: log.assignedTo,
+          logdeadLine: log.deadLine,
+          logpriority: log.priority
+        }));
+
+      } catch (error) {
+        console.error('Error fetching log entries:', error);
+      }
+    },
+
+    /* Filter and Sort */
+
+    resetFilters() {
+      this.selectedPriorities = [];
+      this.selectedLabels = [];
+      this.selectedStatuses = [];
+      this.selectedRooms = [];
+    },
+    toggleFilterVisibility() {
+      this.showFilters = !this.showFilters;
+    },
+    sortBy(key) {
+      if (this.sortKey === key) {
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortKey = key;
+        this.sortOrder = 'asc';
+      }
+    },
+
+    /* Status Updates */
+
+    async Done() {
+      await this.updateStatus('Kész');
+    },
+    async Failed() {
+      await this.updateStatus('Meghiúsult');
+    },
+    async Supply() {
+      await this.updateStatus('Beszerzésre vár');
+    },
+    async InProgress() {
+      await this.updateStatus('Folyamatban');
+    },
+    async updateStatus(status) {
+      try {
+        const response = await fetch(`http://localhost:4500/api/updateStatus/${this.selectedBug.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status, komment: this.komment, modosito: this.loggedInUser }),
+        });
+
+        if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
+
+        this.selectedBug.status = status;
+        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
+
+        this.fetchBugs();
+      } catch (error) {
+        console.error(`Error updating status to "${status}":`, error);
+        alert(`Failed to update the status to "${status}".`);
+      }
+    },
+    /* Main modal */
+
+    openModal(bug) {
+      this.selectedBug = bug;
+      this.showModal = true;
+      this.assignedTo = this.selectedBug.assignedTo;
+      this.status = this.selectedBug.status;
+      document.body.style.overflow = 'hidden';
+      this.checkMobileView();
+    },
+    closeModal() {
+      this.showModal = false;
+      this.selectedUser = null;
+      this.isEditing = false;
+      document.body.style.overflow = '';
+    },
+    closeLogModal() {
+      this.showLogModal = false;
+    },
+
+    handleButtonClick() {
+      this.iscommmentonly = true;
+      this.openCommentModal(this.Komment);
+    },
+
+    /* Comment modal */
+
+    openCommentModal(action, data) {
+      this.showCommentModal = true;
+      this.actionToConfirm = action;
+      this.actionData = data;
+    },
+    closeCommentModal() {
+      this.showCommentModal = false;
+      this.actionData = null;
+      this.komment = '';
+      this.iscommmentonly = false;
+    },
+    async confirmAction() {
+      if (this.actionToConfirm) {
+        try {
+          await this.actionToConfirm(this.actionData);
+        } catch (error) {
+          console.error('Error executing action:', error);
+          alert('There was an error executing the action.');
+        }
+      }
+      this.closeCommentModal();
+      this.closeModal();
+      this.openModal(this.selectedBug);
+    },
+    async Komment() {
+      if (!this.komment || this.komment.trim() === '') {
+        alert('Please enter a comment before submitting.');
+        return;
+      }
+      try {
+        const response = await fetch(`http://localhost:4500/api/addComment/${this.selectedBug.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -756,86 +756,84 @@ async updateStatus(status) {
         console.error('Error updating log:', error);
         alert('Failed to update the log.');
       }
-  },
-  
-  /* Log modal */
+    },
 
-  async openLogModal() {
-    this.showLogModal = true;
-    await this.fetchLogEntries(); // Fetch log entries from the backend
-  },
-  closeLogModal() {
-    this.showLogModal = false;
-  },
+    /* Log modal */
 
-  /* Photo modal */
+    async openLogModal() {
+      this.showLogModal = true;
+      await this.fetchLogEntries(); // Fetch log entries from the backend
+    },
+    closeLogModal() {
+      this.showLogModal = false;
+    },
 
-  openPhoto(photo, index) {
-    this.showPhotoModal = true;
-    this.selectedPhoto = photo;
-    this.selectedPhotoIndex = index;
-  },
-  closePhotoModal() {
-    this.showPhotoModal = false;
-    this.selectedPhoto = null;
-  },
-  prevPhoto() {
-    if (this.selectedPhotoIndex > 0) {
-      this.selectedPhotoIndex--;
-    } else {
-      this.selectedPhotoIndex = this.selectedBug.photos.length - 1;
-    }
-    this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
-  },
-  nextPhoto() {
-    if (this.selectedPhotoIndex < this.selectedBug.photos.length - 1) {
-      this.selectedPhotoIndex++;
-    } else {
-      this.selectedPhotoIndex = 0;
-    }
-    this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
-  },
+    /* Photo modal */
 
-  /* Utility */
-  
-  getPriorityColor(priority) {
-    switch (priority) {
-      case 1: return 'darkgreen';
-      case 2: return 'lightgreen';
-      case 3: return 'yellow';
-      case 4: return 'orange';
-      case 5: return 'red';
-      default: return '';
-    }
-  },
-  getBadgeClass(status) {
-    switch (status) {
-      case 'Bejelentve':
-        return 'badge-reported';
-      case 'Folyamatban':
-        return 'badge-progress';
-      case 'Beszerzésre vár':
-        return 'badge-supply';
-      case 'Újból kiosztva':
-        return 'badge-resent';
-      case 'Kész':
-        return 'badge-done';
-      case 'Meghiúsult':
-        return 'badge-failed';
-    }
-  },
-  selectUser(userName) {
-    this.selectedUser = userName;
-    const dropdownElement = this.$refs.dropdownButton;
-    const dropdown = bootstrap.Dropdown.getInstance(dropdownElement) || new bootstrap.Dropdown(dropdownElement);
-    dropdown.hide();
-  },
+    openPhoto(photo, index) {
+      this.showPhotoModal = true;
+      this.selectedPhoto = photo;
+      this.selectedPhotoIndex = index;
+    },
+    closePhotoModal() {
+      this.showPhotoModal = false;
+      this.selectedPhoto = null;
+    },
+    prevPhoto() {
+      if (this.selectedPhotoIndex > 0) {
+        this.selectedPhotoIndex--;
+      } else {
+        this.selectedPhotoIndex = this.selectedBug.photos.length - 1;
+      }
+      this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
+    },
+    nextPhoto() {
+      if (this.selectedPhotoIndex < this.selectedBug.photos.length - 1) {
+        this.selectedPhotoIndex++;
+      } else {
+        this.selectedPhotoIndex = 0;
+      }
+      this.selectedPhoto = this.selectedBug.photos[this.selectedPhotoIndex];
+    },
+
+    /* Utility */
+
+    getPriorityColor(priority) {
+      switch (priority) {
+        case 1: return 'darkgreen';
+        case 2: return 'lightgreen';
+        case 3: return 'yellow';
+        case 4: return 'orange';
+        case 5: return 'red';
+        default: return '';
+      }
+    },
+    getBadgeClass(status) {
+      switch (status) {
+        case 'Bejelentve':
+          return 'badge-reported';
+        case 'Folyamatban':
+          return 'badge-progress';
+        case 'Beszerzésre vár':
+          return 'badge-supply';
+        case 'Újból kiosztva':
+          return 'badge-resent';
+        case 'Kész':
+          return 'badge-done';
+        case 'Meghiúsult':
+          return 'badge-failed';
+      }
+    },
+    selectUser(userName) {
+      this.selectedUser = userName;
+      const dropdownElement = this.$refs.dropdownButton;
+      const dropdown = bootstrap.Dropdown.getInstance(dropdownElement) || new bootstrap.Dropdown(dropdownElement);
+      dropdown.hide();
+    },
   }
 };
 </script>
 
 
 
-<style>
-
-</style>
+<style></style>
