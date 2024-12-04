@@ -1,0 +1,21 @@
+Git desktopból kell lehúzni a fájlokat
+Felül kell branchet választani. Alapvetően úgy fogunk dolgozni, hogy dev nevezetű branchre fogjuk felrakni a dolgokat és a heti megbeszélés után a működő dolgot átrakjuk a mainre.
+Lehúzni a github desktopból kell a fetch origin gombbal, majd a pull gombbal le kell tölteni a legújabb verziót.
+
+
+Miután GitHubról leúztad a dolgot:
+
+Terminálból bemész a backendre (cd backend)
+Kiadod a npm i nodemon parancsot
+A backendet az npm run dev paranccsal lehet futtatni, de futtatni kell hozzá xamppból a phpmyadmint
+
+Csinálsz még egy terminált, amiből bemész a frontendre(cd frontend)
+Kiadod a npm i  parancsot
+A frontendet az npm run dev paranccsal lehet futtatni
+
+Githubra feltöltés:
+A dev branchre kell feltölteni ha csináltál valamit.
+Githb desktopból kell felrakni a dolgokat. Bal allul írsz valamit a summaryba, hogy mit csináltám, majd rányomsz a commit gombra.
+Utána középen kéken megjelenik egy push gomb. Azt megnyomod és akkor felrakja githubra.
+
+ 
