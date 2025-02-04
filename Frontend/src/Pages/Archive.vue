@@ -540,7 +540,7 @@ updateTheme() {
 /* Fetch and Data Management */
 
 async fetchBugs() {
-  console.log(this.userRole)
+      console.log(this.userRole)
       try {
         const response = await fetch('http://localhost:4500/api/hibakKiir');
         if (!response.ok) throw new Error('Network response was not ok');
@@ -555,7 +555,9 @@ async fetchBugs() {
           priorityColor: this.getPriorityColor(bug['Prioritás']),
           label: bug['Címke'],
           status: bug['Státusz'],
-          badgeClass:
+          badgeClass: bug['Státusz'] === 'Bejelentve' ? 'badge-reported' :
+            bug['Státusz'] === 'Folyamatban' ? 'badge-progress' :
+              bug['Státusz'] === 'Beszerzésre vár' ? 'badge-supply' :
                 bug['Státusz'] === 'Újból kiosztva' ? 'badge-resent' :
                   bug['Státusz'] === 'Kész' ? 'badge-done' :
                     bug['Státusz'] === 'Meghiúsult' ? 'badge-failed' : '',
@@ -565,14 +567,27 @@ async fetchBugs() {
           reportedAt: new Date(bug['Bejelentés ideje']).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
           assignedTo: bug['assignedTo'],
           description: bug['Hiba leírása'],
-          deadline: bug['Határidő'],
+          deadline: bug['Határidő'] && !isNaN(new Date(bug['Határidő']).getTime())
+            ? new Date(bug['Határidő']).toLocaleString([], {
+              year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+            }) : "Nincs határidő",
           photos: bug.photos ? bug.photos.split(',').map(photo => `http://localhost:4500/uploads/${photo.trim()}`) : [] // Ensure the correct URL format,
 
         }));
       } catch (error) {
         console.error('Error fetching bug data:', error);
       }
-},
+    },
+    async fetchUsersWithRoles() {
+      try {
+        const response = await fetch('http://localhost:4500/api/usersWithRoles');
+        if (!response.ok) throw new Error('Failed to fetch users');
+
+        this.usersWithRoles = await response.json();
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    },
 async fetchUsersWithRoles() {
   try {
     const response = await fetch('http://localhost:4500/api/usersWithRoles');
@@ -645,6 +660,7 @@ sortBy(key) {
         if (!response.ok) throw new Error(`Failed to update status to "${status}"`);
 
         this.selectedBug.status = status;
+        this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
         this.fetchBugs();
         this.closeModal();
         this.openModals(this.selectedBug);
@@ -798,7 +814,7 @@ sortBy(key) {
 };
 </script>
 
-<style>
+<style >
 
 
 </style>

@@ -678,6 +678,8 @@ export default {
         this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
 
         this.fetchBugs();
+        this.closeModal();
+        this.openModal(this.selectedBug);
       } catch (error) {
         console.error(`Error updating status to "${status}":`, error);
         alert(`Failed to update the status to "${status}".`);

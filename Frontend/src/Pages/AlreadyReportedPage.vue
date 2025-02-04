@@ -154,10 +154,10 @@
         <div class="modal-content" s>
           <div class="modal-header">
             <h3 class="modal-title">{{ selectedBug.name }}</h3>
-            <button v-if="!isEditing" type="button" class="btn btn-outline-secondary mb-3" @click="toggleEditMode">
+            <button v-if="!isEditing && role=='muszakivezeto' " type="button" class="btn btn-outline-secondary mb-3" @click="toggleEditMode">
               <i :class="['bi', 'bi-pencil', { 'text-white': isDarkMode }]"></i>
             </button>
-            <div v-else class="edit-width d-flex justify-content-end align-items-center gap-2 mb-3">
+            <div v-if="isEditing && role=='muszakivezeto'" class="edit-width d-flex justify-content-end align-items-center gap-2 mb-3">
               <button type="button" class="btn btn-success edit equal-width" @click="saveEdit">Megerősít</button>
               <button type="button" class="btn btn-secondary edit equal-width" @click="toggleEditMode">Mégse</button>
             </div>
@@ -700,6 +700,8 @@ export default {
         this.selectedBug.badgeClass = this.getBadgeClass(this.selectedBug.status);
 
         this.fetchBugs();
+        this.closeModal();
+        this.openModal(this.selectedBug);
       } catch (error) {
         console.error(`Error updating status to "${status}":`, error);
         alert(`Failed to update the status to "${status}".`);
