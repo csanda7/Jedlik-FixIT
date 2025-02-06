@@ -3,7 +3,7 @@
     <div :class="['card', 'shadow-sm', { 'dark-mode': isDarkMode }]">
       <div
         :class="['card-header', { 'dark-mode': isDarkMode }, 'd-flex', 'justify-content-between', 'align-items-center']">
-        <h2 class="my-2 h2">Bejelentett hibák</h2>
+        <h2 class="my-2 h2">Lezárt hibák</h2>
         <div class="user-actions d-flex">
           <input type="text" class="form-control search-input me-3 d-none d-md-block" placeholder="Keresés..." v-model="searchTerm" />
           <button class="btn btn-secondary" type="button" @click="toggleFilterVisibility">
